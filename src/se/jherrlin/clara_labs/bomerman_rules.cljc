@@ -3,67 +3,6 @@
 
 
 
-(defn only-walls [n]
-  (vec (take n (repeat {:type :wall}))))
-
-(defn cycle-walls [n]
-  (vec (take n (cycle [{:type :wall} {:type :free}]))))
-
-(defn walls-on-each-side [n]
-  (-> (- n 2)
-      (take (repeat {:type :free}))
-      (conj {:type :wall})
-      (concat [{:type :wall}])
-      (vec)))
-
-(defn init-generation [n]
-  (let [length n]
-    [(only-walls length)
-     (walls-on-each-side length)
-     (cycle-walls length)
-     (walls-on-each-side length)
-     (only-walls length)]))
-
-(defn individual-state [[x y] generation]
-  (get-in generation [y x]))
-
-(defn neighbour-idxs [[^int x-index ^int y-index]]
-  [(vec (range (- x-index 1) (+ x-index 2)))
-   (vec (range (- y-index 1) (+ y-index 2)))])
-
-(defn neighbour-states
-  [[current-x current-y] generation [x-indexs y-indexs]]
-  (vec (for [x x-indexs
-             y y-indexs
-             :when (not (= [current-x current-y] [x y]))]
-         (individual-state [x y] generation))))
-
-(defn neighbours
-  "Get neighbours state."
-  [current-x-y generation]
-  (->> (neighbour-idxs   current-x-y)
-       (neighbour-states current-x-y generation)))
-
-(defn nesw-neighbours
-  "North, east, west, south neighbours"
-  [neighbours]
-  {:north (nth neighbours 1)
-   :east  (nth neighbours 4)
-   :south (nth neighbours 6)
-   :west  (nth neighbours 3)})
-
-(comment
-  (nesw-neighbours
-   (neighbours
-    [1 1]
-    (init-generation 6)))
-
-  #?(:clj  (java.util.UUID/randomUUID)
-     :cljs (random-uuid))
-
-
-  )
-
 (defn bomb-placed-in-position? [generation [pos-x pos-y]]
   (let [position (get-in generation [pos-y pos-x])]
     (-> position :bomb boolean)))
@@ -105,17 +44,12 @@
   "User move"
   [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
    (not (#{:wall} (target-position-type generation current-xy direction)))]
-  [:not [PlacedBomb (= ?current-xy current-xy)]]
+  [:not [PlacedBomb (= ?position-xy position-xy)]]
   =>
   (insert! (->UserMove ?user-id (next-xy-position ?current-xy ?direction))))
 
-(defquery user-move?
-  []
-  [?user-move <- UserMove])
 
-(defrecord UserWantsToPlaceBomb [user-id generation current-xy fire-length])
-(defrecord UserPlaceBomb        [user-id generation current-xy fire-length timestamp])
-(defrecord Fire                 [user-id generation current-xy])
+
 
 (comment
   (-> (place-bomb-in-position (init-generation 6) [1 1] 1)
@@ -125,40 +59,17 @@
       (bomb-placed-in-position? [1 1]))
   )
 
-(defn now! []
-  #?(:clj  (java.util.Date.)
-     :cljs (js/Date.)))
 
-(defrule place-bomb
-  "User place bomb in current location"
-  [UserWantsToPlaceBomb (= ?user-id user-id) (= ?fire-length fire-length) (= ?current-xy current-xy) (= ?generation generation)
-   (not (bomb-placed-in-position? generation current-xy))]
-  [PlacedBomb]
-  =>
-  (insert! (->UserPlaceBomb ?user-id ?generation ?current-xy ?fire-length (now!))))
 
-(defn inst->local-datetime
-     "Convert `#inst` to `java.time.LocalDateTime`."
-     [inst]
-     (.toLocalDateTime
-      (.atZone
-       (.toInstant inst)
-       (java.time.ZoneId/systemDefault))))
 
-(defn milliseconds-between
-  "Count milliseconds between two `#inst`."
-  [inst1 inst2]
-  (.toMillis
-   (java.time.Duration/between
-    (inst->local-datetime inst1)
-    (inst->local-datetime inst2))))
 
-(defrule bomb-exploation
-  ""
-  [UserPlaceBomb (= ?user-id user-id) (= ?current-xy current-xy) (= ?generation generation)
-   (< (milliseconds-between timestamp (now!)) 3000)]
-  =>
-  (insert! (->Fire ?user-id ?generation ?current-xy)))
+
+;; (defrule bomb-exploation
+;;   ""
+;;   [UserPlaceBomb (= ?user-id user-id) (= ?current-xy current-xy) (= ?generation generation)
+;;    (< (milliseconds-between timestamp (now!)) 3000)]
+;;   =>
+;;   (insert! (->Fire ?user-id ?generation ?current-xy)))
 
 (comment
   (milliseconds-between
@@ -168,9 +79,7 @@
 
 ;; =>
 
-(defquery placed-bombs
-  []
-  [?placed-bombs <- UserPlaceBomb])
+
 
 ;; (defrule
 ;;   "Remove bombs after a certain amount of time"
