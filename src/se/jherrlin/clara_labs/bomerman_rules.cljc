@@ -211,4 +211,18 @@
                               (->FireOnBoard  1 [2 1] #inst "2021-08-28T15:03:03.000-00:00")])
         session' (fire-rules session)]
     (map :?fire-that-have-burned-out (query session' fire-that-have-burned-out?)))
+
+  ;; User dies
+  (let [board    [[{:type :wall, :x 0, :y 0} {:type :wall,  :x 1, :y 0} {:type :wall,  :x 2, :y 0} {:type :wall, :x 3, :y 0}]
+                  [{:type :wall, :x 0, :y 1} {:type :floor, :x 1, :y 1} {:type :floor, :x 2, :y 1} {:type :wall, :x 3, :y 1}]
+                  [{:type :wall, :x 0, :y 2} {:type :floor, :x 1, :y 2} {:type :floor, :x 2, :y 2} {:type :wall, :x 3, :y 2}]
+                  [{:type :wall, :x 0, :y 3} {:type :wall,  :x 1, :y 3} {:type :wall,  :x 2, :y 3} {:type :wall, :x 3, :y 3}]]
+        session  (insert-all bomberman-session
+                             [(->Board board)
+                              (->TimestampNow                #inst "2021-08-28T15:03:04.000-00:00")
+                              (->FireOnBoard         2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+                              (->UserPositionOnBoard 1 [1 1])])
+        session' (fire-rules session)]
+    (map :?dead-users (query session' dead-users?)))
+
   )
