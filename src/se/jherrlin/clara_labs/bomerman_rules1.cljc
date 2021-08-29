@@ -9,7 +9,7 @@
 (defrecord TimestampNow         [now])
 (defrecord UserWantsToMove      [user-id current-xy direction])
 (defrecord UserMove             [user-id next-position])
-(defrecord BombOnBoard          [user-id position-xy fire-length bomb-added-timestamp timestamp-now])
+(defrecord BombOnBoard          [user-id position-xy fire-length bomb-added-timestamp])
 (defrecord BombExploading       [user-id position-xy])
 (defrecord FireOnBoard          [user-id current-xy fire-start-timestamp])
 (defrecord RemoveFireFromBoard  [current-xy])
@@ -62,7 +62,7 @@
   [Board (= ?board board)]
   [TimestampNow (= ?now now)]
   [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)
-   (< 2000 (datetime/milliseconds-between bomb-added-timestamp timestamp-now))]
+   (< 2000 (datetime/milliseconds-between bomb-added-timestamp ?now))]
   =>
   (apply insert-unconditional! (mapv (fn [{:keys [x y]}] (->FireOnBoard ?user-id [x y] ?now))
                                      (bomb-fire-spread ?board ?bomb-position-xy ?fire-length)))
@@ -127,15 +127,16 @@
 (let [board   (board/init 6)
       session (insert-all bomberman-session
                           [(->Board board)
+                           (->TimestampNow #inst "2021-08-28T15:03:50.100-00:00")
                            (->UserWantsToMove 1 [1 1] :north)
                            (->UserWantsToMove 2 [1 1] :east)
                            (->UserWantsToMove 3 [1 1] :south)
                            (->UserWantsToMove 4 [1 1] :west)
                            (->UserWantsToMove 5 [3 1] :west)
-                           (->BombOnBoard     1       [2 1] 3 (datetime/now!) (datetime/now!))
+                           (->BombOnBoard          1  [2 1] 3 (datetime/now!))
                            (->UserWantsToPlaceBomb 10 [2 1] 3 (datetime/now!))
                            (->UserWantsToPlaceBomb 11 [1 1] 3 (datetime/now!))
-                           (->BombOnBoard          66 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00")
+                           (->BombOnBoard          66 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00")
 
                            (->FireOnBoard 1 [5 4] (datetime/now!))
                            (->UserPositionOnBoard 0 [5 4])
@@ -146,8 +147,9 @@
     :add-bombs-to-board (map :?add-bombs-to-board (query session' add-bombs-to-board?))
     :exploading-bombs   (map :?exploading-bombs (query session' exploading-bombs?))
     :add-fires-to-board (map :?add-fire-to-board (query session' fire-to-add?))
-    :dead-users         (map :?dead-users (query session' dead-users?))
-    }})
+    :dead-users         (map :?dead-users (query session' dead-users?))}})
+
+
 
 
 (comment
