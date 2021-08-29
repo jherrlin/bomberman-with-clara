@@ -1,16 +1,18 @@
 (ns se.jherrlin.clara-labs.bomerman-rules1
-  (:require [clara.rules :refer [insert insert-all fire-rules query insert! defrule defsession defquery]]
+  (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.datetime :as datetime]))
 
 
 
 (defrecord Board                [board])
-(defrecord UserWantsToMove      [user-id board current-xy direction])
+(defrecord TimestampNow         [now])
+(defrecord UserWantsToMove      [user-id current-xy direction])
 (defrecord UserMove             [user-id next-position])
 (defrecord BombOnBoard          [user-id position-xy fire-length bomb-added-timestamp timestamp-now])
 (defrecord BombExploading       [user-id position-xy])
-(defrecord FireOnBoard          [user-id current-xy])
+(defrecord FireOnBoard          [user-id current-xy fire-start-timestamp])
+(defrecord RemoveFireFromBoard  [current-xy])
 (defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp])
 (defrecord AddBombToBoard       [user-id location-xy fire-length timestamp])
 (defrecord AddFireToBoard       [user-id location])
@@ -20,8 +22,9 @@
 
 (defrule user-move
   "User move"
+  [Board (= ?board board)]
   [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
-   (#{:floor} (board/target-position-type board current-xy direction))]
+   (#{:floor} (board/target-position-type ?board current-xy direction))]
   [:not [BombOnBoard (= position-xy (board/next-xy-position ?current-xy ?direction))]]
   =>
   (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
@@ -54,20 +57,42 @@
          (sort-by :x)
          (vec))))
 
-(defrule bomb-exploding
-  "Bomb that is on board for 2000ms (2 seconds) should expoad"
+(defrule bomb-exploding-after-timeout
+  "Bomb that is on board for 2000ms (2 seconds) should expload."
   [Board (= ?board board)]
-  [:or
-   [BombOnBoard (= ?user-id user-id) (= ?position-xy position-xy) (= ?fire-length fire-length)
-    (< 2000 (datetime/milliseconds-between bomb-added-timestamp timestamp-now))]
-   [FireOnBoard (= ?user-id user-id) (= ?current-fire-xy current-xy)
-    (= ?current-fire-xy ?position-xy)]]
+  [TimestampNow (= ?now now)]
+  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)
+   (< 2000 (datetime/milliseconds-between bomb-added-timestamp timestamp-now))]
   =>
-  (apply insert! (mapv (fn [{:keys [x y]}] (->AddFireToBoard ?user-id [x y]))
-                       (bomb-fire-spread ?board (or ?position-xy ?current-fire-xy) (or ?fire-length 1)))))
+  (apply insert-unconditional! (mapv (fn [{:keys [x y]}] (->FireOnBoard ?user-id [x y] ?now))
+                                     (bomb-fire-spread ?board ?bomb-position-xy ?fire-length)))
+  (retract! ?bomb))
 
-(< 2000 (datetime/milliseconds-between #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00"))
-(datetime/now!)
+(defrule bomb-exploading-when-hit-by-fire
+  "Bomb is exploading if it's hit by fire."
+  [Board (= ?board board)]
+  [TimestampNow (= ?now now)]
+  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)]
+  [FireOnBoard (= ?user-id user-id) (= ?current-fire-xy current-xy)]
+  [:test (= ?bomb-position-xy ?current-fire-xy)]
+  =>
+  (retract! ?bomb)
+  (apply insert-unconditional! (mapv (fn [{:keys [x y]}] (->FireOnBoard ?user-id [x y] ?now))
+                                     (bomb-fire-spread ?board ?bomb-position-xy ?fire-length))))
+
+(defrule fire-burns-out
+  "Fire on board burns out after some time."
+  [TimestampNow (= ?now now)]
+  [?fire <- FireOnBoard (= ?fire-start-timestamp fire-start-timestamp)]
+  [:test (< 1500 (datetime/milliseconds-between ?fire-start-timestamp ?now))]
+  =>
+  (insert! (->RemoveFireFromBoard ?fire)))
+
+
+(comment
+  (< 2000 (datetime/milliseconds-between #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00"))
+  (datetime/now!)
+  )
 
 (defquery user-move?
   []
@@ -85,26 +110,34 @@
   []
   [?add-fire-to-board <- AddFireToBoard])
 
+(defquery fire-on-board?
+  []
+  [?fire-on-board <- FireOnBoard])
+
 (defquery dead-users?
   []
   [?dead-users <- DeadUser])
+
+(defquery fire-that-have-burned-out?
+  []
+  [?fire-that-have-burned-out <- RemoveFireFromBoard])
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomerman-rules1)
 
 (let [board   (board/init 6)
       session (insert-all bomberman-session
                           [(->Board board)
-                           (->UserWantsToMove 1 board [1 1] :north)
-                           (->UserWantsToMove 2 board [1 1] :east)
-                           (->UserWantsToMove 3 board [1 1] :south)
-                           (->UserWantsToMove 4 board [1 1] :west)
-                           (->UserWantsToMove 5 board [3 1] :west)
+                           (->UserWantsToMove 1 [1 1] :north)
+                           (->UserWantsToMove 2 [1 1] :east)
+                           (->UserWantsToMove 3 [1 1] :south)
+                           (->UserWantsToMove 4 [1 1] :west)
+                           (->UserWantsToMove 5 [3 1] :west)
                            (->BombOnBoard     1       [2 1] 3 (datetime/now!) (datetime/now!))
                            (->UserWantsToPlaceBomb 10 [2 1] 3 (datetime/now!))
                            (->UserWantsToPlaceBomb 11 [1 1] 3 (datetime/now!))
                            (->BombOnBoard          66 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00")
 
-                           (->FireOnBoard 1 [5 4])
+                           (->FireOnBoard 1 [5 4] (datetime/now!))
                            (->UserPositionOnBoard 0 [5 4])
                            ])
       session' (fire-rules session)]
@@ -119,19 +152,60 @@
 
 (comment
   ;; Users can only move on floor
-  (let [board [[{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]
-               [{:type :wall} {:type :floor} {:type :floor} {:type :wall}]
-               [{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]]
-        session (insert-all bomberman-session
-                            [(->Board board)
-                             (->UserWantsToMove 1 board [1 1] :east)
-                             (->UserWantsToMove 2 board [1 1] :south)
-                             (->UserWantsToMove 3 board [1 1] :west)
-                             (->UserWantsToMove 4 board [1 1] :north)
-                             (->UserWantsToMove 5 board [2 1] :east)
-                             (->UserWantsToMove 6 board [2 1] :south)
-                             (->UserWantsToMove 7 board [2 1] :west)
-                             (->UserWantsToMove 8 board [2 1] :north)])
+  (let [board    [[{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]
+                  [{:type :wall} {:type :floor} {:type :floor} {:type :wall}]
+                  [{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]]
+        session  (insert-all bomberman-session
+                             [(->Board board)
+                              (->UserWantsToMove 1 [1 1] :east)
+                              (->UserWantsToMove 2 [1 1] :south)
+                              (->UserWantsToMove 3 [1 1] :west)
+                              (->UserWantsToMove 4 [1 1] :north)
+                              (->UserWantsToMove 5 [2 1] :east)
+                              (->UserWantsToMove 6 [2 1] :south)
+                              (->UserWantsToMove 7 [2 1] :west)
+                              (->UserWantsToMove 8 [2 1] :north)])
         session' (fire-rules session)]
     (query session' user-move?))
+
+  ;; Users cant walk onto a bomb
+  (let [board    [[{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]
+                  [{:type :wall} {:type :floor} {:type :floor} {:type :wall}]
+                  [{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]]
+        session  (insert-all bomberman-session
+                             [(->Board board)
+                              (->UserWantsToMove 1 [1 1] :east)
+                              (->UserWantsToMove 2 [2 1] :west)
+                              (->BombOnBoard     2 [2 1] 3 (datetime/now!) (datetime/now!))])
+        session' (fire-rules session)]
+    (query session' user-move?))
+
+  (board/init 4)
+
+  ;; Fire exploads bombs
+  (let [board    [[{:type :wall, :x 0, :y 0} {:type :wall,  :x 1, :y 0} {:type :wall,  :x 2, :y 0} {:type :wall, :x 3, :y 0}]
+                  [{:type :wall, :x 0, :y 1} {:type :floor, :x 1, :y 1} {:type :floor, :x 2, :y 1} {:type :wall, :x 3, :y 1}]
+                  [{:type :wall, :x 0, :y 2} {:type :floor, :x 1, :y 2} {:type :floor, :x 2, :y 2} {:type :wall, :x 3, :y 2}]
+                  [{:type :wall, :x 0, :y 3} {:type :wall,  :x 1, :y 3} {:type :wall,  :x 2, :y 3} {:type :wall, :x 3, :y 3}]]
+        session  (insert-all bomberman-session
+                             [(->Board board)
+                              (->TimestampNow (datetime/now!))
+                              (->BombOnBoard     1 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00")
+                              (->BombOnBoard     1 [2 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:47.100-00:00")])
+        session' (fire-rules session)]
+    (query session' fire-on-board?))
+
+  ;; Fire burns out
+  (let [board    [[{:type :wall, :x 0, :y 0} {:type :wall,  :x 1, :y 0} {:type :wall,  :x 2, :y 0} {:type :wall, :x 3, :y 0}]
+                  [{:type :wall, :x 0, :y 1} {:type :floor, :x 1, :y 1} {:type :floor, :x 2, :y 1} {:type :wall, :x 3, :y 1}]
+                  [{:type :wall, :x 0, :y 2} {:type :floor, :x 1, :y 2} {:type :floor, :x 2, :y 2} {:type :wall, :x 3, :y 2}]
+                  [{:type :wall, :x 0, :y 3} {:type :wall,  :x 1, :y 3} {:type :wall,  :x 2, :y 3} {:type :wall, :x 3, :y 3}]]
+        session  (insert-all bomberman-session
+                             [(->Board board)
+                              (->TimestampNow         #inst "2021-08-28T15:03:04.000-00:00")
+                              (->FireOnBoard  1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+                              (->FireOnBoard  1 [1 2] #inst "2021-08-28T15:03:02.300-00:00")
+                              (->FireOnBoard  1 [2 1] #inst "2021-08-28T15:03:03.000-00:00")])
+        session' (fire-rules session)]
+    (map :?fire-that-have-burned-out (query session' fire-that-have-burned-out?)))
   )
