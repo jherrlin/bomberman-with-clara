@@ -1,4 +1,4 @@
-(ns se.jherrlin.clara-labs.bomerman-rules1
+(ns se.jherrlin.clara-labs.bomerman-rules
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.datetime :as datetime]))
@@ -122,7 +122,7 @@
   []
   [?fire-that-have-burned-out <- RemoveFireFromBoard])
 
-(defsession bomberman-session 'se.jherrlin.clara-labs.bomerman-rules1)
+(defsession bomberman-session 'se.jherrlin.clara-labs.bomerman-rules)
 
 (let [board   (board/init 6)
       session (insert-all bomberman-session
