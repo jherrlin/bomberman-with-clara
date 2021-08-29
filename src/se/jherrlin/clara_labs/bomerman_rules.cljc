@@ -61,8 +61,8 @@
   "Bomb that is on board for 2000ms (2 seconds) should expload."
   [Board (= ?board board)]
   [TimestampNow (= ?now now)]
-  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)
-   (< 2000 (datetime/milliseconds-between bomb-added-timestamp ?now))]
+  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-added-timestamp bomb-added-timestamp) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)]
+  [:test (< 2000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
   =>
   (apply insert-unconditional! (mapv (fn [{:keys [x y]}] (->FireOnBoard ?user-id [x y] ?now))
                                      (bomb-fire-spread ?board ?bomb-position-xy ?fire-length)))
@@ -176,9 +176,10 @@
                   [{:type :wall} {:type :wall}  {:type :wall}  {:type :wall}]]
         session  (insert-all bomberman-session
                              [(->Board board)
+                              (->TimestampNow  (datetime/now!))
                               (->UserWantsToMove 1 [1 1] :east)
                               (->UserWantsToMove 2 [2 1] :west)
-                              (->BombOnBoard     2 [2 1] 3 (datetime/now!) (datetime/now!))])
+                              (->BombOnBoard     2 [2 1] 3 (datetime/now!))])
         session' (fire-rules session)]
     (query session' user-move?))
 
@@ -191,9 +192,9 @@
                   [{:type :wall, :x 0, :y 3} {:type :wall,  :x 1, :y 3} {:type :wall,  :x 2, :y 3} {:type :wall, :x 3, :y 3}]]
         session  (insert-all bomberman-session
                              [(->Board board)
-                              (->TimestampNow (datetime/now!))
-                              (->BombOnBoard     1 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00")
-                              (->BombOnBoard     1 [2 1] 3 #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:47.100-00:00")])
+                              (->TimestampNow              #inst "2021-08-28T15:03:50.100-00:00")
+                              (->BombOnBoard     1 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00")
+                              (->BombOnBoard     1 [2 1] 3 #inst "2021-08-28T15:03:49.100-00:00")])
         session' (fire-rules session)]
     (query session' fire-on-board?))
 
