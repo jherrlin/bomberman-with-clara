@@ -27,7 +27,7 @@
 (defn individual-state [[x y] board]
   (get-in board [y x]))
 
-(defn neighbour-idxs [[^int x-index ^int y-index]]
+(defn neighbour-idxs [[x-index y-index]]
   [(vec (range (- x-index 1) (+ x-index 2)))
    (vec (range (- y-index 1) (+ y-index 2)))])
 
