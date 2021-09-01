@@ -1,7 +1,9 @@
 (ns se.jherrlin.clara-labs.bomerman-rules
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
+            [clara.rules.accumulators :as acc]
             [se.jherrlin.clara-labs.board :as board]
-            [se.jherrlin.clara-labs.datetime :as datetime]))
+            [se.jherrlin.clara-labs.datetime :as datetime]
+            [clojure.set :as set]))
 
 
 
@@ -18,6 +20,7 @@
 (defrecord AddFireToBoard       [user-id location])
 (defrecord UserPositionOnBoard  [user-id current-xy])
 (defrecord DeadUser             [user-id killed-by-user-id])
+(defrecord Stone                [position-xy]) ;; Object on the board that can be removed by fire
 
 
 (defrule user-move
@@ -52,7 +55,7 @@
     (->> (concat north south east west)
          (vec))))
 
-(defn fire-spead-in-all-directions [[pos-x pos-y] fire-length]
+(defn bomb-fire-spread-in-all-directions [[pos-x pos-y] fire-length]
   (let [fire-length' (inc fire-length)]
     {:north (->> (map (fn [y] [pos-x y]) (range (inc (- pos-y fire-length')) pos-y))
                  (sort-by second #(compare %2 %1))
@@ -67,15 +70,74 @@
                  (sort-by second #(compare %1 %2))
                  (vec))}))
 
+(defn first-stones-hit-by-fire-in-direction [fire-spread stones]
+  (let [stones-set                      (set stones)
+        {:keys [north west east south]} fire-spread
+        first-stone-to-hit-in-direction (fn [vs] (->> vs (filter #(set/subset? #{%} stones-set)) first))]
+    {:north (-> north first-stone-to-hit-in-direction)
+     :west  (-> west  first-stone-to-hit-in-direction)
+     :east  (-> east  first-stone-to-hit-in-direction)
+     :south (-> south first-stone-to-hit-in-direction)}))
+
+(defn remove-fire-that-hit-a-wall [fire-spread board]
+  (let [{:keys [north west east south]} fire-spread
+        first-stone-to-hit-in-direction (fn [vs] (->> vs
+                                                      (map #(board/individual-state % board))
+                                                      (take-while (comp #{:floor} :type))
+                                                      (map (fn [{:keys [x y]}] [x y]))
+                                                      (vec)))]
+    {:north (-> north first-stone-to-hit-in-direction)
+     :west  (-> west  first-stone-to-hit-in-direction)
+     :east  (-> east  first-stone-to-hit-in-direction)
+     :south (-> south first-stone-to-hit-in-direction)}))
+
+(defn stones-hit-by-fire [stones-in-directions]
+  (->> stones-in-directions
+       (vals)
+       (remove nil?)))
+
+(defn stones-to-remove [bomb-xy fire-length board stones]
+  (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
+      (remove-fire-that-hit-a-wall board)
+      (first-stones-hit-by-fire-in-direction stones)
+      (stones-hit-by-fire)))
+
 (comment
-  (fire-spead-in-all-directions [2 2] 2)
+  (let [bomb-xy     [1 1]
+        fire-length 10
+        board       (board/init 6)
+        stones      [[1 2] [2 1] [3 1]]]
+  (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
+      (remove-fire-that-hit-a-wall board)
+      (first-stones-hit-by-fire-in-direction stones)
+      (stones-hit-by-fire)))
+
+  (bomb-fire-spread-in-all-directions [2 2] 2)
+
+  (-> (bomb-fire-spread-in-all-directions [2 2] 2)
+      (first-stones-hit-by-fire-in-direction [[2 0] [3 2] [2 3] [2 4] [2 5]])
+      stones-hit-by-fire)
+
+  (stones-to-remove
+   [2 2] ;; bomb position
+   2     ;; fire length
+   (board/init 6) ;; board
+   [[2 0] [3 2] [2 3] [2 4] [2 5]] ;; stones
+   )
+
+  (first-stones-hit-by-fire-in-direction
+   {:north [[2 1] [2 0]]
+    :west  [[1 2] [0 2]]
+    :east  [[3 2] [4 2]]
+    :south [[2 3] [2 4]]}
+   [[2 0]
+    [3 2]
+    [2 3]
+    [2 4]
+    [2 5]])
   )
 
-
-
-
-(fire-spead [5 5] 3)
-
+;; Remove when time comes
 (defn bomb-fire-spread [board [pos-x pos-y] fire-length]
   (let [current       [pos-x pos-y]
         north         (map (fn [y] [pos-x y]) (range (- pos-y fire-length) pos-y))
@@ -88,108 +150,6 @@
          (into #{})
          (sort-by :x)
          (vec))))
-
-{:fire-length 3
- :bomb-xy     [1 1]}
-
-
-
-(def stone-location [1 1])
-(def fire-locations [[1 2]
-                     [1 3]
-                     [1 4]
-                     [1 5]
-                     [1 6]
-                     [2 1]
-                     [3 1]])
-
-(fire-spead [5 5] 3)
-
-(defn remove-axises-with-no-streak [m]
-  (->> m
-       (filter (fn [[k v]] (< 1 (count v))))
-       (into {})))
-
-(->> {:vertical-axis
-      (-> (reduce (fn [m [x y]]
-                    (update m x (fn [current]
-                                  ((fnil conj []) current [x y])))) {} fire-locations)
-          remove-axises-with-no-streak)
-      :horizontal-axis
-      (-> (reduce (fn [m [x y]]
-                    (update m y (fn [current]
-                                  ((fnil conj []) current [x y])))) {} fire-locations)
-          remove-axises-with-no-streak)}
-     (remove (comp empty? second))
-     (into {}))
-
-(let [xy    [1 2]
-      [x y] xy
-      {:keys [horizontal-axis vertical-axis]}
-      {:vertical-axis   {1 [[1 2] [1 3] [1 4] [1 5] [1 6]]},
-       :horizontal-axis {1 [[2 1] [3 1]]}}]
-  (get vertical-axis x))
-
-(defn next-found-in-south [[x y] vs]
-  (let [vs    [[1 2] [1 3] [1 4] [1 5] [1 6]]
-        xy     [1 0]
-        [x y] xy]
-    (->> vs
-         (filter (comp #(> % y) second))
-         (sort-by second)
-         (first))))
-
-(defn next-found-in-north [[x y] vs]
-  (let [vs    [[1 0] [1 2] [1 3] [1 4] [1 5] [1 6]]
-        xy    [1 2]
-        [x y] xy]
-    (->> vs
-         (filter (comp #(< % y) second))
-         (sort-by second)
-         (first))))
-
-(defn next-found-in-east [[x y] vs]
-  (let [vs    [[2 1] [3 1]]
-        xy    [1 1]
-        [x y] xy]
-    (->> vs
-         (filter (comp #(> % y) first))
-         (sort-by first)
-         (first)))
-  )
-
-(defn next-found-in-west [[x y] vs]
-  (let [vs    [[2 1] [3 1]]
-        xy    [4 1]
-        [x y] xy]
-    (->> vs
-         (filter (comp #(> % y) first))
-         (sort-by first #(compare %2 %1))
-         (first)
-         ))
-  )
-
-
-
-(defn first-in-west [[x y] axis]
-
-  )
-
-
-(defn next-xy-north [[x y]] [     x  (dec y)])
-(defn next-xy-east  [[x y]] [(inc x)      y])
-(defn next-xy-south [[x y]] [     x  (inc y)])
-(defn next-xy-west  [[x y]] [(dec x)      y])
-
-
-
-(comment
-  (next-xy-east [1 1])
-  )
-
-
-
-
 
 (defrule bomb-exploding-after-timeout
   "Bomb that is on board for 2000ms (2 seconds) should expload."
