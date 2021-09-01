@@ -185,7 +185,7 @@
          (apply concat))))
 
 (defrule exploading-bomb-throws-fire-flames
-  "When a bomb exploads, fire is created in all four latitudes.
+  "When a bomb exploads, fire is created in all four directions.
 When fire hits a wall it stops.
 When fire huts a stone it saves the fire to that stone but discard the rest in that latitude."
   [Board (= ?board board)]
@@ -207,6 +207,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (retract! ?bomb)
   (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
+
+(defrule remove-stones-hit-by-fire
+  "If a stone is hit by fire, remove it."
+  [FireOnBoard (= ?fire-position-xy current-xy)]
+  [Stone       (= ?stone-position-xy position-xy)]
+  [:test (= ?fire-position-xy ?stone-position-xy)]
+  =>
+  (insert! (->StoneToRemove ?stone-position-xy)))
 
 (defrule bomb-exploading-when-hit-by-fire
   "Bomb is exploading if it's hit by fire."
@@ -242,6 +250,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defquery add-bombs-to-board?
   []
   [?add-bombs-to-board <- AddBombToBoard])
+
+(defquery stones-to-remove?
+  []
+  [?stones-to-remove <- StoneToRemove])
 
 (defquery exploading-bombs?
   []
@@ -350,12 +362,13 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
                               (->BombOnBoard     1 [1 1] 3 #inst "2021-08-28T15:03:47.100-00:00")
                               ;; (->BombOnBoard     1 [2 1] 3 #inst "2021-08-28T15:03:49.100-00:00")
                               (->Stone             [1 2])
-                              (->Stone             [2 1])
+                              ;; (->Stone             [2 1])
                               (->Stone             [3 1])
                               ])
         session' (fire-rules session)]
     [(query session' fire-on-board?)
-     (query session' exploading-bombs?)])
+     (query session' exploading-bombs?)
+     (query session' stones-to-remove?)])
 
   ;; Fire burns out
   (let [board    [[{:type :wall, :x 0, :y 0} {:type :wall,  :x 1, :y 0} {:type :wall,  :x 2, :y 0} {:type :wall, :x 3, :y 0}]
