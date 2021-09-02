@@ -5,6 +5,10 @@
             [se.jherrlin.clara-labs.datetime :as datetime]
             [clojure.set :as set]))
 
+(comment
+  (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
+  )
+
 
 
 (defrecord Board                [board])
@@ -22,31 +26,6 @@
 (defrecord DeadUser             [user-id killed-by-user-id])
 (defrecord Stone                [position-xy]) ;; Object on the board that can be removed by fire
 (defrecord StoneToRemove        [position-xy])
-
-
-(defrule user-move
-  "User move"
-  [Board (= ?board board)]
-  [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
-   (#{:floor} (board/target-position-type ?board current-xy direction))]
-  [:not [BombOnBoard (= position-xy (board/next-xy-position ?current-xy ?direction))]]
-  =>
-  (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
-
-(defrule place-bomb
-  "User place bomb in her current location."
-  [UserWantsToPlaceBomb (= ?user-id user-id) (= ?fire-length fire-length) (= ?current-xy current-xy) (= ?timestamp timestamp)]
-  [:not [BombOnBoard (= position-xy ?current-xy)]]
-  =>
-  (insert! (->AddBombToBoard ?user-id ?current-xy ?fire-length ?timestamp)))
-
-(defrule user-dies
-  "User dies if she gets hit by fire."
-  [UserPositionOnBoard (= ?user-id user-id)      (= ?user-current-xy current-xy)]
-  [FireOnBoard         (= ?fire-user-id user-id) (= ?fire-current-xy current-xy)
-   (= ?fire-current-xy ?user-current-xy)]
-  =>
-  (insert! (->DeadUser ?user-id ?fire-user-id)))
 
 (defn fire-spead [[pos-x pos-y] fire-length]
   (let [north   (map (fn [y] [pos-x y]) (range (- pos-y fire-length) pos-y))
@@ -136,11 +115,6 @@
          (apply concat)
          ))
 
-  (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
-      (remove-fire-after-is-hits-a-wall board)
-      (first-stones-hit-by-fire-in-direction stones)
-      (stones-hit-by-fire))
-
   {:north [], :west [], :east [[2 1] [3 1] [4 1]], :south [[1 2] [1 3]]}
 
   (-> (bomb-fire-spread-in-all-directions [2 2] 2))
@@ -183,6 +157,30 @@
          (vals)
          (remove empty?)
          (apply concat))))
+
+(defrule user-move
+  "User move"
+  [Board (= ?board board)]
+  [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
+   (#{:floor} (board/target-position-type ?board current-xy direction))]
+  [:not [BombOnBoard (= position-xy (board/next-xy-position ?current-xy ?direction))]]
+  =>
+  (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
+
+(defrule place-bomb
+  "User place bomb in her current location."
+  [UserWantsToPlaceBomb (= ?user-id user-id) (= ?fire-length fire-length) (= ?current-xy current-xy) (= ?timestamp timestamp)]
+  [:not [BombOnBoard (= position-xy ?current-xy)]]
+  =>
+  (insert! (->AddBombToBoard ?user-id ?current-xy ?fire-length ?timestamp)))
+
+(defrule user-dies
+  "User dies if she gets hit by fire."
+  [UserPositionOnBoard (= ?user-id user-id)      (= ?user-current-xy current-xy)]
+  [FireOnBoard         (= ?fire-user-id user-id) (= ?fire-current-xy current-xy)
+   (= ?fire-current-xy ?user-current-xy)]
+  =>
+  (insert! (->DeadUser ?user-id ?fire-user-id)))
 
 (defrule exploading-bomb-throws-fire-flames
   "When a bomb exploads, fire is created in all four directions.
