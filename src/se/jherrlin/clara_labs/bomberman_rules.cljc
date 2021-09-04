@@ -27,14 +27,6 @@
 (defrecord Stone                [position-xy]) ;; Object on the board that can be removed by fire
 (defrecord StoneToRemove        [position-xy])
 
-(defn fire-spead [[pos-x pos-y] fire-length]
-  (let [north   (map (fn [y] [pos-x y]) (range (- pos-y fire-length) pos-y))
-        south   (map (fn [y] [pos-x y]) (range pos-y (+ pos-y fire-length)))
-        east    (map (fn [x] [x pos-y]) (range pos-x (+ pos-x fire-length)))
-        west    (map (fn [x] [x pos-y]) (range (- pos-x fire-length) pos-x))]
-    (->> (concat north south east west)
-         (vec))))
-
 (defn bomb-fire-spread-in-all-directions [[pos-x pos-y] fire-length]
   (let [fire-length' (inc fire-length)]
     {:north (->> (map (fn [y] [pos-x y]) (range (inc (- pos-y fire-length')) pos-y))
@@ -70,17 +62,6 @@
      :west  (-> west  first-stone-to-hit-in-direction)
      :east  (-> east  first-stone-to-hit-in-direction)
      :south (-> south first-stone-to-hit-in-direction)}))
-
-(defn stones-hit-by-fire [stones-in-directions]
-  (->> stones-in-directions
-       (vals)
-       (remove nil?)))
-
-(defn stones-to-remove [bomb-xy fire-length board stones]
-  (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
-      (remove-fire-after-is-hits-a-wall board)
-      (first-stones-hit-by-fire-in-direction stones)
-      (stones-hit-by-fire)))
 
 (defn until-fire-flame-hits-a-stone [fire-xys stones]
   (let [stones-set (set stones)]
@@ -120,15 +101,7 @@
   (-> (bomb-fire-spread-in-all-directions [2 2] 2))
 
   (-> (bomb-fire-spread-in-all-directions [2 2] 2)
-      (first-stones-hit-by-fire-in-direction [[2 0] [3 2] [2 3] [2 4] [2 5]])
-      stones-hit-by-fire)
-
-  (stones-to-remove
-   [2 2] ;; bomb position
-   2     ;; fire length
-   (board/init 6) ;; board
-   [[2 0] [3 2] [2 3] [2 4] [2 5]] ;; stones
-   )
+      (first-stones-hit-by-fire-in-direction [[2 0] [3 2] [2 3] [2 4] [2 5]]))
 
   (first-stones-hit-by-fire-in-direction
    {:north [[2 1] [2 0]]
@@ -141,13 +114,6 @@
     [2 4]
     [2 5]])
   )
-
-;; Remove when time comes
-(defn bomb-fire-spread [bomb-xy fire-length board stones]
-  (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
-      (remove-fire-after-is-hits-a-wall board)
-      (first-stones-hit-by-fire-in-direction stones)
-      (stones-hit-by-fire)))
 
 (defn remove-fires-that-meet-obstacles [bomb-xy fire-length board stones]
   (let [stones' (map :position-xy stones)]
@@ -193,7 +159,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (let [fire-on-board (mapv (fn [[x y]] (->FireOnBoard ?user-id [x y] ?now))
                             (remove-fires-that-meet-obstacles ?bomb-position-xy ?fire-length ?board ?stones))]
-    (clojure.pprint/pprint fire-on-board)
     (apply insert! fire-on-board)))
 
 (defrule bomb-exploding-after-timeout
