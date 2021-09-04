@@ -1,0 +1,5 @@
+{:deps     true
+ :dev-http {8080 "public"}
+ :builds   {:frontend {:target   :browser
+                       :devtools {:preloads [devtools.preload]}
+                       :modules  {:main {:init-fn se.jherrlin.clara-labs.frontend/init}}}}}

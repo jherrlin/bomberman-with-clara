@@ -1,0 +1,22 @@
+
+#+BEGIN_SRC shell :results output code
+  curl http://localhost:3003/health
+#+END_SRC
+
+
+
+* Resources
+
+  clara
+  http://www.metasimple.org/2017/12/23/clara-updating-facts.html
+  http://www.clara-rules.org/docs/expressions/
+
+  canvas
+  https://github.com/videumcodeup/bomberman-client/blob/570c6515573ce02497e446fd9c4d2f29ced587a0/src/js/bomberman.js#L126
+  https://gist.github.com/ChillyBwoy/38741e0005826fc84e9e
+  https://gitlab.com/skratlo/nines/blob/master/src/app/nines/app.cljs
+  https://github.com/day8/re-frame/blob/master/docs/Effects.md
+
+  https://www.reddit.com/r/Clojure/comments/9b30s5/what_is_the_preferred_method_of_creating_graphics/
+  https://stackoverflow.com/questions/26074344/how-to-set-size-of-canvas-to-its-background-image/26074683
+  https://stackoverflow.com/questions/9322294/how-to-create-new-image-in-clojurescritp
