@@ -7,6 +7,10 @@
    #?(:clj [clojure.test :as t]
       :cljs [cljs.test :as t :include-macros true])))
 
+(comment
+  (remove-ns 'se.jherrlin.clara-labs.bomberman-rules-test)
+  )
+
 
 (def board
   [[{:type :wall :x 0 :y 0} {:type :wall  :x 1 :y 0} {:type :wall  :x 2 :y 0} {:type :wall  :x 3 :y 0} {:type :wall  :x 4 :y 0} {:type :wall  :x 5 :y 0}]

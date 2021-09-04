@@ -198,7 +198,91 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (->RemoveFireFromBoard ?fire)))
 
+(def board' [["W" "W" "W" "W" "W"]
+             ["W" " " " " " " "W"]
+             ["W" "W" "W" "W" "W"]])
 
+(clojure.pprint/pprint
+ [["W" "W" "W" "W" "W"]
+  ["W" " " " " " " "W"]
+  ["W" "W" "W" "W" "W"]])
+
+(defn print-row [row]
+  (for [r row]
+    (print "W"))
+  (println ""))
+
+(print
+ (for [board' (board/init 6)]
+   (print-row board')
+   ))
+
+
+
+(let [game (board/init 6)]
+  (for [[i row]  (map-indexed list game)
+        [j cell] (map-indexed list row)]
+    (let [t (:type cell)]
+      (case t
+        :wall (print "W")
+        :floor (print "F"))
+      (when (= 5 j)
+        (print "\n")))))
+
+(defn console-representation [board]
+  (->> board
+       (mapv (fn [row]
+               (mapv (fn [cell]
+                       (let [t (:type cell)]
+                         (case t
+                           :wall  "W"
+                           :floor " ")))
+                     row)))))
+
+(defn console-player [board' [x y] sign]
+  (assoc-in board' [y x] sign))
+
+(defn console-items [board' items s]
+  (reduce
+   (fn [b [x y]]
+     (assoc-in b [y x] s))
+   board'
+   items))
+
+(board/init 6)
+
+(comment
+  (-> (console-representation (board/init 6))
+      (console-player [1 1] "1")
+      (console-items [[1 3] [3 3]] "S")
+      (console-items [[4 3]] "B")
+      (console-items [[4 1]] "F")
+      )
+  )
+
+(def game-map
+  {:players {:1 {:sign        "1"
+                 :position    [1 1]
+                 :fire-length 3}}
+   :board   (board/init 6)
+   :stones  [[1 3] [3 3]]
+   })
+
+(defn print-game-state []
+
+  )
+
+(def game-state
+  (let [game '[[_ _ _ _]
+               [1 1 _ _]
+               [! 1 _ _]
+               [1 1 _ _]]]
+    (for [[i row] (map-indexed list game)
+          [j cell] (map-indexed list row)
+          :when (not= '_ cell)]
+      {:x i :y j :value cell})))
+
+ (clojure.pprint/pprint game-state)
 
 
 (comment

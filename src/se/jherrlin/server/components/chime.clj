@@ -6,7 +6,7 @@
    [chime.core-async :refer [chime-ch]]))
 
 
-(defrecord ChimeAsync [args game-state incomming-actions]
+(defrecord ChimeAsync [args game-state incomming-actions websocket]
   component/Lifecycle
 
   (start [this]
@@ -21,7 +21,7 @@
           (let [chimes (chime-ch schedule)]
             (go-loop []
               (when-let [timestamp (<! chimes)]
-                (f timestamp game-state incomming-actions)
+                (f timestamp game-state incomming-actions (:broadcast-fn websocket))
                 (recur)))
             (assoc this :chimes chimes))))))
 

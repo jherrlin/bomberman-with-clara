@@ -41,12 +41,18 @@
                      :csrf-token-fn nil}  ;; WARNING!!!!
                     config))]
         (timbre/info "Starting Sente websocket server.")
+
+        (def connected-uids connected-uids)
+
         {:ring-ajax-post                ajax-post-fn
          :ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn
          :ch-chsk                       ch-recv
          :chsk-send!                    send-fn
          :connected-uids                connected-uids
          :event-msg-handler             event-msg-handler
+         :broadcast-fn                  (fn [message]
+                                          (doseq [uid (-> connected-uids deref :ws)]
+                                            (send-fn uid message)))
          :stop-fn                       (sente/start-server-chsk-router!
                                          ch-recv
                                          event-msg-handler)

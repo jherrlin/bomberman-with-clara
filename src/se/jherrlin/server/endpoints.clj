@@ -24,6 +24,7 @@
   [""
    ["/websocket/chsk" (get websocket :reitit-routes)]])
 
+;; (swap! game-state assoc :player 1)
 
 (defn handler [{:keys [websocket game-state incomming-actions middleware] :as deps} req]
   ((ring/ring-handler
@@ -31,6 +32,13 @@
      [
 
       (websocket-endpoints websocket)
+
+      ["/game-state" {:get (fn [req]
+                             (def req req)
+                             (def game-state game-state)
+                             (def incomming-actions incomming-actions)
+                             {:status 200
+                              :body @game-state})}]
 
       ["/swagger.json"
        {:get {:no-doc  true
@@ -40,7 +48,7 @@
                                {:name "math", :description "math api"}]}
               :handler (swagger/create-swagger-handler)}}]
 
-      ["/health" {:get (fn [_]
+      ["/health" {:get (fn [req]
                          {:status 200 :body "ok"})}]]
      {
       ;; :compile   reitit.coercion/compile-request-coercers
