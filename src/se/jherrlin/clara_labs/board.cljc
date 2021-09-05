@@ -54,13 +54,14 @@
 
 (defn next-xy-position [[current-x current-y] direction]
   (case direction
-    :north [     current-x  (inc current-y)]
+    :north [     current-x  (dec current-y)]
     :east  [(inc current-x)      current-y]
-    :south [     current-x  (dec current-y)]
+    :south [     current-x  (inc current-y)]
     :west  [(dec current-x)      current-y]))
 
 (comment
   (next-xy-position [1 1] :north)
+  (next-xy-position [1 1] :south)
   )
 
 (defn target-position-type
