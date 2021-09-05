@@ -21,6 +21,8 @@
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
+
+
 (t/deftest user-wants-to-move
   (t/is
    (=
@@ -41,7 +43,20 @@
     #{{:user-id 7, :next-position [1 1]}
       {:user-id 1, :next-position [2 1]}
       {:user-id 5, :next-position [3 1]}
-      {:user-id 2, :next-position [1 0]}})))
+      {:user-id 2, :next-position [1 0]}}))
+
+  (t/is
+   (=
+    (let [session  (insert-all bomberman-session
+                               [(bomberman/->Board board)
+                                (bomberman/->UserWantsToMove 1 [3 1] :south)
+                                (bomberman/->UserWantsToMove 2 [3 3] :east)])
+          session' (fire-rules session)]
+      (->> (query session' bomberman/user-move?)
+           (map (comp #(into {} %) :?user-move))
+           (set)))
+    #{{:user-id 2, :next-position [4 3]}
+      {:user-id 1, :next-position [3 2]}})))
 
 (t/deftest user-cant-walk-on-bomb
   (t/testing "User cant walk west as there is a bomb there"
@@ -59,12 +74,30 @@
              (set)))
       #{{:user-id 2, :next-position [1 1]}}))))
 
+(t/deftest user-wants-to-place-bomb-on-board
+  (t/testing "should result in bomb on board."
+      (t/is
+       (=
+        (let [session  (insert-all bomberman-session
+                                   [(bomberman/->Board board)
+                                    (bomberman/->TimestampNow #inst "2021-09-05T19:16:52.292-00:00")
+                                    (bomberman/->UserWantsToPlaceBomb 1 [1 1] 3 #inst "2021-09-05T19:16:52.292-00:00")])
+              session' (fire-rules session)]
+          {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                                (map (comp #(into {} %) :?bomb-on-board))
+                                (set))})
+        {:bombs-on-board
+         #{{:user-id 1,
+            :bomb-position-xy [1 1],
+            :fire-length 3,
+            :bomb-added-timestamp #inst "2021-09-05T19:16:52.292-00:00"}}}))))
+
 (t/deftest exploading-bombs-create-fire-and-fire-destroys-stone
   (t/is
    (=
     (let [session  (insert-all bomberman-session
                                [(bomberman/->Board board)
-                                (bomberman/->TimestampNow              #inst "2021-08-28T15:03:50.100-00:00")
+                                (bomberman/->TimestampNow               #inst "2021-08-28T15:03:50.100-00:00")
                                 (bomberman/->BombOnBoard     1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
                                 (bomberman/->BombOnBoard     1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
                                 (bomberman/->Stone             [3 1])
