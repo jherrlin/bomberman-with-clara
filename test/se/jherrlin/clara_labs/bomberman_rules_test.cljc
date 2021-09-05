@@ -65,43 +65,51 @@
     (let [session  (insert-all bomberman-session
                                [(bomberman/->Board board)
                                 (bomberman/->TimestampNow              #inst "2021-08-28T15:03:50.100-00:00")
-                                (bomberman/->BombOnBoard     1 [1 1] 4 #inst "2021-08-28T15:03:47.100-00:00")
-                                (bomberman/->BombOnBoard     1 [1 3] 4 #inst "2021-08-28T15:03:49.100-00:00")
+                                (bomberman/->BombOnBoard     1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                                (bomberman/->BombOnBoard     1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
                                 (bomberman/->Stone             [3 1])
                                 (bomberman/->Stone             [3 3])])
           session' (fire-rules session)]
-      {:fire-on-board (->> (query session' bomberman/fire-on-board?)
-                           (map (comp #(into {} %) :?fire-on-board))
-                           (set))
+      {:fire-on-board    (->> (query session' bomberman/fire-on-board?)
+                              (map (comp #(into {} %) :?fire-on-board))
+                              (set))
        :exploading-bombs (->> (query session' bomberman/exploading-bombs?)
                               (map (comp #(into {} %) :?exploading-bombs))
                               (set))
        :stones-to-remove (->> (query session' bomberman/stones-to-remove?)
                               (map (comp #(into {} %) :?stones-to-remove))
                               (set))})
-    {:fire-on-board    #{{:user-id              1,
-                          :current-xy           [1 3],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [1 2],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [2 3],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [2 1],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [1 1],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [3 3],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-                         {:user-id              1,
-                          :current-xy           [3 1],
-                          :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}},
-     :exploading-bombs #{{:user-id 1, :position-xy [1 1], :fire-length 4}
-                         {:user-id 1, :position-xy [1 3], :fire-length 4}},
+    {:fire-on-board
+     #{{:user-id              1,
+        :fire-position-xy     [1 1],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [1 2],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [1 3],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [2 1],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [2 3],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [3 1],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [3 3],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [4 1],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:user-id              1,
+        :fire-position-xy     [4 3],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}}
+     :exploading-bombs
+     #{{:user-id 1, :position-xy [1 3], :fire-length 10}
+       {:user-id 1, :position-xy [1 1], :fire-length 10}},
      :stones-to-remove #{{:position-xy [3 1]} {:position-xy [3 3]}}})))
 
 (t/deftest fire-burns-out
@@ -115,13 +123,13 @@
                                 (bomberman/->FireOnBoard  1 [2 1] #inst "2021-08-28T15:03:03.000-00:00")])
           session' (fire-rules session)]
       (->> (query session' bomberman/fire-that-have-burned-out?)
-           (map (comp #(into {} %) :current-xy :?fire-that-have-burned-out ))
+           (map (comp #(into {} %) :current-xy :?fire-that-have-burned-out))
            (set)))
     #{{:user-id 1,
-       :current-xy [1 2],
+       :fire-position-xy [1 2],
        :fire-start-timestamp #inst "2021-08-28T15:03:02.300-00:00"}
       {:user-id 1,
-       :current-xy [1 1],
+       :fire-position-xy [1 1],
        :fire-start-timestamp #inst "2021-08-28T15:03:02.000-00:00"}})))
 
 (t/deftest user-dies-if-hit-by-fire
