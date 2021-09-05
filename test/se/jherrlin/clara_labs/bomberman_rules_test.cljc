@@ -113,31 +113,29 @@
      :stones-to-remove #{{:position-xy [3 1]} {:position-xy [3 3]}}})))
 
 (t/deftest fire-burns-out
-  (t/is
-   (=
-    (let [session  (insert-all bomberman-session
-                               [(bomberman/->Board board)
-                                (bomberman/->TimestampNow         #inst "2021-08-28T15:03:04.000-00:00")
-                                (bomberman/->FireOnBoard  1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                (bomberman/->FireOnBoard  1 [1 2] #inst "2021-08-28T15:03:02.300-00:00")
-                                (bomberman/->FireOnBoard  1 [2 1] #inst "2021-08-28T15:03:03.000-00:00")])
-          session' (fire-rules session)]
-      (->> (query session' bomberman/fire-that-have-burned-out?)
-           (map (comp #(into {} %) :current-xy :?fire-that-have-burned-out))
-           (set)))
-    #{{:user-id 1,
-       :fire-position-xy [1 2],
-       :fire-start-timestamp #inst "2021-08-28T15:03:02.300-00:00"}
-      {:user-id 1,
-       :fire-position-xy [1 1],
-       :fire-start-timestamp #inst "2021-08-28T15:03:02.000-00:00"}})))
+  (t/testing "When fire burns out it's removed from the board."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->Board board)
+                                  (bomberman/->TimestampNow         #inst "2021-08-28T15:03:04.000-00:00")
+                                  (bomberman/->FireOnBoard  1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+                                  (bomberman/->FireOnBoard  1 [1 2] #inst "2021-08-28T15:03:02.300-00:00")
+                                  (bomberman/->FireOnBoard  1 [2 1] #inst "2021-08-28T15:03:03.000-00:00")])
+            session' (fire-rules session)]
+        (->> (query session' bomberman/fire-on-board?)
+             (map (comp #(into {} %) :?fire-on-board))
+             (set)))
+      #{{:user-id 1,
+         :fire-position-xy [2 1],
+         :fire-start-timestamp #inst "2021-08-28T15:03:03.000-00:00"}}))))
 
 (t/deftest user-dies-if-hit-by-fire
   (t/is
    (=
     (let [session  (insert-all bomberman-session
                                [(bomberman/->Board board)
-                                (bomberman/->TimestampNow                #inst "2021-08-28T15:03:04.000-00:00")
+                                (bomberman/->TimestampNow                #inst "2021-08-28T15:03:02.000-00:00")
                                 (bomberman/->FireOnBoard         2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
                                 (bomberman/->UserPositionOnBoard 1 [1 1])])
           session' (fire-rules session)]

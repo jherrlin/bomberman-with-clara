@@ -18,10 +18,8 @@
 (defrecord BombOnBoard          [user-id bomb-position-xy fire-length bomb-added-timestamp])
 (defrecord BombExploading       [user-id position-xy fire-length])
 (defrecord FireOnBoard          [user-id fire-position-xy fire-start-timestamp])
-(defrecord RemoveFireFromBoard  [current-xy])
 (defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp])
 (defrecord AddBombToBoard       [user-id bomb-position-xy fire-length bomb-added-timestamp])
-(defrecord AddFireToBoard       [user-id location])
 (defrecord UserPositionOnBoard  [user-id user-current-xy])
 (defrecord DeadUser             [user-id killed-by-user-id])
 (defrecord Stone                [stone-position-xy]) ;; Object on the board that can be removed by fire
@@ -196,7 +194,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?fire <- FireOnBoard (= ?fire-start-timestamp fire-start-timestamp)]
   [:test (< 1500 (datetime/milliseconds-between ?fire-start-timestamp ?now))]
   =>
-  (insert! (->RemoveFireFromBoard ?fire)))
+  (retract! ?fire))
 
 (def board' [["W" "W" "W" "W" "W"]
              ["W" " " " " " " "W"]
@@ -306,10 +304,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?exploading-bombs <- BombExploading])
 
-(defquery fire-to-add?
-  []
-  [?add-fire-to-board <- AddFireToBoard])
-
 (defquery fire-on-board?
   []
   [?fire-on-board <- FireOnBoard])
@@ -317,10 +311,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defquery dead-users?
   []
   [?dead-users <- DeadUser])
-
-(defquery fire-that-have-burned-out?
-  []
-  [?fire-that-have-burned-out <- RemoveFireFromBoard])
 
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
@@ -335,10 +325,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
      {:user-moves                (map :?user-move                 (query session' user-move?))
       :add-bombs-to-board        (map :?add-bombs-to-board        (query session' add-bombs-to-board?))
       :exploading-bombs          (map :?exploading-bombs          (query session' exploading-bombs?))
-      :add-fire-to-board         (map :?add-fire-to-board         (query session' fire-to-add?))
       :fire-on-board             (map :?fire-on-board             (query session' fire-on-board?))
       :stones-to-remove          (map :?stones-to-remove          (query session' stones-to-remove?))
-      :fire-that-have-burned-out (map :?fire-that-have-burned-out (query session' fire-that-have-burned-out?))
       :dead-users                (map :?dead-users                (query session' dead-users?))}}))
 
 (comment
@@ -368,7 +356,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
      {:user-moves         (map :?user-move (query session' user-move?))
       :add-bombs-to-board (map :?add-bombs-to-board (query session' add-bombs-to-board?))
       :exploading-bombs   (map :?exploading-bombs (query session' exploading-bombs?))
-      :add-fires-to-board (map :?add-fire-to-board (query session' fire-to-add?))
       :dead-users         (map :?dead-users (query session' dead-users?))}}
     (query session)
     )
