@@ -20,7 +20,7 @@
 (defrecord FireOnBoard          [user-id fire-position-xy fire-start-timestamp])
 (defrecord RemoveFireFromBoard  [current-xy])
 (defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp])
-(defrecord AddBombToBoard       [user-id location-xy fire-length timestamp])
+(defrecord AddBombToBoard       [user-id bomb-position-xy fire-length bomb-added-timestamp])
 (defrecord AddFireToBoard       [user-id location])
 (defrecord UserPositionOnBoard  [user-id user-current-xy])
 (defrecord DeadUser             [user-id killed-by-user-id])
