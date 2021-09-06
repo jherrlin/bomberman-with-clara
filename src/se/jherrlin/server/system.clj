@@ -160,12 +160,9 @@
         _                   (def new-game-state new-game-state)]
     (reset! game-state new-game-state)
     (reset! incomming-actions-state {})
-
-    #_(ws-broadcast-fn [:new/game-state new-game-state]))
-
-  ;; (ws-broadcast-fn [:test/broadcast "hejsan"])
-  (println "Game loop is now done " (java.util.Date.))
-  new-game-state)
+    (ws-broadcast-fn [:new/game-state new-game-state])
+    (println "Game loop is now done " (java.util.Date.))
+    new-game-state))
 
 
 (defmulti register-incomming-user-action! :action)
