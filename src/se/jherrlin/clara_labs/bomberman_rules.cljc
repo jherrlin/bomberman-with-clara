@@ -113,7 +113,7 @@
   )
 
 (defn remove-fires-that-meet-obstacles [bomb-xy fire-length board stones]
-  (let [stones' (map :position-xy stones)]
+  (let [stones' (map :stone-position-xy stones)]
     (->> (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
              (remove-fire-after-is-hits-a-wall board)
              (remove-fire-after-is-hits-the-first-stone stones'))
@@ -125,6 +125,15 @@
 (comment
   (remove-fires-that-meet-obstacles
    [3 1] 3 (board/init 6) [])
+
+  (remove-fires-that-meet-obstacles
+   [1 1]
+   3
+   (board/init 6)
+   [#se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [2 1]}
+    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [3 1]}
+    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 2]}
+    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 3]}])
   )
 
 (defrule user-move
@@ -132,6 +141,7 @@
   [Board (= ?board board)]
   [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
    (#{:floor} (board/target-position-type ?board current-xy direction))]
+  [:not [Stone       (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= bomb-position-xy (board/next-xy-position ?current-xy ?direction))]]
   =>
   (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
