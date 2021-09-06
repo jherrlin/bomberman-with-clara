@@ -178,7 +178,7 @@
 
 
 (comment
-  (game-loop (java.util.Date.) game-state incomming-actions-state (fn []))
+  (game-loop (java.util.Date.) game-state incomming-actions-state (fn [_]))
   @game-state
 
   (register-incomming-user-action!

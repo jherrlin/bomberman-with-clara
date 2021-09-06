@@ -42,16 +42,69 @@
 (re-frame/reg-sub ::fire    (fn [db] (get-in db [:game-state :fire] [])))
 
 
+(defn add-players-to-screen [players screen]
+  (reduce
+   (fn [screen' {:keys [position sign]}]
+     (let [[x y] position]
+       (-> screen'
+           (assoc-in [y x :type] :player)
+           (assoc-in [y x :str] sign))))
+   screen players))
 
-(let [board (get-in @re-frame.db/app-db [:game-state :board] [])]
-  (->> board
-       (mapv (fn [row]
-               (mapv (fn [cell]
-                       (let [t (:type cell)]
-                         (case t
-                           :wall  "W"
-                           :floor " ")))
-                     row)))))
+(defn add-bombs-to-screen [bombs screen]
+  (reduce
+   (fn [screen' {:keys [bomb-position-xy]}]
+     (let [[x y] bomb-position-xy]
+       (assoc-in screen' [y x :type] :bomb)))
+   screen bombs))
+
+(defn add-fire-to-screen [fire screen]
+  (reduce
+   (fn [screen' {:keys [fire-position-xy]}]
+     (let [[x y] fire-position-xy]
+       (assoc-in screen' [y x :type] :fire)))
+   screen fire))
+
+(defn add-stones-to-screen [stones screen]
+  (reduce
+   (fn [screen' [x y]]
+     (assoc-in screen' [y x :type] :stone))
+   screen stones))
+
+(re-frame/reg-sub
+ ::screen
+ (fn [{:keys [game-state] :as db}]
+   (let [{:keys [players stones board bombs fire]}
+         (:game-state @re-frame.db/app-db)
+         #_game-state]
+     (some->> board
+              (add-players-to-screen (vals players))
+              (add-bombs-to-screen bombs)
+              (add-fire-to-screen fire)
+              (add-stones-to-screen stones)
+              (mapv (fn [row]
+                      (mapv (fn [cell]
+                              (let [t (:type cell)]
+                                (case t
+                                  ;; :player (assoc cell :str "W")
+                                  :wall   (assoc cell :str "W")
+                                  :floor  (assoc cell :str " ")
+                                  :fire   (assoc cell :str "F")
+                                  :stone  (assoc cell :str "S")
+                                  :bomb   (assoc cell :str "B")
+                                  cell)))
+                            row)))))))
+
+
+;; (let [board (get-in @re-frame.db/app-db [:game-state :board] [])]
+;;   (->> board
+;;        (mapv (fn [row]
+;;                (mapv (fn [cell]
+;;                        (let [t (:type cell)]
+;;                          (case t
+;;                            :wall  "W"
+;;                            :floor " ")))
+;;                      row)))))
 
 
 (defmethod wevent :new/game-state
@@ -81,53 +134,18 @@
   (catch js/Error e
     (js/console.log e)))
 
-(defn render-row [row]
-  [:div
-   (for [cell row]
-     ^{:key (str cell)}
-     [:div (:type cell)])])
-
-(defn add-player-to-screen [{:keys [position sign]} screen]
-  (assoc-in screen [(last position) (first position)] sign))
-
-(defn add-players-to-screen [players screen]
-  (reduce
-   (fn [s player]
-     (add-player-to-screen player s))
-   screen players))
-
-
-
-(->> @(re-frame/subscribe [::board])
-     (mapv (fn [row]
-             (mapv (fn [cell]
-                     (let [t (:type cell)]
-                       (case t
-                         :wall  "W"
-                         :floor " ")))
-                   row)))
-     (add-players-to-screen
-      (->> @(re-frame/subscribe [::players])
-           (vals))
-      )
-     )
-
 (defn root-component []
-  (let [board @(re-frame/subscribe [::board])]
-    (if board
+  (let [screen @(re-frame/subscribe [::screen])]
+    (if screen
       [:div
-       (for [[i row]  (map-indexed list board)
+       (for [[i row]  (map-indexed list screen)
              [j cell] (map-indexed list row)]
          (let [t (:type cell)]
            [:<>
-            (case t
-              :wall  [:div {:style {:width   "40px"
-                                    :height  "40px"
-                                    :display "inline-block"}}
-                      "wall"]
-              :floor [:div {:style {:width   "40px"
-                                    :height  "40px"
-                                    :display "inline-block"}} "floor"])
+            [:div {:style {:width   "40px"
+                           :height  "40px"
+                           :display "inline-block"}}
+             (:str cell)]
             (when (= 5 j)
               [:div {:style {:display "block"}}])]))]
       [:div "loading..."])))
