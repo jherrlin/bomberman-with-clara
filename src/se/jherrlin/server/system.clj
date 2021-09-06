@@ -219,8 +219,8 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 (Duration/ofMinutes 1)
-                                                 #_(Duration/ofMillis 200))}}))
+                                                 #_(Duration/ofMinutes 1)
+                                                 (Duration/ofMillis 200))}}))
 
 
 (comment
