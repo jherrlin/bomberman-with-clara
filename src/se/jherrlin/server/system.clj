@@ -12,6 +12,7 @@
    [se.jherrlin.server.endpoints :as server.endpoints]
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+   [se.jherrlin.server.user-commands :as user-commands]
    [se.jherrlin.clara-labs.board :as board]
    [taoensso.timbre :as timbre])
   (:import [java.time Instant Duration])
@@ -164,34 +165,6 @@
     (println "Game loop is now done " (java.util.Date.))
     new-game-state))
 
-
-(defmulti register-incomming-user-action! :action)
-
-(defmethod register-incomming-user-action! :move [{:keys [action user-id] :as m}]
-  (swap! incomming-actions-state assoc-in [action user-id] m))
-
-(defmethod register-incomming-user-action! :place-bomb [{:keys [action user-id] :as m}]
-  (swap! incomming-actions-state assoc-in [action user-id] m))
-
-(defmethod register-incomming-user-action! :default [m]
-  (throw (Exception. (str "In dont know what to do with" m))))
-
-
-(comment
-  (game-loop (java.util.Date.) game-state incomming-actions-state (fn [_]))
-  @game-state
-
-  (register-incomming-user-action!
-   {:action  :move
-    :user-id 1
-    :payload {:direction :east}})
-
-  (register-incomming-user-action!
-   {:action  :place-bomb
-    :user-id 1})
-  )
-
-
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler]}]
   (timbre/info "Creating system.")
   (component/system-map
@@ -226,4 +199,15 @@
 (comment
   (alter-var-root #'production component/start)
   (alter-var-root #'production component/stop)
+
+  (user-commands/register-incomming-user-action!
+   incomming-actions-state
+   {:action  :move
+    :user-id 1
+    :payload {:direction :east}})
+
+  (user-commands/register-incomming-user-action!
+   incomming-actions-state
+   {:action  :place-bomb
+    :user-id 1})
   )
