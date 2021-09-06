@@ -4,7 +4,9 @@
             [taoensso.timbre :as timbre]
             [re-frame.core :as re-frame]
             [taoensso.sente :as sente :refer [cb-success?]]
-            ))
+            [goog.events.KeyCodes :as keycodes]
+            [goog.events :as gev])
+  (:import [goog.events EventType KeyHandler]))
 
 (re-frame/reg-event-db
  ::initialize-db
@@ -74,9 +76,7 @@
 (re-frame/reg-sub
  ::screen
  (fn [{:keys [game-state] :as db}]
-   (let [{:keys [players stones board bombs fire]}
-         (:game-state @re-frame.db/app-db)
-         #_game-state]
+   (let [{:keys [players stones board bombs fire]} game-state]
      (some->> board
               (add-players-to-screen (vals players))
               (add-bombs-to-screen bombs)
@@ -95,18 +95,6 @@
                                   cell)))
                             row)))))))
 
-
-;; (let [board (get-in @re-frame.db/app-db [:game-state :board] [])]
-;;   (->> board
-;;        (mapv (fn [row]
-;;                (mapv (fn [cell]
-;;                        (let [t (:type cell)]
-;;                          (case t
-;;                            :wall  "W"
-;;                            :floor " ")))
-;;                      row)))))
-
-
 (defmethod wevent :new/game-state
   [{:as ev-msg :keys [event id ?data]}]
   (re-frame/dispatch [::game-state ?data]))
@@ -116,6 +104,7 @@
   )
 
 (try
+  ;; Setup websocket
   (let [{:keys [chsk ch-recv send-fn state]}
         (sente/make-channel-socket! "/websocket/chsk"
                                     nil
@@ -154,9 +143,34 @@
   (re-frame/clear-subscription-cache!)
   (rd/render [root-component] (.getElementById js/document "root")))
 
+
+(defn capture-key
+  "Given a `keycode`, execute function `f` "
+  [keycode-map]
+  (let [key-handler (KeyHandler. js/document)
+        press-fn (fn [key-press]
+                   (when-let [f (get keycode-map (.. key-press -keyCode))]
+                     (f)))]
+    (gev/listen key-handler
+                (-> KeyHandler .-EventType .-KEY)
+                press-fn)))
+
+(defn reagent-content-fn []
+  ;; sets up the event listener
+  ;; https://tech.toryanderson.com/2020/10/22/capturing-key-presses-in-clojurescript-with-closure/
+  (capture-key {keycodes/DOWN  #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :south}}])
+                keycodes/UP    #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :north}}])
+                keycodes/LEFT  #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :west}}])
+                keycodes/RIGHT #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :east}}])
+                keycodes/SPACE #(chsk-send! [:command/user-action {:action :place-bomb :user-id 1}])})
+  ;; ... the actual content that the rest of the fn should produce
+  ;; (like the components that will use the keybinding)
+  )
+
 (defn init []
   (re-frame/dispatch-sync [::initialize-db])
   (println "Hello World!")
+  (reagent-content-fn)
   (mount-root))
 
 
@@ -165,5 +179,5 @@
 ;; (js/alert "Hejsan")
 
 (comment
-  (chsk-send! [::hejsan "asd"])
+
   )
