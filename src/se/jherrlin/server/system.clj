@@ -21,11 +21,12 @@
 
 (defonce game-state
   (atom {:players    {1 {:position    [1 1]
-                         :fire-length 3
+                           :fire-length 3
                          :id          1
                          :sign        "1"}}
-         :stones     [[4 1] [3 3]]
-         :board      (board/init 6)
+           :stones     [[2 1] [3 1] [4 1] [5 1]
+                        [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
+         :board      board/board2
          :dead-users {}
          :bombs      [#_{:user-id              1
                          :bomb-position-xy     [3 2]
@@ -38,11 +39,12 @@
 (comment
   (reset! game-state
           {:players    {1 {:position    [1 1]
-                         :fire-length 3
+                           :fire-length 3
                          :id          1
                          :sign        "1"}}
-         :stones     [[4 1] [3 3]]
-         :board      (board/init 6)
+           :stones     [[2 1] [3 1] [4 1] [5 1]
+                        [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
+         :board      board/board2
          :dead-users {}
          :bombs      [#_{:user-id              1
                          :bomb-position-xy     [3 2]
@@ -151,11 +153,12 @@
         _                   (def user-action-facts user-action-facts)
         game-state-facts    (game-state->enginge-facts game-state)
         _                   (def game-state-facts game-state-facts)
-        actions-from-enging (bomberman-rules/run-rules
-                             (concat
-                              user-action-facts
-                              game-state-facts
-                              [(bomberman-rules/->TimestampNow (java.util.Date.))]))
+        facts               (concat
+                             user-action-facts
+                             game-state-facts
+                             [(bomberman-rules/->TimestampNow (java.util.Date.))])
+        _                   (def facts facts)
+        actions-from-enging (bomberman-rules/run-rules facts)
         _                   (def actions-from-enging actions-from-enging)
         new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
         _                   (def new-game-state new-game-state)]

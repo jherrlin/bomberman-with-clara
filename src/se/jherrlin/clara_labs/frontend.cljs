@@ -131,11 +131,11 @@
              [j cell] (map-indexed list row)]
          (let [t (:type cell)]
            [:<>
-            [:div {:style {:width   "40px"
-                           :height  "40px"
+            [:div {:style {:width   "20px"
+                           :height  "20px"
                            :display "inline-block"}}
              (:str cell)]
-            (when (= 5 j)
+            (when (= (-> screen first count dec) j)
               [:div {:style {:display "block"}}])]))]
       [:div "loading..."])))
 
