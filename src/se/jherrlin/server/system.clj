@@ -115,10 +115,10 @@
     (assoc gs :stones (remove stones-to-remove' stones))))
 
 (defn update-bombs-to-gs [gs bombs]
-  (assoc gs :bombs (set bombs)))
+  (assoc gs :bombs (->> bombs (map #(into {} %)) (set))))
 
 (defn update-fire-to-gs [gs fires]
-  (assoc gs :fire (set fires)))
+  (assoc gs :fire (->> fires (map #(into {} %)) (set))))
 
 (defn update-user-position-in-gs [gs {:keys [user-id next-position] :as user-move}]
   (assoc-in gs [:players user-id :position] next-position))
@@ -131,7 +131,7 @@
    (fn [gs' {:keys [user-id killed-by-user-id] :as dead-user}]
      (-> gs'
          (assoc-in [:players user-id :dead?] true)
-         (assoc-in [:dead-users user-id] dead-user)))
+         (assoc-in [:dead-users user-id] (into {} dead-user))))
    gs
    dead-users))
 
