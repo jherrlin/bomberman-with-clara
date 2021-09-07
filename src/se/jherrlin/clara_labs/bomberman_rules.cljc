@@ -149,13 +149,12 @@
 
 (defrule place-bomb
   "User place bomb in her current location."
-  [?user-wants-to-place-bomb <- UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
+  [UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
    (= ?max-nr-of-bombs-for-user max-nr-of-bombs-for-user)]
   [:not [BombOnBoard (= bomb-position-xy ?user-current-xy)]]
   [?bombs-placed-by-user <- (acc/count) from [BombOnBoard (= user-id ?place-bomb-user-id)]]
   [:test (< ?bombs-placed-by-user ?max-nr-of-bombs-for-user)]
   =>
-  (retract! ?user-wants-to-place-bomb)
   (insert-unconditional! (->BombOnBoard ?place-bomb-user-id ?user-current-xy ?fire-length ?timestamp)))
 
 (defrule user-dies
