@@ -50,13 +50,8 @@
                         [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
            :board      board/board2
            :dead-users {}
-           :bombs      [#_{:user-id              1
-                           :bomb-position-xy     [3 2]
-                           :fire-length          3
-                           :bomb-added-timestamp (java.util.Date.)}]
-           :fire       [#_{:user-id              6
-                           :fire-position-xy     [3 2]
-                           :fire-start-timestamp (java.util.Date.)}]})
+           :bombs      []
+           :fire       []})
   )
 
 (defonce incomming-actions-state
@@ -155,26 +150,31 @@
         (update-users-position-in-gs user-moves)
         (update-user-is-dead         dead-users))))
 
+
+
 (defn game-loop [task-execution-timestamp game-state incomming-actions-state ws-broadcast-fn]
   (println "Game loop is now started " task-execution-timestamp)
-  (let [user-action-facts   (incomming-actions incomming-actions-state game-state)
-        _                   (def user-action-facts user-action-facts)
-        game-state-facts    (game-state->enginge-facts game-state)
-        _                   (def game-state-facts game-state-facts)
-        facts               (concat
-                             user-action-facts
-                             game-state-facts
-                             [(bomberman-rules/->TimestampNow (java.util.Date.))])
-        _                   (def facts facts)
-        actions-from-enging (bomberman-rules/run-rules facts)
-        _                   (def actions-from-enging actions-from-enging)
-        new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
-        _                   (def new-game-state new-game-state)]
-    (reset! game-state new-game-state)
-    (reset! incomming-actions-state {})
-    (ws-broadcast-fn [:new/game-state new-game-state])
-    (println "Game loop is now done " (java.util.Date.))
-    new-game-state))
+  (try
+    (let [user-action-facts   (incomming-actions incomming-actions-state game-state)
+          _                   (def user-action-facts user-action-facts)
+          game-state-facts    (game-state->enginge-facts game-state)
+          _                   (def game-state-facts game-state-facts)
+          facts               (concat
+                               user-action-facts
+                               game-state-facts
+                               [(bomberman-rules/->TimestampNow (java.util.Date.))])
+          _                   (def facts facts)
+          actions-from-enging (bomberman-rules/run-rules facts)
+          _                   (def actions-from-enging actions-from-enging)
+          new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
+          _                   (def new-game-state new-game-state)]
+      (reset! game-state new-game-state)
+      (reset! incomming-actions-state {})
+      (ws-broadcast-fn [:new/game-state new-game-state])
+      (println "Game loop is now done " (java.util.Date.))
+      new-game-state)
+    (catch Exception e
+      (timbre/error "Error in game loop: " e))))
 
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler]}]
   (timbre/info "Creating system.")

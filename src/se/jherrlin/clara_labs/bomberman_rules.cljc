@@ -1,6 +1,7 @@
 (ns se.jherrlin.clara-labs.bomberman-rules
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [clara.rules.accumulators :as acc]
+            [clara.tools.inspect :as inspect]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.datetime :as datetime]
             [clojure.set :as set]))

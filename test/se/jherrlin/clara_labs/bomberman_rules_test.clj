@@ -4,6 +4,7 @@
    [clara.rules.accumulators :as acc]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman]
    [se.jherrlin.clara-labs.datetime :as datetime]
+   [clara.tools.inspect :as inspect]
    [clojure.test :as t]))
 
 (comment
