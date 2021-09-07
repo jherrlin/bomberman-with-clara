@@ -15,7 +15,7 @@
 
 (defrecord Board                [board])
 (defrecord BombExploading       [user-id position-xy fire-length])
-(defrecord BombOnBoard          [user-id bomb-position-xy fire-length bomb-added-timestamp])
+
 (defrecord DeadUser             [user-id killed-by-user-id])
 (defrecord FireOnBoard          [user-id fire-position-xy fire-start-timestamp])
 (defrecord Stone                [stone-position-xy]) ;; Object on the board that can be removed by fire
@@ -26,6 +26,68 @@
 (defrecord UserWantsToMove      [user-id current-xy direction])
 (defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp max-nr-of-bombs-for-user])
 
+(defrecord UserWantsToThrowBomb [user-id users-current-xy       user-facing-direction])
+
+(defrecord BombOnBoard          [user-id bomb-position-xy       fire-length bomb-added-timestamp])
+(defrecord FlyingBomb           [user-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction])
+
+
+(defrule user-throws-bomb
+  "A user can throw a bomb if facing direction points to it."
+  [?user-wants-to-throw-bomb <- UserWantsToThrowBomb (= ?user-id user-id) (= ?users-current-xy users-current-xy) (= ?user-facing-direction user-facing-direction)]
+  [?bomb-on-board            <- BombOnBoard (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length) (= ?bomb-added-timestamp bomb-added-timestamp)]
+  [:test (= ?bomb-position-xy (board/next-xy-position ?users-current-xy ?user-facing-direction))]
+  =>
+  (retract! ?user-wants-to-throw-bomb)
+  (retract! ?bomb-on-board)
+  (insert-unconditional! (->FlyingBomb
+                          ?user-id
+                          (board/next-xy-position ?users-current-xy ?user-facing-direction)
+                          ?fire-length
+                          ?bomb-added-timestamp
+                          ?user-facing-direction)))
+
+(defrule flying-bomb-lands-on-empty-floor
+  ""
+  [Board (= ?board board)]
+  [?flying-bomb <- FlyingBomb
+   (= ?user-id user-id)
+   (= ?flying-bomb-current-xy flying-bomb-current-xy)
+   (= ?fire-length fire-length)
+   (= ?bomb-added-timestamp bomb-added-timestamp)
+   (= ?flying-bomb-direction flying-bomb-direction)]
+  [:not [Stone       (= stone-position-xy (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction))]]
+  [:not [BombOnBoard (= bomb-position-xy  (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction))]]
+  [:test (#{:floor} (board/target-position-type ?board ?flying-bomb-current-xy ?flying-bomb-direction))]
+  =>
+  (retract! ?flying-bomb)
+  (insert-unconditional! (->BombOnBoard
+                          ?user-id
+                          (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
+                          ?fire-length
+                          ?bomb-added-timestamp)))
+
+(defrule flying-bomb-keeps-on-flying
+  ""
+  [Board (= ?board board)]
+  [?flying-bomb <- FlyingBomb
+   (= ?user-id user-id)
+   (= ?flying-bomb-current-xy flying-bomb-current-xy)
+   (= ?fire-length fire-length)
+   (= ?bomb-added-timestamp bomb-added-timestamp)
+   (= ?flying-bomb-direction flying-bomb-direction)]
+  [:or
+   [Stone       (= stone-position-xy (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction))]
+   [BombOnBoard (= bomb-position-xy  (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction))]
+   [:test (not (#{:floor} (board/target-position-type ?board ?flying-bomb-current-xy ?flying-bomb-direction)))]]
+  =>
+  (retract! ?flying-bomb)
+  (insert-unconditional! (->FlyingBomb
+                          ?user-id
+                          (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
+                          ?fire-length
+                          ?bomb-added-timestamp
+                          ?flying-bomb-direction)))
 
 (defrule user-move
   "User move"
@@ -129,6 +191,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?bomb-on-board <- BombOnBoard])
 
+(defquery flying-bombs?
+  []
+  [?flying-bombs <- FlyingBomb])
+
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
@@ -144,7 +210,15 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :bombs-on-board            (map :?bomb-on-board             (query session' bomb-on-board?))
       :fire-on-board             (map :?fire-on-board             (query session' fire-on-board?))
       :stones-to-remove          (map :?stones-to-remove          (query session' stones-to-remove?))
-      :dead-users                (map :?dead-users                (query session' dead-users?))}}))
+      :dead-users                (map :?dead-users                (query session' dead-users?))
+      :flying-bombs              (map :?flying-bombs              (query session' flying-bombs?))}}))
+
+(comment
+  (run-rules
+   [(->Board board/board2)
+    (->FlyingBomb 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
+    (->Stone        [3 1])])
+  )
 
 
 (comment
