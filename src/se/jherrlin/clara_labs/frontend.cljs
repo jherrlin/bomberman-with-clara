@@ -162,7 +162,8 @@
                 keycodes/UP    #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :north}}])
                 keycodes/LEFT  #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :west}}])
                 keycodes/RIGHT #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :east}}])
-                keycodes/SPACE #(chsk-send! [:command/user-action {:action :place-bomb :user-id 1}])})
+                keycodes/SPACE #(chsk-send! [:command/user-action {:action :place-bomb :user-id 1}])
+                keycodes/T     #(chsk-send! [:command/user-action {:action :throw-bomb :user-id 1}])})
   ;; ... the actual content that the rest of the fn should produce
   ;; (like the components that will use the keybinding)
   )

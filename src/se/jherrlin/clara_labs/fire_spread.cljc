@@ -72,14 +72,14 @@
   (fire-after-it-hit-objects
    [3 1] 3 (board/init 6) [])
 
-  (fire-after-it-hit-objects
-   [1 1]
-   3
-   (board/init 6)
-   [#se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [2 1]}
-    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [3 1]}
-    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 2]}
-    #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 3]}])
+  ;; (fire-after-it-hit-objects
+  ;;  [1 1]
+  ;;  3
+  ;;  (board/init 6)
+  ;;  [#se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [2 1]}
+  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [3 1]}
+  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 2]}
+  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 3]}])
 
   (let [bomb-xy     [1 1]
         fire-length 10

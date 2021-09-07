@@ -40,10 +40,10 @@
       (->> (query session' bomberman/user-move?)
            (map (comp #(into {} %) :?user-move))
            (set)))
-    #{{:user-id 7, :next-position [1 1]}
-      {:user-id 2, :next-position [1 2]}
-      {:user-id 1, :next-position [2 1]}
-      {:user-id 5, :next-position [3 1]}}))
+    #{{:user-id 7, :next-position [1 1], :direction :west}
+      {:user-id 5, :next-position [3 1], :direction :east}
+      {:user-id 2, :next-position [1 2], :direction :south}
+      {:user-id 1, :next-position [2 1], :direction :east}}))
 
   (t/is
    (=
@@ -55,8 +55,8 @@
       (->> (query session' bomberman/user-move?)
            (map (comp #(into {} %) :?user-move))
            (set)))
-    #{{:user-id 2, :next-position [4 3]}
-      {:user-id 1, :next-position [3 2]}})))
+    #{{:user-id 1, :next-position [3 2], :direction :south}
+      {:user-id 2, :next-position [4 3], :direction :east}})))
 
 (t/deftest user-cant-walk-on-bomb
   (t/testing "User cant walk west as there is a bomb there"
@@ -72,7 +72,7 @@
         (->> (query session' bomberman/user-move?)
              (map (comp #(into {} %) :?user-move))
              (set)))
-      #{{:user-id 2, :next-position [1 1]}}))))
+      #{{:user-id 2, :next-position [1 1], :direction :west}}))))
 
 (t/deftest user-wants-to-place-bomb-on-board
   (t/testing "should result in bomb on board."
