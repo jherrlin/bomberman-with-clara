@@ -20,39 +20,43 @@
 
 
 (defonce game-state
-  (atom {:players    {1 {:position    [1 1]
-                           :fire-length 3
-                         :id          1
-                         :sign        "1"}}
+  (atom {:players    {1 {:position                 [1 1]
+                           :fire-length              3
+                           :id                       1
+                           :sign                     "1"
+                           :max-nr-of-bombs-for-user 3
+                           }}
            :stones     [[2 1] [3 1] [4 1] [5 1]
                         [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
-         :board      board/board2
-         :dead-users {}
-         :bombs      [#_{:user-id              1
-                         :bomb-position-xy     [3 2]
-                         :fire-length          3
-                         :bomb-added-timestamp (java.util.Date.)}]
-         :fire       [#_{:user-id              6
-                         :fire-position-xy     [3 2]
-                         :fire-start-timestamp (java.util.Date.)}]}))
+           :board      board/board2
+           :dead-users {}
+           :bombs      [#_{:user-id              1
+                           :bomb-position-xy     [3 2]
+                           :fire-length          3
+                           :bomb-added-timestamp (java.util.Date.)}]
+           :fire       [#_{:user-id              6
+                           :fire-position-xy     [3 2]
+                           :fire-start-timestamp (java.util.Date.)}]}))
 
 (comment
   (reset! game-state
-          {:players    {1 {:position    [1 1]
-                           :fire-length 3
-                         :id          1
-                         :sign        "1"}}
+          {:players    {1 {:position                 [1 1]
+                           :fire-length              3
+                           :id                       1
+                           :sign                     "1"
+                           :max-nr-of-bombs-for-user 3
+                           }}
            :stones     [[2 1] [3 1] [4 1] [5 1]
                         [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
-         :board      board/board2
-         :dead-users {}
-         :bombs      [#_{:user-id              1
-                         :bomb-position-xy     [3 2]
-                         :fire-length          3
-                         :bomb-added-timestamp (java.util.Date.)}]
-         :fire       [#_{:user-id              6
-                         :fire-position-xy     [3 2]
-                         :fire-start-timestamp (java.util.Date.)}]})
+           :board      board/board2
+           :dead-users {}
+           :bombs      [#_{:user-id              1
+                           :bomb-position-xy     [3 2]
+                           :fire-length          3
+                           :bomb-added-timestamp (java.util.Date.)}]
+           :fire       [#_{:user-id              6
+                           :fire-position-xy     [3 2]
+                           :fire-start-timestamp (java.util.Date.)}]})
   )
 
 (defonce incomming-actions-state
@@ -63,11 +67,14 @@
 ;; gs = game state
 (defn gs-player-current-xy  [game-state player-id] (get-in game-state [:players player-id :position]))
 (defn gs-player-fire-length [game-state player-id] (get-in game-state [:players player-id :fire-length]))
+(defn gs-player-max-number-of-bombs [game-state player-id]
+  (get-in game-state [:players player-id :max-nr-of-bombs-for-user]))
 (defn gs-board              [game-state]           (get-in game-state [:board]))
 (defn gs-stones             [game-state]           (get-in game-state [:stones]))
 (defn gs-fires              [game-state]           (get-in game-state [:fire]))
 (defn gs-players            [game-state]           (get-in game-state [:players]))
 (defn gs-bombs              [game-state]           (get-in game-state [:bombs]))
+
 
 
 (defmulti command->engine-fact (fn [game-state command] (:action command)))
@@ -78,11 +85,12 @@
     (bomberman-rules/->UserWantsToMove user-id user-current-xy (:direction payload))))
 
 (defmethod command->engine-fact :place-bomb [game-state {:keys [user-id] :as command}]
-  (let [game-state'      @game-state
-        user-current-xy  (gs-player-current-xy game-state' user-id)
-        user-fire-length (gs-player-fire-length game-state' user-id)
-        now              (java.util.Date.)]
-    (bomberman-rules/->UserWantsToPlaceBomb user-id user-current-xy user-fire-length now)))
+  (let [game-state'         @game-state
+        user-current-xy     (gs-player-current-xy game-state' user-id)
+        user-fire-length    (gs-player-fire-length game-state' user-id)
+        max-number-of-bombs (gs-player-max-number-of-bombs game-state' user-id)
+        now                 (java.util.Date.)]
+    (bomberman-rules/->UserWantsToPlaceBomb user-id user-current-xy user-fire-length now max-number-of-bombs)))
 
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
