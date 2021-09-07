@@ -22,7 +22,7 @@
 (defrecord UserMove             [user-id next-position])
 (defrecord UserPositionOnBoard  [user-id user-current-xy])
 (defrecord UserWantsToMove      [user-id current-xy direction])
-(defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp])
+(defrecord UserWantsToPlaceBomb [user-id current-xy fire-length timestamp max-nr-of-bombs-for-user])
 
 (defn bomb-fire-spread-in-all-directions [[pos-x pos-y] fire-length]
   (let [fire-length' (inc fire-length)]
@@ -142,15 +142,18 @@
   [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
    (#{:floor} (board/target-position-type ?board current-xy direction))]
   [:not [Stone       (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
-  [:not [BombOnBoard (= bomb-position-xy (board/next-xy-position ?current-xy ?direction))]]
+  [:not [BombOnBoard (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
   (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
 
 (defrule place-bomb
   "User place bomb in her current location."
-  [UserWantsToPlaceBomb (= ?user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)]
+  [UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
+   (= ?max-nr-of-bombs-for-user max-nr-of-bombs-for-user)]
+  [?bombs-placed-by-user <- (acc/count) from [BombOnBoard (= user-id ?place-bomb-user-id)]]
+  [:test (< ?bombs-placed-by-user ?max-nr-of-bombs-for-user)]
   =>
-  (insert! (->BombOnBoard ?user-id ?user-current-xy ?fire-length ?timestamp)))
+  (insert-unconditional! (->BombOnBoard ?place-bomb-user-id ?user-current-xy ?fire-length ?timestamp)))
 
 (defrule user-dies
   "User dies if she gets hit by fire."
@@ -210,98 +213,9 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (retract! ?fire))
 
-(def board' [["W" "W" "W" "W" "W"]
-             ["W" " " " " " " "W"]
-             ["W" "W" "W" "W" "W"]])
-
-(clojure.pprint/pprint
- [["W" "W" "W" "W" "W"]
-  ["W" " " " " " " "W"]
-  ["W" "W" "W" "W" "W"]])
-
-(defn print-row [row]
-  (for [r row]
-    (print "W"))
-  (println ""))
-
-(print
- (for [board' (board/init 6)]
-   (print-row board')
-   ))
 
 
-
-(let [game (board/init 6)]
-  (for [[i row]  (map-indexed list game)
-        [j cell] (map-indexed list row)]
-    (let [t (:type cell)]
-      (case t
-        :wall (print "W")
-        :floor (print "F"))
-      (when (= 5 j)
-        (print "\n")))))
-
-(defn console-representation [board]
-  (->> board
-       (mapv (fn [row]
-               (mapv (fn [cell]
-                       (let [t (:type cell)]
-                         (case t
-                           :wall  "W"
-                           :floor " ")))
-                     row)))))
-
-(defn console-player [board' [x y] sign]
-  (assoc-in board' [y x] sign))
-
-(defn console-items [board' items s]
-  (reduce
-   (fn [b [x y]]
-     (assoc-in b [y x] s))
-   board'
-   items))
-
-(board/init 6)
-
-(comment
-  (-> (console-representation (board/init 6))
-      (console-player [1 1] "1")
-      (console-items [[1 3] [3 3]] "S")
-      (console-items [[4 3]] "B")
-      (console-items [[4 1]] "F")
-      )
-  )
-
-(def game-map
-  {:players {:1 {:sign        "1"
-                 :position    [1 1]
-                 :fire-length 3}}
-   :board   (board/init 6)
-   :stones  [[1 3] [3 3]]
-   })
-
-(defn print-game-state []
-
-  )
-
-(def game-state
-  (let [game '[[_ _ _ _]
-               [1 1 _ _]
-               [! 1 _ _]
-               [1 1 _ _]]]
-    (for [[i row] (map-indexed list game)
-          [j cell] (map-indexed list row)
-          :when (not= '_ cell)]
-      {:x i :y j :value cell})))
-
- (clojure.pprint/pprint game-state)
-
-
-(comment
-  (< 2000 (datetime/milliseconds-between #inst "2021-08-28T15:03:47.100-00:00" #inst "2021-08-28T15:03:50.100-00:00"))
-  (datetime/now!)
-  )
-
+;; Queries
 (defquery user-move?
   []
   [?user-move <- UserMove])

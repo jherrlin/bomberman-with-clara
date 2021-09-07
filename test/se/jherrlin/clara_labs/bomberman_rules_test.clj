@@ -4,8 +4,7 @@
    [clara.rules.accumulators :as acc]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman]
    [se.jherrlin.clara-labs.datetime :as datetime]
-   #?(:clj [clojure.test :as t]
-      :cljs [cljs.test :as t :include-macros true])))
+   [clojure.test :as t]))
 
 (comment
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules-test)
@@ -76,21 +75,21 @@
 
 (t/deftest user-wants-to-place-bomb-on-board
   (t/testing "should result in bomb on board."
-      (t/is
-       (=
-        (let [session  (insert-all bomberman-session
-                                   [(bomberman/->Board board)
-                                    (bomberman/->TimestampNow #inst "2021-09-05T19:16:52.292-00:00")
-                                    (bomberman/->UserWantsToPlaceBomb 1 [1 1] 3 #inst "2021-09-05T19:16:52.292-00:00")])
-              session' (fire-rules session)]
-          {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
-                                (map (comp #(into {} %) :?bomb-on-board))
-                                (set))})
-        {:bombs-on-board
-         #{{:user-id 1,
-            :bomb-position-xy [1 1],
-            :fire-length 3,
-            :bomb-added-timestamp #inst "2021-09-05T19:16:52.292-00:00"}}}))))
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->Board board)
+                                  (bomberman/->TimestampNow #inst "2021-09-05T19:16:52.292-00:00")
+                                  (bomberman/->UserWantsToPlaceBomb 1 [1 1] 3 #inst "2021-09-05T19:16:52.292-00:00" 3)])
+            session' (fire-rules session)]
+        {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                              (map (comp #(into {} %) :?bomb-on-board))
+                              (set))})
+      {:bombs-on-board
+       #{{:user-id 1,
+          :bomb-position-xy [1 1],
+          :fire-length 3,
+          :bomb-added-timestamp #inst "2021-09-05T19:16:52.292-00:00"}}}))))
 
 (let [session  (insert-all bomberman-session
                            [(bomberman/->Board board)
@@ -178,3 +177,83 @@
            (map (comp #(into {} %) :?dead-users))
            (set)))
     #{{:user-id 1, :killed-by-user-id 2}})))
+
+(t/deftest user-cant-put-to-many-bombs
+  (t/testing "User can't put more bombs than it limit."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->UserWantsToPlaceBomb  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 3)
+                                  (bomberman/->BombOnBoard           1 [2 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                                  (bomberman/->BombOnBoard           1 [3 1] 10 #inst "2021-08-28T15:03:47.100-00:00")])
+            session' (fire-rules session)]
+        {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                              (map (comp #(into {} %) :?bomb-on-board))
+                              (set))})
+      {:bombs-on-board
+       #{{:user-id              1,
+          :bomb-position-xy     [2 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
+         {:user-id              1,
+          :bomb-position-xy     [1 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
+         {:user-id              1,
+          :bomb-position-xy     [3 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
+
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->UserWantsToPlaceBomb  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 3)
+                                  (bomberman/->BombOnBoard           1 [2 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                                  (bomberman/->BombOnBoard           1 [3 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                                  (bomberman/->BombOnBoard           1 [4 1] 10 #inst "2021-08-28T15:03:47.100-00:00")])
+            session' (fire-rules session)]
+        {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                              (map (comp #(into {} %) :?bomb-on-board))
+                              (set))})
+      {:bombs-on-board
+       #{{:user-id              1,
+          :bomb-position-xy     [2 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
+         {:user-id              1,
+          :bomb-position-xy     [4 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
+         {:user-id              1,
+          :bomb-position-xy     [3 1],
+          :fire-length          10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
+
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->UserWantsToPlaceBomb  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 1)
+                                  (bomberman/->BombOnBoard           1 [2 1] 10 #inst "2021-08-28T15:03:47.100-00:00")])
+            session' (fire-rules session)]
+        {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                              (map (comp #(into {} %) :?bomb-on-board))
+                              (set))})
+      {:bombs-on-board
+       #{{:user-id 1,
+          :bomb-position-xy [2 1],
+          :fire-length 10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
+
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(bomberman/->UserWantsToPlaceBomb  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 1)])
+            session' (fire-rules session)]
+        {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                              (map (comp #(into {} %) :?bomb-on-board))
+                              (set))})
+      {:bombs-on-board
+       #{{:user-id 1,
+          :bomb-position-xy [1 1],
+          :fire-length 10,
+          :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))))
