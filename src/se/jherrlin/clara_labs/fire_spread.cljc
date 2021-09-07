@@ -58,7 +58,7 @@
      :east  (until-fire-flame-hits-a-stone east  stones)
      :south (until-fire-flame-hits-a-stone south stones)}))
 
-(defn remove-fires-that-meet-obstacles [bomb-xy fire-length board stones]
+(defn fire-after-it-hit-objects [bomb-xy fire-length board stones]
   (let [stones' (map :stone-position-xy stones)]
     (->> (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
              (remove-fire-after-is-hits-a-wall board)
@@ -69,10 +69,10 @@
          (concat [bomb-xy]))))
 
 (comment
-  (remove-fires-that-meet-obstacles
+  (fire-after-it-hit-objects
    [3 1] 3 (board/init 6) [])
 
-  (remove-fires-that-meet-obstacles
+  (fire-after-it-hit-objects
    [1 1]
    3
    (board/init 6)

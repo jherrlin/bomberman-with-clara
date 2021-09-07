@@ -65,7 +65,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?stones <- (acc/all) :from [Stone]]
   =>
   (let [fire-on-board (mapv (fn [[x y]] (->FireOnBoard ?user-id [x y] ?now))
-                            (fire-spread/remove-fires-that-meet-obstacles ?bomb-position-xy ?fire-length ?board ?stones))]
+                            (fire-spread/fire-after-it-hit-objects ?bomb-position-xy ?fire-length ?board ?stones))]
     (apply insert! fire-on-board)))
 
 (defrule bomb-exploding-after-timeout
