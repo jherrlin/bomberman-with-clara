@@ -24,6 +24,23 @@
      (add-index (walls-on-each-side length) 3)
      (add-index (only-walls length) 4)]))
 
+(def board2
+  (let [length 19]
+    [(add-index (only-walls length)          0)
+     (add-index (walls-on-each-side length)  1)
+     (add-index (cycle-walls length)         2)
+     (add-index (walls-on-each-side length)  3)
+     (add-index (cycle-walls length)         4)
+     (add-index (walls-on-each-side length)  5)
+     (add-index (cycle-walls length)         6)
+     (add-index (walls-on-each-side length)  7)
+
+     (add-index (cycle-walls length)         8)
+     (add-index (walls-on-each-side length)  9)
+
+     (add-index (only-walls length)         10)
+     ]))
+
 (defn individual-state [[x y] board]
   (get-in board [y x]))
 
