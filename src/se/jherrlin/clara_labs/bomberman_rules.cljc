@@ -139,22 +139,22 @@
 (defrule user-move
   "User move"
   [Board (= ?board board)]
-  [UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
+  [?user-wants-to-move <- UserWantsToMove (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
    (#{:floor} (board/target-position-type ?board current-xy direction))]
   [:not [Stone       (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
-  (insert-unconditional! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
+  (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
 
 (defrule place-bomb
   "User place bomb in her current location."
-  [?user-placed-bomb <- UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
+  [?user-wants-to-place-bomb <- UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
    (= ?max-nr-of-bombs-for-user max-nr-of-bombs-for-user)]
   [:not [BombOnBoard (= bomb-position-xy ?user-current-xy)]]
   [?bombs-placed-by-user <- (acc/count) from [BombOnBoard (= user-id ?place-bomb-user-id)]]
   [:test (< ?bombs-placed-by-user ?max-nr-of-bombs-for-user)]
   =>
-  (retract! ?user-placed-bomb)
+  (retract! ?user-wants-to-place-bomb)
   (insert-unconditional! (->BombOnBoard ?place-bomb-user-id ?user-current-xy ?fire-length ?timestamp)))
 
 (defrule user-dies
@@ -179,7 +179,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
     (apply insert! fire-on-board)))
 
 (defrule bomb-exploding-after-timeout
-  "Bomb that is on board for 2000ms (2 seconds) should expload."
+  "Bomb that been on board for a time threshold should expload."
   [TimestampNow (= ?now now)]
   [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-added-timestamp bomb-added-timestamp) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
   [:test (< 2000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
@@ -194,7 +194,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
-  (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
+  (insert! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
 
 (defrule remove-stones-hit-by-fire
   "If a stone is hit by fire, remove it."

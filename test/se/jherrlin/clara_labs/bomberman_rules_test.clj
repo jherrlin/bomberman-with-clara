@@ -79,7 +79,7 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(bomberman/->Board board)
-                                  (bomberman/->TimestampNow #inst "2021-09-05T19:16:52.292-00:00")
+                                  (bomberman/->TimestampNow                   #inst "2021-09-05T19:16:52.292-00:00")
                                   (bomberman/->UserWantsToPlaceBomb 1 [1 1] 3 #inst "2021-09-05T19:16:52.292-00:00" 3)])
             session' (fire-rules session)]
         {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
