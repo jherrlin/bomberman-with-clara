@@ -90,27 +90,26 @@
           :bomb-position-xy [1 1],
           :fire-length 3,
           :bomb-added-timestamp #inst "2021-09-05T19:16:52.292-00:00"}}}))))
-
-(let [session  (insert-all bomberman-session
-                           [(bomberman/->Board board)
-                            (bomberman/->TimestampNow               #inst "2021-08-28T15:03:50.100-00:00")
-                            (bomberman/->BombOnBoard     1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
-                            (bomberman/->Stone             [2 1])
-                            (bomberman/->Stone             [3 1])
-                            (bomberman/->Stone             [1 2])
-                            (bomberman/->Stone             [1 3])])
-      session' (fire-rules session)]
-  {:fire-on-board    (->> (query session' bomberman/fire-on-board?)
-                          (map (comp #(into {} %) :?fire-on-board))
-                          (set))
-   :exploading-bombs (->> (query session' bomberman/exploading-bombs?)
-                          (map (comp #(into {} %) :?exploading-bombs))
-                          (set))
-   :stones-to-remove (->> (query session' bomberman/stones-to-remove?)
-                          (map (comp #(into {} %) :?stones-to-remove))
-                          (set))})
-
-
+(comment
+  (let [session  (insert-all bomberman-session
+                             [(bomberman/->Board board)
+                              (bomberman/->TimestampNow               #inst "2021-08-28T15:03:50.100-00:00")
+                              (bomberman/->BombOnBoard     1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                              (bomberman/->Stone             [2 1])
+                              (bomberman/->Stone             [3 1])
+                              (bomberman/->Stone             [1 2])
+                              (bomberman/->Stone             [1 3])])
+        session' (fire-rules session)]
+    {:fire-on-board    (->> (query session' bomberman/fire-on-board?)
+                            (map (comp #(into {} %) :?fire-on-board))
+                            (set))
+     :exploading-bombs (->> (query session' bomberman/exploading-bombs?)
+                            (map (comp #(into {} %) :?exploading-bombs))
+                            (set))
+     :stones-to-remove (->> (query session' bomberman/stones-to-remove?)
+                            (map (comp #(into {} %) :?stones-to-remove))
+                            (set))})
+  )
 
 (t/deftest exploading-bombs-create-fire-and-fire-destroys-stone
   (t/is
@@ -177,6 +176,22 @@
            (map (comp #(into {} %) :?dead-users))
            (set)))
     #{{:user-id 1, :killed-by-user-id 2}})))
+
+(t/deftest two-bombs-cant-be-place-in-the-same-xy
+  (t/is
+   (=
+    (let [session  (insert-all bomberman-session
+                               [(bomberman/->UserWantsToPlaceBomb  1 [1 1] 10 #inst "2021-08-28T15:04:47.100-00:00" 3)
+                                (bomberman/->BombOnBoard           1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")])
+          session' (fire-rules session)]
+      {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
+                            (map (comp #(into {} %) :?bomb-on-board))
+                            (set))})
+    {:bombs-on-board
+     #{{:user-id 1,
+        :bomb-position-xy [1 1],
+        :fire-length 10,
+        :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}})))
 
 (t/deftest user-cant-put-to-many-bombs
   (t/testing "User can't put more bombs than it limit."

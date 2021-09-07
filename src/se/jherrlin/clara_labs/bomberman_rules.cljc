@@ -144,12 +144,13 @@
   [:not [Stone       (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
-  (insert! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
+  (insert-unconditional! (->UserMove ?user-id (board/next-xy-position ?current-xy ?direction))))
 
 (defrule place-bomb
   "User place bomb in her current location."
   [UserWantsToPlaceBomb (= ?place-bomb-user-id user-id) (= ?fire-length fire-length) (= ?user-current-xy current-xy) (= ?timestamp timestamp)
    (= ?max-nr-of-bombs-for-user max-nr-of-bombs-for-user)]
+  [:not [BombOnBoard (= bomb-position-xy ?user-current-xy)]]
   [?bombs-placed-by-user <- (acc/count) from [BombOnBoard (= user-id ?place-bomb-user-id)]]
   [:test (< ?bombs-placed-by-user ?max-nr-of-bombs-for-user)]
   =>
@@ -178,10 +179,18 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 (defrule bomb-exploding-after-timeout
   "Bomb that is on board for 2000ms (2 seconds) should expload."
-  [Board (= ?board board)]
   [TimestampNow (= ?now now)]
   [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-added-timestamp bomb-added-timestamp) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
   [:test (< 2000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
+  =>
+  (retract! ?bomb)
+  (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
+
+(defrule bomb-exploading-when-hit-by-fire
+  "Bomb is exploading if it's hit by fire."
+  [FireOnBoard (= ?user-id user-id) (= ?current-fire-xy fire-position-xy)]
+  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
+  [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
   (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
@@ -193,17 +202,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?fire-position-xy ?stone-position-xy)]
   =>
   (insert! (->StoneToRemove ?stone-position-xy)))
-
-(defrule bomb-exploading-when-hit-by-fire
-  "Bomb is exploading if it's hit by fire."
-  [Board (= ?board board)]
-  [TimestampNow (= ?now now)]
-  [FireOnBoard (= ?user-id user-id) (= ?current-fire-xy fire-position-xy)]
-  [?bomb <- BombOnBoard (= ?user-id user-id) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
-  [:test (= ?bomb-position-xy ?current-fire-xy)]
-  =>
-  (retract! ?bomb)
-  (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
 
 (defrule fire-burns-out
   "Fire on board burns out after some time."
@@ -256,6 +254,68 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :fire-on-board             (map :?fire-on-board             (query session' fire-on-board?))
       :stones-to-remove          (map :?stones-to-remove          (query session' stones-to-remove?))
       :dead-users                (map :?dead-users                (query session' dead-users?))}}))
+
+
+(comment
+  (run-rules
+   [(map->Board {:board board/board2})
+    (map->UserWantsToPlaceBomb {:user-id 1,
+                                :current-xy [7 9],
+                                :fire-length 3,
+                                :timestamp #inst "2021-09-07T10:17:10.456-00:00",
+                                :max-nr-of-bombs-for-user 3})
+    (map->UserWantsToMove {:user-id 1, :current-xy [7 9], :direction :west})
+    (map->UserPositionOnBoard {:user-id 1, :user-current-xy [7 9]})
+    (map->Stone {:stone-position-xy [2 1]})
+    (map->Stone {:stone-position-xy [3 1]})
+    (map->Stone {:stone-position-xy [4 1]})
+    (map->Stone {:stone-position-xy [5 1]})
+    (map->Stone {:stone-position-xy [4 1]})
+    (map->Stone {:stone-position-xy [3 3]})
+    (map->Stone {:stone-position-xy [5 5]})
+    (map->Stone {:stone-position-xy [5 6]})
+    (map->Stone {:stone-position-xy [5 7]})
+    (map->Stone {:stone-position-xy [5 8]})
+    (map->Stone {:stone-position-xy [6 5]})
+    (map->Stone {:stone-position-xy [7 5]})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [9 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [11 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [12 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [7 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [10 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [11 6],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [15 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [11 8],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [14 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [11 7],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [8 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->FireOnBoard {:user-id 1,
+                       :fire-position-xy [13 9],
+                       :fire-start-timestamp #inst "2021-09-07T10:17:10.255-00:00"})
+    (map->TimestampNow {:now #inst "2021-09-07T10:17:10.455-00:00"})])
+  )
 
 (comment
   (run-rules
