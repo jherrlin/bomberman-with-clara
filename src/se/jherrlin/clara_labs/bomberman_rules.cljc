@@ -15,10 +15,9 @@
 
 (defrecord Board                [board])
 (defrecord BombExploading       [user-id position-xy fire-length])
-
 (defrecord DeadUser             [user-id killed-by-user-id])
 (defrecord FireOnBoard          [user-id fire-position-xy fire-start-timestamp])
-(defrecord Stone                [stone-position-xy]) ;; Object on the board that can be removed by fire
+(defrecord Stone                [stone-position-xy])
 (defrecord StoneToRemove        [position-xy])
 (defrecord TimestampNow         [now])
 (defrecord UserMove             [user-id next-position direction])
@@ -82,7 +81,7 @@
   (retract! ?flying-bomb)
   (insert-unconditional! (->FlyingBomb
                           ?user-id
-                          (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
+                          (board/next-xy-board-position ?board ?flying-bomb-current-xy ?flying-bomb-direction)
                           ?fire-length
                           ?bomb-added-timestamp
                           ?flying-bomb-direction)))

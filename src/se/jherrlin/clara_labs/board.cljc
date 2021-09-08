@@ -76,7 +76,23 @@
     :south [     current-x  (inc current-y)]
     :west  [(dec current-x)      current-y]))
 
+(defn next-xy-board-position [board [current-x current-y] direction]
+  (let [board-length          (-> board first count)
+        board-height          (-> board count)
+        [next-x next-y]       (next-xy-position [current-x current-y] direction)]
+    [(if-not (neg? next-x) next-x (- board-length (Math/abs next-x)))
+     (if-not (neg? next-y) next-y (- board-height (Math/abs next-y)))]))
+
+
+
 (comment
+  (next-xy-board-position (init 6) [0 1] :west)
+  (next-xy-board-position board2 [0 1] :west)
+  (next-xy-board-position board2 [1 0] :north)
+
+
+
+
   (next-xy-position [1 1] :north)
   (next-xy-position [1 1] :south)
   )

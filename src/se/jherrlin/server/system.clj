@@ -20,23 +20,23 @@
 
 
 (defonce game-state
-  (atom {:players    {1 {:position                 [1 1]
-                         :fire-length              3
-                         :id                       1
-                         :sign                     "1"
-                         :max-nr-of-bombs-for-user 3
-                         :user-facing-direction    :south}}
-         :stones     [[2 1] [3 1] [4 1] [5 1]
-                      [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
-         :board      board/board2
-         :dead-users {}
-         :bombs      [#_{:user-id              1
-                         :bomb-position-xy     [3 2]
-                         :fire-length          3
-                         :bomb-added-timestamp (java.util.Date.)}]
-         :fire       [#_{:user-id              6
-                         :fire-position-xy     [3 2]
-                         :fire-start-timestamp (java.util.Date.)}]}))
+  (atom
+   {:players    {1 {:position                 [1 1]
+                    :fire-length              3
+                    :id                       1
+                    :sign                     "1"
+                    :max-nr-of-bombs-for-user 3
+                    :user-facing-direction    :south
+                    }}
+    :stones     [#_[2 1] [3 1] [4 1] [5 1]
+                 [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
+                 [1 3]
+                 [1 4]
+                 ]
+    :board      board/board2
+    :dead-users {}
+    :bombs      []
+    :fire       []}))
 
 (comment
   (reset! game-state
@@ -48,7 +48,10 @@
                            :user-facing-direction    :south
                            }}
            :stones     [#_[2 1] [3 1] [4 1] [5 1]
-                        [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]]
+                        [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
+                        [1 3]
+                        [1 4]
+                        ]
            :board      board/board2
            :dead-users {}
            :bombs      []
