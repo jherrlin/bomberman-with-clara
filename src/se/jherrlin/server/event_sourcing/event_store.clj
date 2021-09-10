@@ -4,7 +4,7 @@
 
 (defonce store (atom store-init))
 
-(defn add-event [event]
+(defn add-event! [event]
   (swap! store update :events conj event))
 
 (comment
@@ -21,9 +21,9 @@
   @store
   (reset! store store-init)
 
-  (add-event {:a :b})
-  (add-event {:c :d})
-  (add-event {:abc :def})
+  (add-event! {:a :b})
+  (add-event! {:c :d})
+  (add-event! {:abc :def})
 
   ;; https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
   ;; Används av Google Docs

@@ -28,7 +28,7 @@
   (def req req)
   (let [{:keys [?reply-fn incomming-actions ?data client-id event-store]} req
         {:keys [game-name password]}                                      ?data]
-    (application-service/create-game (:add-event event-store) game-name password)))
+    (application-service/create-game (:add-event-fn! event-store) game-name password)))
 
 (defmethod handler :game/list
   [req]

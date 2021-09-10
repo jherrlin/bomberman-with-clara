@@ -9,7 +9,7 @@
   (reset! store store-init)
   )
 
-(defn add-event [store event]
+(defn add-event! [store event]
   (swap! store update :events conj event))
 
 
@@ -26,14 +26,14 @@
         (timbre/info "Starting EventStore component.")
         (assoc this
                :store     store
-               :add-event (partial add-event store)))))
+               :add-event-fn! (partial add-event! store)))))
 
   (stop [this]
     (if (get this :store)
       (do
         (timbre/info "Stopping EventStore component.")
         (reset! store store-init)
-        (assoc this :store nil :add-event nil))
+        (assoc this :store nil :add-event-fn! nil))
       (do
         (timbre/info "Stopping EventStore component but no server instance found!")
         this))))
@@ -57,9 +57,9 @@
   @store
   (reset! store store-init)
 
-  (add-event {:a :b})
-  (add-event {:c :d})
-  (add-event {:abc :def})
+  (add-event! {:a :b})
+  (add-event! {:c :d})
+  (add-event! {:abc :def})
 
   ;; https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
   ;; Används av Google Docs

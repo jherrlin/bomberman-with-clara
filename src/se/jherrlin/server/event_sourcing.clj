@@ -78,22 +78,22 @@
 
   (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
 
-  (event-store/add-event
+  (event-store/add-event!
    (create-game repl-subject "First game" "my-secret"))
 
-  (event-store/add-event
+  (event-store/add-event!
    (join-game
     repl-subject
     (java.util.UUID/randomUUID) ;; event id
     "Killer"))
 
-  (event-store/add-event
+  (event-store/add-event!
    (join-game
     #uuid "218efd63-3ac5-47b4-9490-c2b77ac728ba"
     (java.util.UUID/randomUUID) ;; event id
     "Hitman"))
 
-  (event-store/add-event
+  (event-store/add-event!
    (start-game
     #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"))
 
@@ -104,7 +104,7 @@
    :time         #inst "2021-09-10T08:11:29.559-00:00",
    :content-type "application/edn"}
 
-  (event-store/add-event
+  (event-store/add-event!
    (player-action
     #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
     {:action  :move
