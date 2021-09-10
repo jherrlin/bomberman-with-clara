@@ -6,6 +6,11 @@
 (def initial-game-state {})
 (defonce game-state (atom initial-game-state))
 
+(comment
+  @game-state
+  (reset! game-state initial-game-state)
+  )
+
 (defrecord GameState [args event-store]
   component/Lifecycle
 

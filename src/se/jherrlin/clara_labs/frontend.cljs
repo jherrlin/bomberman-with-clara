@@ -168,6 +168,18 @@
   ;; (like the components that will use the keybinding)
   )
 
+
+(comment
+  (chsk-send! [:game/create {:game-name "FireGame" :password "pwd"}])
+  (chsk-send! [:game/list nil]
+              5000
+                 (fn [cb-reply]
+                   (if (cb-success? cb-reply)
+                     (println "Success: "cb-reply)
+                     (println "Error: "cb-reply))))
+  (chsk-send! [:game/join {:game-name "FireGame" :password "pwd"}])
+  )
+
 (defn init []
   (re-frame/dispatch-sync [::initialize-db])
   (println "Hello World!")

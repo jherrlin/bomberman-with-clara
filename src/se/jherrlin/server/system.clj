@@ -9,6 +9,9 @@
    [se.jherrlin.server.components.sente :as components.sente]
    [se.jherrlin.server.components.chime :as components.chime]
    [se.jherrlin.server.components.timbre :as components.timbre]
+   [se.jherrlin.server.components.event-store :as components.event-store]
+   [se.jherrlin.server.components.game-state :as components.game-state]
+   [se.jherrlin.server.game-state :as game-state]
    [se.jherrlin.server.endpoints :as server.endpoints]
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
@@ -19,66 +22,22 @@
   (:gen-class))
 
 
-(defonce game-state
-  (atom
-   {:players    {1 {:position                 [1 1]
-                    :fire-length              3
-                    :id                       1
-                    :sign                     "1"
-                    :max-nr-of-bombs-for-user 3
-                    :user-facing-direction    :south
-                    }}
-    :stones     [#_[2 1] [3 1] [4 1] [5 1]
-                 [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
-                 [1 3]
-                 [1 4]
-                 ]
-    :board      board/board2
-    :dead-users {}
-    :bombs      []
-    :fire       []}))
-
-(comment
-  (reset! game-state
-          {:players    {1 {:position                 [1 1]
-                           :fire-length              3
-                           :id                       1
-                           :sign                     "1"
-                           :max-nr-of-bombs-for-user 3
-                           :user-facing-direction    :south
-                           }}
-           :stones     [#_[2 1] [3 1] [4 1] [5 1]
-                        [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
-                        [1 3]
-                        [1 4]
-                        ]
-           :board      board/board2
-           :dead-users {}
-           :bombs      []
-           :fire       []})
-  )
-
 (defonce incomming-actions-state
   (atom {}))
 
 
 
 ;; gs = game state
-(defn gs-player-current-xy  [game-state player-id] (get-in game-state [:players player-id :position]))
-(defn gs-player-fire-length [game-state player-id] (get-in game-state [:players player-id :fire-length]))
-
-(defn gs-player-max-number-of-bombs [game-state player-id]
-  (get-in game-state [:players player-id :max-nr-of-bombs-for-user]))
-(defn gs-player-facing-direction [game-state player-id]
-  (get-in game-state [:players player-id :user-facing-direction]))
-(defn gs-board              [game-state]           (get-in game-state [:board]))
-(defn gs-stones             [game-state]           (get-in game-state [:stones]))
-(defn gs-fires              [game-state]           (get-in game-state [:fire]))
-(defn gs-players            [game-state]           (get-in game-state [:players]))
-(defn gs-bombs              [game-state]           (get-in game-state [:bombs]))
-(defn gs-flying-bombs       [game-state]           (get-in game-state [:flying-bombs]))
-
-
+(defn gs-player-current-xy          [game-state player-id] (get-in game-state [:players player-id :position]))
+(defn gs-player-fire-length         [game-state player-id] (get-in game-state [:players player-id :fire-length]))
+(defn gs-player-max-number-of-bombs [game-state player-id] (get-in game-state [:players player-id :max-nr-of-bombs-for-user]))
+(defn gs-player-facing-direction    [game-state player-id] (get-in game-state [:players player-id :user-facing-direction]))
+(defn gs-board                      [game-state]           (get-in game-state [:board]))
+(defn gs-stones                     [game-state]           (get-in game-state [:stones]))
+(defn gs-fires                      [game-state]           (get-in game-state [:fire]))
+(defn gs-players                    [game-state]           (get-in game-state [:players]))
+(defn gs-bombs                      [game-state]           (get-in game-state [:bombs]))
+(defn gs-flying-bombs               [game-state]           (get-in game-state [:flying-bombs]))
 
 
 (defmulti command->engine-fact (fn [game-state command] (:action command)))
@@ -205,21 +164,27 @@
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
 
-(defn system [{:keys [scheduler timbre webserver ws-handler http-handler]}]
+
+
+
+(defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
   (timbre/info "Creating system.")
   (component/system-map
-   :game-state        game-state
    :incomming-actions incomming-actions-state
+   :event-store       (components.event-store/create)
+   :game-state        (component/using
+                       (components.game-state/create (:projection-fn game-state))
+                       [:event-store])
    :logging           (components.timbre/create timbre)
    :scheduler         (component/using
                        (components.chime/create scheduler)
                        [:game-state :incomming-actions :websocket])
    :websocket         (component/using
                        (components.sente/create {:handler ws-handler})
-                       [:game-state :incomming-actions])
+                       [:game-state :incomming-actions :event-store])
    :router            (component/using
                        (components.router/create {:handler http-handler})
-                       [:websocket :logging :game-state :incomming-actions])
+                       [:websocket :logging :game-state :incomming-actions :event-store])
    :webserver         (component/using
                        (components.httpkit/create webserver)
                        [:logging :router])))
@@ -227,13 +192,14 @@
 
 (defonce production
   (system
-   {:http-handler #'server.endpoints/handler
+   {:game-state   {:projection-fn game-state/projection}
+    :http-handler #'server.endpoints/handler
     :webserver    {:port 3005}
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 #_(Duration/ofMinutes 30)
-                                                 (Duration/ofMillis 200))}}))
+                                                 (Duration/ofMinutes 1)
+                                                 #_(Duration/ofMillis 200))}}))
 
 
 (comment

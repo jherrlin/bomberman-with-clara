@@ -5,14 +5,20 @@
 (defonce store-init {:events '()})
 (defonce store (atom store-init))
 
+(comment
+  (reset! store store-init)
+  )
+
 (defn add-event [store event]
   (swap! store update :events conj event))
+
+
 
 (defrecord EventStore [args]
   component/Lifecycle
 
   (start [this]
-    (if (:server this)
+    (if (:store this)
       (do
         (timbre/info "Starting EventStore component but server is already runnig.")
         this)

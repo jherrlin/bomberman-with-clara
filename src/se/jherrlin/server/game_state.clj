@@ -20,7 +20,7 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/create-game
   [game-state {:keys [subject data] :as event}]
-  (assoc-in game-state [:games subject] data))
+  (assoc-in game-state [:games subject] (assoc data :subject subject)))
 
 (defmethod projection :se.jherrlin.bomberman.game/join-game
   [game-state {:keys [subject data] :as event}]

@@ -20,7 +20,7 @@
       (require sym)
       ((resolve (symbol (str sym "/get-sch-adapter")))))))
 
-(defrecord SenteWebsocket [args game-state incomming-actions]
+(defrecord SenteWebsocket [args game-state incomming-actions event-store]
   component/Lifecycle
   (start [this]
     (if (::server this)
@@ -34,7 +34,8 @@
                   (future (handler
                            (assoc ws-event
                                   :game-state        game-state
-                                  :incomming-actions incomming-actions)))))
+                                  :incomming-actions incomming-actions
+                                  :event-store       event-store)))))
             sch-adapter                                (get-sch-adapter)
             {:keys [ch-recv send-fn connected-uids
                     ajax-post-fn ajax-get-or-ws-handshake-fn]}
