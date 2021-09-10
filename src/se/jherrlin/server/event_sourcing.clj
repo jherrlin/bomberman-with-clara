@@ -1,6 +1,5 @@
 (ns se.jherrlin.server.event-sourcing
-  (:require [se.jherrlin.server.event-sourcing.event-store :as event-store]
-            [se.jherrlin.clara-labs.board :as board]))
+  (:require [se.jherrlin.clara-labs.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.server.event-sourcing)
@@ -78,77 +77,6 @@
 
 
 (comment
-
   (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
 
-  (event-store/add-event!
-   (create-game repl-subject "First game" "my-secret"))
-
-  (event-store/add-event!
-   (join-game
-    repl-subject
-    (java.util.UUID/randomUUID) ;; event id
-    "Killer"))
-
-  (event-store/add-event!
-   (join-game
-    #uuid "218efd63-3ac5-47b4-9490-c2b77ac728ba"
-    (java.util.UUID/randomUUID) ;; event id
-    "Hitman"))
-
-  (event-store/add-event!
-   (start-game
-    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"))
-
-  {:id           #uuid "49d1d65a-67e2-4ea8-b338-f5a431827097",
-   :source       "urn:se:jherrlin:bomberman:game",
-   :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "start",
-   :time         #inst "2021-09-10T08:11:29.559-00:00",
-   :content-type "application/edn"}
-
-  (event-store/add-event!
-   (player-action
-    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
-    {:action  :move
-     :user-id 1
-     :payload {:direction :east}}))
-
-  {:id           #uuid "11a6d87f-5f9b-4287-98b4-f3d13434717c",
-   :source       "urn:se:jherrlin:bomberman:player",
-   :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "player-action",
-   :time         #inst "2021-09-10T08:12:49.273-00:00",
-   :content-type "application/edn",
-   :data         {:action :move, :user-id 1, :payload {:direction :east}}}
-
-  (player-action
-   #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
-   {:action  :place-bomb
-    :user-id 1})
-
-  {:id           #uuid "050b9a73-9c03-4c75-8d10-b8a2d8b9f4bf",
-   :source       "urn:se:jherrlin:bomberman:player",
-   :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "player-action",
-   :time         #inst "2021-09-10T08:15:07.737-00:00",
-   :content-type "application/edn",
-   :data         {:action :place-bomb, :user-id 1}}
-
-  (player-action
-   #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
-   {:action  :throw-bomb
-    :user-id 1})
-
-  (end-game
-   #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
-   "Killer")
-
-  {:id           #uuid "43eef471-caf3-4446-b52b-27eece3d0381",
-   :source       "urn:se:jherrlin:bomberman:game",
-   :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "end",
-   :time         #inst "2021-09-10T08:13:23.815-00:00",
-   :content-type "application/edn",
-   :data         {:winner "Killer"}}
   )

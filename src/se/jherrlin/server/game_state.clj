@@ -1,6 +1,5 @@
 (ns se.jherrlin.server.game-state
-  (:require [se.jherrlin.server.event-sourcing.event-store :as event-store]
-            [se.jherrlin.server.event-sourcing :as event-sourcing]
+  (:require [se.jherrlin.server.event-sourcing :as event-sourcing]
             [clojure.string :as str]))
 
 (defn urn->qualified-keyword
