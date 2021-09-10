@@ -4,6 +4,14 @@
   (remove-ns 'se.jherrlin.server.event-sourcing.create-events)
   )
 
+(defn template [source type data]
+  {:id           (java.util.UUID/randomUUID) ;; event id
+   :source       source
+   :subject      (java.util.UUID/randomUUID) ;; game id
+   :type         type
+   :time         (java.util.Date.)
+   :content-type "application/edn"
+   :data         data})
 
 (defn create-game [{:keys [data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
@@ -27,7 +35,7 @@
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:game"
    :subject      subject                     ;; game id
-   :type         "start-game"
+   :type         "start"
    :time         (java.util.Date.)
    :content-type "application/edn"})
 
@@ -44,7 +52,7 @@
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:game"
    :subject      subject                     ;; game id
-   :type         "end-game"
+   :type         "end"
    :time         (java.util.Date.)
    :content-type "application/edn"
    :data         data})
