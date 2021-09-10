@@ -1,5 +1,9 @@
 (ns se.jherrlin.server.event-sourcing.create-events)
 
+(comment
+  (remove-ns 'se.jherrlin.server.event-sourcing.create-events)
+  )
+
 
 (defn create-game [{:keys [data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
@@ -27,11 +31,11 @@
    :time         (java.util.Date.)
    :content-type "application/edn"})
 
-(defn user-action [{:keys [subject data]}]
+(defn player-action [{:keys [subject data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:player"
    :subject      subject                     ;; game id
-   :type         "user-action"
+   :type         "player-action"
    :time         (java.util.Date.)
    :content-type "application/edn"
    :data         data})

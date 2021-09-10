@@ -20,8 +20,8 @@
   (create-events/start-game
    {:subject subject}))
 
-(defn user-action [subject action]
-  (create-events/user-action
+(defn player-action [subject action]
+  (create-events/player-action
    {:subject subject
     :data    action}))
 
@@ -76,7 +76,7 @@
    :time         #inst "2021-09-10T08:11:29.559-00:00",
    :content-type "application/edn"}
 
-  (user-action
+  (player-action
    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
    {:action  :move
     :user-id 1
@@ -85,12 +85,12 @@
   {:id           #uuid "11a6d87f-5f9b-4287-98b4-f3d13434717c",
    :source       "urn:se:jherrlin:bomberman:player",
    :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "user-action",
+   :type         "player-action",
    :time         #inst "2021-09-10T08:12:49.273-00:00",
    :content-type "application/edn",
    :data         {:action :move, :user-id 1, :payload {:direction :east}}}
 
-  (user-action
+  (player-action
    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
    {:action  :place-bomb
     :user-id 1})
@@ -98,12 +98,12 @@
   {:id           #uuid "050b9a73-9c03-4c75-8d10-b8a2d8b9f4bf",
    :source       "urn:se:jherrlin:bomberman:player",
    :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "user-action",
+   :type         "player-action",
    :time         #inst "2021-09-10T08:15:07.737-00:00",
    :content-type "application/edn",
    :data         {:action :place-bomb, :user-id 1}}
 
-  (user-action
+  (player-action
    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
    {:action  :throw-bomb
     :user-id 1})
