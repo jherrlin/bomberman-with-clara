@@ -1,90 +1,97 @@
 (ns se.jherrlin.server.event-sourcing
-  (:require [se.jherrlin.server.event-sourcing.create-events :as create-events]
-            [se.jherrlin.server.event-sourcing.event-store :as event-store]
+  (:require [se.jherrlin.server.event-sourcing.event-store :as event-store]
             [se.jherrlin.clara-labs.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.server.event-sourcing)
   )
 
-(defn create-game [game-name password]
-  (create-events/create-game
-   {:data
-    {:game-name     game-name
-     :game-password password
-     :board         board/board2
-     :stones        [[1 2] [3 3] [4 4] [4 5] [5 5] [5 6] [6 7] [7 8] [8 9]]}}))
+(defn- template
+  ([source subject type]
+   (template source subject type nil))
+  ([source subject type data]
+   (cond-> {:id           (java.util.UUID/randomUUID) ;; event id
+            :source       source
+            :subject      subject
+            :type         type
+            :time         (java.util.Date.)
+            :content-type "application/edn"}
+     data (assoc :data data))))
 
-(defn join-game [subject player-name player-id]
-  (create-events/join-game
-   {:subject subject
-    :data    {:player-id   player-id
-              :player-name player-name}}))
+(defn create-game [subject game-name password]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "create-game"
+   {:game-state    :created
+    :game-name     game-name
+    :game-password password
+    :board         #_board/board2 (board/init 6)
+    :stones        [[1 2] [3 3] [4 4] [4 5] [5 5] [5 6] [6 7] [7 8] [8 9]]}))
+
+(defn join-game [subject player-id player-name]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "join-game"
+   {:player-id   player-id
+    :player-name player-name}))
 
 (defn start-game [subject]
-  (create-events/start-game
-   {:subject subject}))
-
-(defn player-action [subject action]
-  (create-events/player-action
-   {:subject subject
-    :data    action}))
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "start"))
 
 (defn end-game [subject winner]
-  (create-events/end-game
-   {:subject subject
-    :data    {:winner winner}}))
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "end"
+   {:winner winner}))
 
-(defn player-move [user-id direction]
-  (create-events/template
+(defn player-move [subject user-id direction]
+  (template
    "urn:se:jherrlin:bomberman:player"
+   subject
    "move"
    {:user-id   user-id
     :direction direction}))
 
-(defn player-place-bomb [user-id]
-  (create-events/template
+(defn player-place-bomb [subject user-id]
+  (template
    "urn:se:jherrlin:bomberman:player"
+   subject
    "place-bomb"
    {:user-id user-id}))
 
-(defn player-throw-bomb [user-id]
-  (create-events/template
+(defn player-throw-bomb [subject user-id]
+  (template
    "urn:se:jherrlin:bomberman:player"
+   subject
    "throw-bomb"
    {:user-id user-id}))
 
-(comment
-  (event-store/add-event
-   (create-game "First game" "my-secret"))
 
-  {:id           #uuid "b3853d20-cc86-4d3d-96c7-594ab7c1de7e",
-   :source       "urn:se:jherrlin:bomberman:game",
-   :subject      #uuid "d26460aa-7f4a-48c1-8bfa-c6dc2f37006a",
-   :type         "create-game",
-   :time         #inst "2021-09-10T08:16:54.066-00:00",
-   :content-type "application/edn",
-   :data
-   {:game-name     "First game",
-    :join-password "my-secret",
-    :board         [{:x 0, :y 0, :type :floor}],
-    :stones        [[1 2] [1 3] [1 4]]}}
+
+(comment
+
+  (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
+
+  (event-store/add-event
+   (create-game repl-subject "First game" "my-secret"))
 
   (event-store/add-event
    (join-game
-    #uuid "8633f232-8628-4c0a-80d6-bccea44c723e"
+    repl-subject
     (java.util.UUID/randomUUID) ;; event id
     "Killer"))
 
-  {:id           #uuid "dd38d58f-1a2c-4ac2-b9b0-781e64338ab2",
-   :source       "urn:se:jherrlin:bomberman:game",
-   :subject      #uuid "8633f232-8628-4c0a-80d6-bccea44c723e",
-   :type         "join-game",
-   :time         #inst "2021-09-10T08:10:57.830-00:00",
-   :content-type "application/edn",
-   :data
-   {:player-id   #uuid "cafd9e3b-9598-4ff9-8d88-5838d4af77d0",
-    :player-name "Killer"}}
+  (event-store/add-event
+   (join-game
+    #uuid "218efd63-3ac5-47b4-9490-c2b77ac728ba"
+    (java.util.UUID/randomUUID) ;; event id
+    "Hitman"))
 
   (event-store/add-event
    (start-game

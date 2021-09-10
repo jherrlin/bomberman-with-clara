@@ -1,14 +1,11 @@
 (ns se.jherrlin.server.game-state
   (:require [se.jherrlin.server.event-sourcing.event-store :as event-store]
+            [se.jherrlin.server.event-sourcing :as event-sourcing]
             [clojure.string :as str]))
 
 (def initial-game-state {})
 (defonce game-state (atom initial-game-state))
 
-(comment
-  @game-state
-  (reset! game-state initial-game-state)
-  )
 
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."
@@ -19,8 +16,6 @@
                 (str/replace #":" "."))
             "/"
             type)))
-
-
 
 (defn event->projection-key [{:keys [source type] :as event}]
   (urn->qualified-keyword source type))
@@ -33,17 +28,22 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/join-game
   [game-state {:keys [subject data] :as event}]
-  (assoc-in @game-state [:games subject] data))
+  (let [players-in-game    (get-in game-state [:games subject :players])
+        number-of-players  (count players-in-game)
+        player-gets-number (inc number-of-players)]
+    (assoc-in game-state
+              [:games subject :players (:player-id data)]
+              (assoc data :player-nr player-gets-number))))
+
+(defmethod projection :se.jherrlin.bomberman.game/start
+  [game-state {:keys [subject data] :as event}]
+  (assoc-in game-state [:games subject :game-state] :started))
 
 
-
-
-
-;; Handlers for resulting dispatch values
 (defmethod projection :default [game-state event]
-  (println game-state)
+  (println "Error! Could not find projection for event:")
+  ;; (println game-state)
   (clojure.pprint/pprint event))
-
 
 (add-watch event-store/store :game-state-projection
            (fn [key atom old-state new-state]
@@ -53,8 +53,26 @@
                  (reset! game-state new-game-state)))))
 
 
-(:events @event-store/store)
-@game-state
+(comment
+  @game-state
+  (reset! game-state initial-game-state)
+  @event-store/store
+  (reset! event-store/store event-store/store-init)
+
+  (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
+  (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0" #_(java.util.UUID/randomUUID))
+  (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
+
+  (-> {}
+      (projection (event-sourcing/create-game repl-subject "First game" "my-secret"))
+      (projection (event-sourcing/join-game   repl-subject player-1-ws-id "John"))
+      (projection (event-sourcing/join-game   repl-subject player-2-ws-id "Hannah"))
+      (projection (event-sourcing/start-game  repl-subject))
+      (projection (event-sourcing/player-move repl-subject ))
+      )
+  )
+
+
 
 (comment
   (urn->qualified-keyword "urn:se:jherrlin:bomberman:game" "start")
