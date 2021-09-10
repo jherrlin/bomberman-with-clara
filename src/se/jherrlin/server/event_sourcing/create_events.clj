@@ -1,27 +1,23 @@
 (ns se.jherrlin.server.event-sourcing.create-events)
 
 
-(defn create-game [{:keys [board game-name init-game-state password]}]
+(defn create-game [{:keys [data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:game"
    :subject      (java.util.UUID/randomUUID) ;; game id
    :type         "create-game"
    :time         (java.util.Date.)
    :content-type "application/edn"
-   :data         {:game-name           game-name
-                  :join-password       password
-                  :board               board
-                  :initial-board-state init-game-state}})
+   :data         data})
 
-(defn join-game [{:keys [subject player-name]}]
+(defn join-game [{:keys [subject data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:game"
    :subject      subject                     ;; game id
    :type         "join-game"
    :time         (java.util.Date.)
    :content-type "application/edn"
-   :data         {:player-id   (java.util.UUID/randomUUID)
-                  :player-name player-name}})
+   :data         data})
 
 (defn start-game [{:keys [subject]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
@@ -31,14 +27,14 @@
    :time         (java.util.Date.)
    :content-type "application/edn"})
 
-(defn user-action [{:keys [subject action]}]
+(defn user-action [{:keys [subject data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
    :source       "urn:se:jherrlin:bomberman:player"
    :subject      subject                     ;; game id
    :type         "user-action"
    :time         (java.util.Date.)
    :content-type "application/edn"
-   :data         action})
+   :data         data})
 
 (defn end-game [{:keys [subject data]}]
   {:id           (java.util.UUID/randomUUID) ;; event id
