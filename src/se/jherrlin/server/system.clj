@@ -16,10 +16,28 @@
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
    [se.jherrlin.server.user-commands :as user-commands]
+   [se.jherrlin.server.events :as events]
    [se.jherrlin.clara-labs.board :as board]
    [taoensso.timbre :as timbre])
   (:import [java.time Instant Duration])
   (:gen-class))
+
+{:players    {1 {:position                 [1 1]
+                 :fire-length              3
+                 :id                       1
+                 :sign                     "1"
+                 :max-nr-of-bombs-for-user 3
+                 :user-facing-direction    :south
+                 }}
+ :stones     [#_[2 1] [3 1] [4 1] [5 1]
+              [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
+              [1 3]
+              [1 4]
+              ]
+ :board      board/board2
+ :dead-users {}
+ :bombs      []
+    :fire       []}
 
 
 (defonce incomming-actions-state
@@ -142,6 +160,7 @@
 
 (defn game-loop [task-execution-timestamp game-state incomming-actions-state ws-broadcast-fn]
   (println "Game loop is now started " task-execution-timestamp)
+  (def game-state game-state)
   (try
     (let [user-action-facts   (incomming-actions incomming-actions-state game-state)
           _                   (def user-action-facts user-action-facts)
@@ -206,10 +225,24 @@
   (alter-var-root #'production component/start)
   (alter-var-root #'production component/stop)
 
+  (def add-event-fn! (-> production :event-store :add-event-fn!))
+  (-> production :game-state :game-state deref)
+  (-> production :event-store :store deref)
+
+
+  (java.util.UUID/randomUUID)
+  (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
+  (def player-1-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
+  (def player-2-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
+
+  (add-event-fn! (events/create-game repl-subject "First game" "my-secret"))
+  (add-event-fn! (events/join-game   repl-subject player-1-id "John"))
+  (add-event-fn! (events/join-game   repl-subject player-2-id "Hannah"))
+  (add-event-fn! (events/start-game  repl-subject))
+  (add-event-fn! (events/player-move repl-subject player-1-id :north))
+
   (game-loop (java.util.Date.) game-state incomming-actions-state (get-in production [:websocket :broadcast-fn]))
 
-
-  @game-state
 
   (user-commands/register-incomming-user-action!
    incomming-actions-state

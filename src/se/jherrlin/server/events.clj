@@ -1,8 +1,8 @@
-(ns se.jherrlin.server.event-sourcing
+(ns se.jherrlin.server.events
   (:require [se.jherrlin.clara-labs.board :as board]))
 
 (comment
-  (remove-ns 'se.jherrlin.server.event-sourcing)
+  (remove-ns 'se.jherrlin.server.events)
   )
 
 (defn- template

@@ -1,5 +1,5 @@
 (ns se.jherrlin.server.game-state
-  (:require [se.jherrlin.server.event-sourcing :as event-sourcing]
+  (:require [se.jherrlin.server.events :as events]
             [clojure.string :as str]))
 
 (defn urn->qualified-keyword
@@ -34,10 +34,16 @@
   [game-state {:keys [subject data] :as event}]
   (assoc-in game-state [:games subject :game-state] :started))
 
+(defmethod projection :se.jherrlin.bomberman.player/move
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [direction user-id]} data]
+    (assoc-in game-state [:games subject :players user-id :user-facing-direction] direction)))
+
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")
   ;; (println game-state)
-  (clojure.pprint/pprint event))
+  (clojure.pprint/pprint event)
+  game-state)
 
 
 (comment
@@ -47,10 +53,10 @@
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
 
   (-> {}
-      (projection (event-sourcing/create-game repl-subject "First game" "my-secret"))
-      (projection (event-sourcing/join-game   repl-subject player-1-ws-id "John"))
-      (projection (event-sourcing/join-game   repl-subject player-2-ws-id "Hannah"))
-      (projection (event-sourcing/start-game  repl-subject))
-      (projection (event-sourcing/player-move repl-subject ))
+      (projection (events/create-game repl-subject "First game" "my-secret"))
+      (projection (events/join-game   repl-subject player-1-ws-id "John"))
+      (projection (events/join-game   repl-subject player-2-ws-id "Hannah"))
+      (projection (events/start-game  repl-subject))
+      (projection (events/player-move repl-subject ))
       )
   )
