@@ -34,8 +34,11 @@
    "urn:se:jherrlin:bomberman:game"
    subject
    "join-game"
-   {:player-id   player-id
-    :player-name player-name}))
+   {:player-id                player-id
+    :player-name              player-name
+    :user-facing-direction    :south
+    :max-nr-of-bombs-for-user 3
+    :fire-length              3}))
 
 (defn start-game [subject]
   (template

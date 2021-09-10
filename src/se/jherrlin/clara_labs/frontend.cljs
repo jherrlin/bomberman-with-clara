@@ -177,7 +177,15 @@
                    (if (cb-success? cb-reply)
                      (println "Success: "cb-reply)
                      (println "Error: "cb-reply))))
-  (chsk-send! [:game/join {:game-name "FireGame" :password "pwd"}])
+  (chsk-send! [:game/join {:subject     #uuid "7efd2079-701a-4f85-9e99-f1a365af81c2"
+                           :player-id   #uuid "c4ca7cfe-ae84-4792-b90a-67fdb8544787"
+                           :player-name "John"
+                           :password    "pwd"}])
+  (chsk-send! [:game/join {:subject     #uuid "7efd2079-701a-4f85-9e99-f1a365af81c2"
+                           :player-id   #uuid "b8484943-798a-43db-b9da-a1e6e5ce44c0"
+                           :player-name "Hannah"
+                           :password    "pwd"}])
+
   )
 
 (defn init []

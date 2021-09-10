@@ -41,7 +41,5 @@
 (defmethod handler :game/join
   [req]
   (let [{:keys [?data ?reply-fn client-id event-store game-state incomming-actions]} req
-        {:keys [game-name password]}                                                 ?data]
-    (?reply-fn (->> req :game-state :game-state deref :games vals
-                    (filter (comp #{:created} :game-state))
-                    (map #(select-keys % [:game-name :subject]))))))
+        {:keys [subject player-id player-name password]}                             ?data]
+    (application-service/join-game (:add-event-fn! event-store) subject player-id player-name)))
