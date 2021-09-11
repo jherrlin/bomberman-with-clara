@@ -2,6 +2,7 @@
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [clara.rules.accumulators :as acc]
             [clara.tools.inspect :as inspect]
+            [se.jherrlin.server.events :as events]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.clara-labs.datetime :as datetime]
@@ -10,6 +11,10 @@
 (comment
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
   )
+
+(defprotocol CloudEvent
+  (toCloudEvent [this])
+  (cloudEvent? [this]))
 
 
 (defrecord TimestampNow         [now])
@@ -20,21 +25,21 @@
 (defrecord Stone                [game-id stone-position-xy])
 (defrecord StoneToRemove        [game-id position-xy])
 
-(defrecord UserPositionOnBoard  [game-id user-id user-current-xy])
+(defrecord PlayerPositionOnBoard  [game-id user-id user-current-xy])
 
-(defrecord UserWantsToMove      [game-id user-id current-xy direction])
-(defrecord UserMove             [game-id user-id next-position direction])
+(defrecord PlayerWantsToMove      [game-id user-id current-xy direction])
+(defrecord PlayerMove             [game-id user-id next-position direction])
 
-(defrecord UserWantsToPlaceBomb [game-id user-id current-xy fire-length timestamp max-nr-of-bombs-for-user])
+(defrecord PlayerWantsToPlaceBomb [game-id user-id current-xy fire-length timestamp max-nr-of-bombs-for-user])
 (defrecord BombOnBoard          [game-id user-id bomb-position-xy       fire-length bomb-added-timestamp])
 
-(defrecord UserWantsToThrowBomb [game-id user-id users-current-xy       user-facing-direction])
+(defrecord PlayerWantsToThrowBomb [game-id user-id users-current-xy       user-facing-direction])
 (defrecord FlyingBomb           [game-id user-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction])
 
 
 (defrule user-throws-bomb
   "A user can throw a bomb if facing direction points to it."
-  [?user-wants-to-throw-bomb <- UserWantsToThrowBomb
+  [?user-wants-to-throw-bomb <- PlayerWantsToThrowBomb
    (= ?game-id game-id)
    (= ?user-id user-id)
    (= ?users-current-xy users-current-xy)
@@ -109,16 +114,16 @@
 (defrule user-move
   "User move"
   [Board (= ?game-id game-id) (= ?board board)]
-  [?user-wants-to-move <- UserWantsToMove (= ?game-id game-id) (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
+  [?user-wants-to-move <- PlayerWantsToMove (= ?game-id game-id) (= ?user-id user-id) (= ?current-xy current-xy) (= ?direction direction)
    (#{:floor} (board/target-position-type ?board current-xy direction))]
   [:not [Stone       (= ?game-id game-id) (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= ?game-id game-id) (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
-  (insert-unconditional! (->UserMove ?game-id ?user-id (board/next-xy-position ?current-xy ?direction) ?direction)))
+  (insert-unconditional! (->PlayerMove ?game-id ?user-id (board/next-xy-position ?current-xy ?direction) ?direction)))
 
 (defrule place-bomb
   "User place bomb in her current location."
-  [UserWantsToPlaceBomb
+  [PlayerWantsToPlaceBomb
    (= ?game-id game-id)
    (= ?place-bomb-user-id user-id)
    (= ?fire-length fire-length)
@@ -135,7 +140,7 @@
 
 (defrule user-dies
   "User dies if she gets hit by fire."
-  [UserPositionOnBoard (= ?game-id game-id) (= ?user-id user-id)      (= ?user-current-xy user-current-xy)]
+  [PlayerPositionOnBoard (= ?game-id game-id) (= ?user-id user-id)      (= ?user-current-xy user-current-xy)]
   [FireOnBoard         (= ?game-id game-id) (= ?fire-user-id user-id) (= ?fire-current-xy fire-position-xy)
    (= ?fire-current-xy ?user-current-xy)]
   =>
@@ -193,7 +198,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 ;; Queries
 (defquery user-move?
   []
-  [?user-move <- UserMove])
+  [?user-move <- PlayerMove])
 
 (defquery stones-to-remove?
   []
@@ -221,7 +226,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 (defquery user-wants-to-move?
   []
-  [?user-wants-to-move <- UserWantsToMove])
+  [?user-wants-to-move <- PlayerWantsToMove])
 
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
