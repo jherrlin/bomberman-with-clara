@@ -5,7 +5,7 @@
 
 (s/def ::game-id    (s/or :s string? :u uuid?))
 (s/def ::action     #{:place-bomb :move :throw-bomb})
-(s/def ::user-id    number?)
+(s/def ::user-id    (s/or :n number? :u uuid?))
 (s/def ::direction  #{:west :east :north :south})
 (s/def ::move       (s/keys :req-un [::game-id ::action ::user-id ::direction]))
 (s/def ::place-bomb (s/keys :req-un [::game-id ::action ::user-id]))
@@ -20,13 +20,13 @@
       (timbre/error "Command dont confirm to spec: " command))))
 
 (defmethod register-incomming-user-command! :move [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id action user-id] m))
+  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
 
 (defmethod register-incomming-user-command! :place-bomb [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id action user-id] m))
+  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
 
 (defmethod register-incomming-user-command! :throw-bomb [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id action user-id] m))
+  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
 
 (defmethod register-incomming-user-command! :default [incomming-commands-state m]
   (throw (Exception. (str "In dont know what to do with" m))))
