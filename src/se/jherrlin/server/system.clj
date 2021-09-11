@@ -243,24 +243,24 @@
   (game-loop (java.util.Date.) game-state' incomming-actions-state broadcast-fn! add-event-fn!)
 
 
-  (user-commands/register-incomming-user-action!
+  (user-commands/register-incomming-user-command!
    incomming-actions-state
    {:action    :move
     :user-id   1
     :direction :east})
 
-  (user-commands/register-incomming-user-action!
+  (user-commands/register-incomming-user-command!
    incomming-actions-state
    {:action    :move
     :user-id   1
     :direction :west})
 
-  (user-commands/register-incomming-user-action!
+  (user-commands/register-incomming-user-command!
    incomming-actions-state
    {:action  :place-bomb
     :user-id 1})
 
-  (user-commands/register-incomming-user-action!
+  (user-commands/register-incomming-user-command!
    incomming-actions-state
    {:action  :throw-bomb
     :user-id 1})

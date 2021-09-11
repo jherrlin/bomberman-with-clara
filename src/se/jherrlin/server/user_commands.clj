@@ -1,18 +1,18 @@
 (ns se.jherrlin.server.user-commands
   (:require [clojure.spec.alpha :as s]))
 
-(defmulti register-incomming-user-action! (fn [incomming-actions-state command] (:action command)))
+(defmulti register-incomming-user-command! (fn [incomming-actions-state command] (:action command)))
 
-(defmethod register-incomming-user-action! :move [incomming-actions-state {:keys [game-id action user-id] :as m}]
+(defmethod register-incomming-user-command! :move [incomming-actions-state {:keys [game-id action user-id] :as m}]
   (swap! incomming-actions-state assoc-in [game-id action user-id] m))
 
-(defmethod register-incomming-user-action! :place-bomb [incomming-actions-state {:keys [game-id action user-id] :as m}]
+(defmethod register-incomming-user-command! :place-bomb [incomming-actions-state {:keys [game-id action user-id] :as m}]
   (swap! incomming-actions-state assoc-in [game-id action user-id] m))
 
-(defmethod register-incomming-user-action! :throw-bomb [incomming-actions-state {:keys [game-id action user-id] :as m}]
+(defmethod register-incomming-user-command! :throw-bomb [incomming-actions-state {:keys [game-id action user-id] :as m}]
   (swap! incomming-actions-state assoc-in [game-id action user-id] m))
 
-(defmethod register-incomming-user-action! :default [incomming-actions-state m]
+(defmethod register-incomming-user-command! :default [incomming-actions-state m]
   (throw (Exception. (str "In dont know what to do with" m))))
 
 

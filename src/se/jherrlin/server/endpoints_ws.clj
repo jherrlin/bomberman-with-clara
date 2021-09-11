@@ -20,7 +20,7 @@
 (defmethod handler :command/user-action
   [{:keys [?reply-fn incomming-actions ?data] :as req}]
   (if (s/valid? ::user-commands/actions ?data)
-    (user-commands/register-incomming-user-action! incomming-actions ?data)
+    (user-commands/register-incomming-user-command! incomming-actions ?data)
     (timbre/error "Dont know how to handle incomming user action: " ?data)))
 
 (defmethod handler :game/create
