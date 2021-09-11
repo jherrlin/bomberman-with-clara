@@ -24,7 +24,7 @@
 
 
 
-(t/deftest user-wants-to-move
+(t/deftest player-wants-to-move
   (t/is
    (=
     (let [session  (insert-all bomberman-session
@@ -38,13 +38,13 @@
                                 (bomberman/->PlayerWantsToMove repl-game-id 7 [2 1] :west)
                                 (bomberman/->PlayerWantsToMove repl-game-id 8 [2 1] :north)])
           session' (fire-rules session)]
-      (->> (query session' bomberman/user-move?)
-           (map (comp #(into {} %) :?user-move))
+      (->> (query session' bomberman/player-move?)
+           (map (comp #(into {} %) :?player-move))
            (set)))
-    #{{:game-id repl-game-id :user-id 7, :next-position [1 1], :direction :west}
-      {:game-id repl-game-id :user-id 5, :next-position [3 1], :direction :east}
-      {:game-id repl-game-id :user-id 2, :next-position [1 2], :direction :south}
-      {:game-id repl-game-id :user-id 1, :next-position [2 1], :direction :east}}))
+    #{{:game-id repl-game-id :player-id 7, :next-position [1 1], :direction :west}
+      {:game-id repl-game-id :player-id 5, :next-position [3 1], :direction :east}
+      {:game-id repl-game-id :player-id 2, :next-position [1 2], :direction :south}
+      {:game-id repl-game-id :player-id 1, :next-position [2 1], :direction :east}}))
 
   (t/is
    (=
@@ -53,14 +53,14 @@
                                 (bomberman/->PlayerWantsToMove repl-game-id 1 [3 1] :south)
                                 (bomberman/->PlayerWantsToMove repl-game-id 2 [3 3] :east)])
           session' (fire-rules session)]
-      (->> (query session' bomberman/user-move?)
-           (map (comp #(into {} %) :?user-move))
+      (->> (query session' bomberman/player-move?)
+           (map (comp #(into {} %) :?player-move))
            (set)))
-    #{{:game-id repl-game-id :user-id 1, :next-position [3 2], :direction :south}
-      {:game-id repl-game-id :user-id 2, :next-position [4 3], :direction :east}})))
+    #{{:game-id repl-game-id :player-id 1, :next-position [3 2], :direction :south}
+      {:game-id repl-game-id :player-id 2, :next-position [4 3], :direction :east}})))
 
-(t/deftest user-cant-walk-on-bomb
-  (t/testing "User cant walk west as there is a bomb there"
+(t/deftest player-cant-walk-on-bomb
+  (t/testing "Player cant walk west as there is a bomb there"
     (t/is
      (=
       (let [session  (insert-all bomberman-session
@@ -70,12 +70,12 @@
                                   (bomberman/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
                                   (bomberman/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now!))])
             session' (fire-rules session)]
-        (->> (query session' bomberman/user-move?)
-             (map (comp #(into {} %) :?user-move))
+        (->> (query session' bomberman/player-move?)
+             (map (comp #(into {} %) :?player-move))
              (set)))
-      #{{:game-id repl-game-id :user-id 2, :next-position [1 1], :direction :west}}))))
+      #{{:game-id repl-game-id :player-id 2, :next-position [1 1], :direction :west}}))))
 
-(t/deftest user-wants-to-place-bomb-on-board
+(t/deftest player-wants-to-place-bomb-on-board
   (t/testing "should result in bomb on board."
     (t/is
      (=
@@ -89,7 +89,7 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :bomb-position-xy [1 1],
           :fire-length 3,
           :bomb-added-timestamp #inst "2021-09-05T19:16:52.292-00:00"}}}))))
@@ -114,50 +114,50 @@
                                 (set))})
       {:fire-on-board
        #{{:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [3 3],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [1 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [1 2],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [4 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [1 3],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [3 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [4 3],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [3 2],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [2 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
          {:game-id repl-game-id
-          :user-id 1,
+          :player-id 1,
           :fire-position-xy [2 3],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}},
        :exploading-bombs
-       #{{:game-id repl-game-id :user-id 1, :position-xy [1 3], :fire-length 2}
-         {:game-id repl-game-id :user-id 1, :position-xy [3 3], :fire-length 2}
-         {:game-id repl-game-id :user-id 1, :position-xy [3 1], :fire-length 2}
-         {:game-id repl-game-id :user-id 1, :position-xy [1 1], :fire-length 2}}}))))
+       #{{:game-id repl-game-id :player-id 1, :position-xy [1 3], :fire-length 2}
+         {:game-id repl-game-id :player-id 1, :position-xy [3 3], :fire-length 2}
+         {:game-id repl-game-id :player-id 1, :position-xy [3 1], :fire-length 2}
+         {:game-id repl-game-id :player-id 1, :position-xy [1 1], :fire-length 2}}}))))
 
 (t/deftest exploading-bombs-create-fire-and-fire-destroys-stone
   (t/is
@@ -182,18 +182,18 @@
                               (set))})
     {:fire-on-board
      #{{:game-id repl-game-id
-        :user-id 1,
+        :player-id 1,
         :fire-position-xy [1 2],
         :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
        {:game-id repl-game-id
-        :user-id 1,
+        :player-id 1,
         :fire-position-xy [1 1],
         :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
        {:game-id repl-game-id
-        :user-id 1,
+        :player-id 1,
         :fire-position-xy [2 1],
         :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}},
-     :exploading-bombs #{{:game-id repl-game-id :user-id 1, :position-xy [1 1], :fire-length 10}},
+     :exploading-bombs #{{:game-id repl-game-id :player-id 1, :position-xy [1 1], :fire-length 10}},
      :stones-to-remove #{{:game-id repl-game-id :position-xy [1 2]}
                          {:game-id repl-game-id :position-xy [2 1]}}})))
 
@@ -212,11 +212,11 @@
              (map (comp #(into {} %) :?fire-on-board))
              (set)))
       #{{:game-id repl-game-id
-         :user-id 1,
+         :player-id 1,
          :fire-position-xy [2 1],
          :fire-start-timestamp #inst "2021-08-28T15:03:03.000-00:00"}}))))
 
-(t/deftest user-dies-if-hit-by-fire
+(t/deftest player-dies-if-hit-by-fire
   (t/is
    (=
     (let [session  (insert-all bomberman-session
@@ -225,10 +225,10 @@
                                 (bomberman/->FireOnBoard         repl-game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
                                 (bomberman/->PlayerPositionOnBoard repl-game-id 1 [1 1])])
           session' (fire-rules session)]
-      (->> (query session' bomberman/dead-users?)
-           (map (comp #(into {} %) :?dead-users))
+      (->> (query session' bomberman/dead-players?)
+           (map (comp #(into {} %) :?dead-players))
            (set)))
-    #{{:game-id repl-game-id :user-id 1, :killed-by-user-id 2}})))
+    #{{:game-id repl-game-id :player-id 1, :killed-by-player-id 2}})))
 
 (t/deftest two-bombs-cant-be-place-in-the-same-xy
   (t/is
@@ -242,13 +242,13 @@
                             (set))})
     {:bombs-on-board
      #{{:game-id repl-game-id
-        :user-id 1,
+        :player-id 1,
         :bomb-position-xy [1 1],
         :fire-length 10,
         :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}})))
 
-(t/deftest user-cant-put-to-many-bombs
-  (t/testing "User can't put more bombs than it limit."
+(t/deftest player-cant-put-to-many-bombs
+  (t/testing "Player can't put more bombs than it limit."
     (t/is
      (=
       (let [session  (insert-all bomberman-session
@@ -261,17 +261,17 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [2 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
          {:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [1 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
          {:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [3 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
@@ -289,17 +289,17 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [2 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
          {:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [4 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}
          {:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [3 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
@@ -315,7 +315,7 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [2 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))
@@ -330,7 +330,7 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [1 1],
           :fire-length          10,
           :bomb-added-timestamp #inst "2021-08-28T15:03:47.100-00:00"}}}))))
@@ -351,13 +351,13 @@
                             (set))})
     {:bombs-on-board
      #{{:game-id              repl-game-id
-        :user-id              1,
+        :player-id              1,
         :bomb-position-xy     [1 2],
         :fire-length          3,
         :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
      :flying-bombs
      #{{:game-id                repl-game-id
-        :user-id                1,
+        :player-id                1,
         :flying-bomb-current-xy [2 1],
         :fire-length            3,
         :bomb-added-timestamp   #inst "2021-09-07T19:50:17.258-00:00",
@@ -377,7 +377,7 @@
                             (set))})
     {:bombs-on-board
      #{{:game-id              repl-game-id
-        :user-id              1,
+        :player-id              1,
         :bomb-position-xy     [3 1],
         :fire-length          3,
         :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
@@ -398,7 +398,7 @@
                             (set))})
     {:bombs-on-board
      #{{:game-id              repl-game-id
-        :user-id              1,
+        :player-id              1,
         :bomb-position-xy     [4 1],
         :fire-length          3,
         :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
@@ -420,7 +420,7 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :user-id              1,
+          :player-id              1,
           :bomb-position-xy     [4 1],
           :fire-length          3,
           :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
