@@ -143,7 +143,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
-  (insert! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
+  (insert-unconditional! (->BombExploading ?user-id ?bomb-position-xy ?fire-length)))
 
 (defrule remove-stones-hit-by-fire
   "If a stone is hit by fire, remove it."
