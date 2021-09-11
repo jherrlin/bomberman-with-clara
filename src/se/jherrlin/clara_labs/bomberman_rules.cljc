@@ -12,30 +12,21 @@
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
   )
 
-(defprotocol CloudEvent
-  (toCloudEvent [this])
-  (cloudEvent? [this]))
 
-
-(defrecord TimestampNow         [now])
-(defrecord Board                [game-id board])
-(defrecord BombExploading       [game-id player-id position-xy fire-length])
+(defrecord Board                  [game-id board])
+(defrecord BombExploading         [game-id player-id position-xy fire-length])
+(defrecord BombOnBoard            [game-id player-id bomb-position-xy       fire-length bomb-added-timestamp])
 (defrecord DeadPlayer             [game-id player-id killed-by-player-id])
-(defrecord FireOnBoard          [game-id player-id fire-position-xy fire-start-timestamp])
-(defrecord Stone                [game-id stone-position-xy])
-(defrecord StoneToRemove        [game-id position-xy])
-
-(defrecord PlayerPositionOnBoard  [game-id player-id player-current-xy])
-
-(defrecord PlayerWantsToMove      [game-id player-id current-xy direction])
+(defrecord FireOnBoard            [game-id player-id fire-position-xy fire-start-timestamp])
+(defrecord FlyingBomb             [game-id player-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction])
 (defrecord PlayerMove             [game-id player-id next-position direction])
-
+(defrecord PlayerPositionOnBoard  [game-id player-id player-current-xy])
+(defrecord PlayerWantsToMove      [game-id player-id current-xy direction])
 (defrecord PlayerWantsToPlaceBomb [game-id player-id current-xy fire-length timestamp max-nr-of-bombs-for-player])
-(defrecord BombOnBoard          [game-id player-id bomb-position-xy       fire-length bomb-added-timestamp])
-
 (defrecord PlayerWantsToThrowBomb [game-id player-id players-current-xy       player-facing-direction])
-(defrecord FlyingBomb           [game-id player-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction])
-
+(defrecord Stone                  [game-id stone-position-xy])
+(defrecord StoneToRemove          [game-id position-xy])
+(defrecord TimestampNow           [now])
 
 (defrule player-throws-bomb
   "A player can throw a bomb if facing direction points to it."
@@ -238,14 +229,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (let [session  (insert-all bomberman-session facts)
         session' (fire-rules session)]
     {:actions
-     {:player-moves                (map :?player-move                 (query session' player-move?))
-      :exploading-bombs          (map :?exploading-bombs          (query session' exploading-bombs?))
-      :bombs-on-board            (map :?bomb-on-board             (query session' bomb-on-board?))
-      :fire-on-board             (map :?fire-on-board             (query session' fire-on-board?))
-      :stones-to-remove          (map :?stones-to-remove          (query session' stones-to-remove?))
-      :dead-players                (map :?dead-players                (query session' dead-players?))
-      :flying-bombs              (map :?flying-bombs              (query session' flying-bombs?))
-      :player-wants-to-move        (map :?player-wants-to-move        (query session' player-wants-to-move?))}}))
+     {:player-moves         (map :?player-move           (query session' player-move?))
+      :exploading-bombs     (map :?exploading-bombs      (query session' exploading-bombs?))
+      :bombs-on-board       (map :?bomb-on-board         (query session' bomb-on-board?))
+      :fire-on-board        (map :?fire-on-board         (query session' fire-on-board?))
+      :stones-to-remove     (map :?stones-to-remove      (query session' stones-to-remove?))
+      :dead-players         (map :?dead-players          (query session' dead-players?))
+      :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
+      :player-wants-to-move (map :?player-wants-to-move  (query session' player-wants-to-move?))}}))
 
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
