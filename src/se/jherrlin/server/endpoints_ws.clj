@@ -1,8 +1,7 @@
 (ns se.jherrlin.server.endpoints-ws
   (:require [taoensso.timbre :as timbre]
             [se.jherrlin.server.user-commands :as user-commands]
-            [se.jherrlin.server.application-service :as application-service]
-            [clojure.spec.alpha :as s]))
+            [se.jherrlin.server.application-service :as application-service]))
 
 
 (defmulti handler :id)
@@ -19,9 +18,7 @@
 
 (defmethod handler :command/user-action
   [{:keys [?reply-fn incomming-actions ?data] :as req}]
-  (if (s/valid? ::user-commands/actions ?data)
-    (user-commands/register-incomming-user-command! incomming-actions ?data)
-    (timbre/error "Dont know how to handle incomming user action: " ?data)))
+  (user-commands/register-incomming-user-command! incomming-actions ?data))
 
 (defmethod handler :game/create
   [req]
