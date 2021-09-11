@@ -26,7 +26,10 @@
     :game-name     game-name
     :game-password password
     :board         #_board/board2 (board/init 6)
-    :stones        [[1 2] [3 3] [4 4] [4 5] [5 5] [5 6] [6 7] [7 8] [8 9]]}))
+    :stones        [[1 2] [3 3] [4 4] [4 5] [5 5] [5 6] [6 7] [7 8] [8 9]]
+    :fire         '()
+    :flying-bombs '()
+    :bombs        '()}))
 
 (defn join-game [subject player-id player-name]
   (template
@@ -37,6 +40,7 @@
     :player-name              player-name
     :user-facing-direction    :south
     :max-nr-of-bombs-for-user 3
+    :position                 [1 1]
     :fire-length              3}))
 
 (defn start-game [subject]
@@ -60,9 +64,25 @@
    {:user-id   user-id
     :direction direction}))
 
+(defn engine-action-move [subject user-id next-position direction]
+  (template
+   "urn:se:jherrlin:bomberman:rule-engine-action"
+   subject
+   "move"
+   {:user-id       user-id
+    :next-position next-position
+    :direction     direction}))
+
 (defn player-place-bomb [subject user-id]
   (template
    "urn:se:jherrlin:bomberman:player"
+   subject
+   "place-bomb"
+   {:user-id user-id}))
+
+(defn engine-action-place-bomb [subject user-id]
+  (template
+   "urn:se:jherrlin:bomberman:rule-engine-action"
    subject
    "place-bomb"
    {:user-id user-id}))
@@ -74,6 +94,12 @@
    "throw-bomb"
    {:user-id user-id}))
 
+(defn engine-action-throw-bomb [subject user-id]
+  (template
+   "urn:se:jherrlin:bomberman:rule-engine-action"
+   subject
+   "throw-bomb"
+   {:user-id user-id}))
 
 
 (comment

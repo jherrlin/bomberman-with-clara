@@ -2,6 +2,19 @@
   (:require [se.jherrlin.server.events :as events]
             [clojure.string :as str]))
 
+;; Access data in game state
+(defn player-current-xy          [game-state subject player-id] (get-in game-state [:games subject :players player-id :position]))
+(defn player-fire-length         [game-state subject player-id] (get-in game-state [:games subject :players player-id :fire-length]))
+(defn player-max-number-of-bombs [game-state subject player-id] (get-in game-state [:games subject :players player-id :max-nr-of-bombs-for-user]))
+(defn player-facing-direction    [game-state subject player-id] (get-in game-state [:games subject :players player-id :user-facing-direction]))
+(defn board                      [game-state subject]           (get-in game-state [:games subject :board]))
+(defn stones                     [game-state subject]           (get-in game-state [:games subject :stones]))
+(defn fires                      [game-state subject]           (get-in game-state [:games subject :fire]))
+(defn players                    [game-state subject]           (get-in game-state [:games subject :players]))
+(defn bombs                      [game-state subject]           (get-in game-state [:games subject :bombs]))
+(defn flying-bombs               [game-state subject]           (get-in game-state [:games subject :flying-bombs]))
+
+
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."
   [source type]
@@ -57,6 +70,5 @@
       (projection (events/join-game   repl-subject player-1-ws-id "John"))
       (projection (events/join-game   repl-subject player-2-ws-id "Hannah"))
       (projection (events/start-game  repl-subject))
-      (projection (events/player-move repl-subject ))
-      )
+      (projection (events/player-move repl-subject )))
   )

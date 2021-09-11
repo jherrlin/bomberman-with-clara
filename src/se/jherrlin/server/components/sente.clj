@@ -55,7 +55,7 @@
          :chsk-send!                    send-fn
          :connected-uids                connected-uids
          :event-msg-handler             event-msg-handler
-         :broadcast-fn                  (fn [message]
+         :broadcast-fn!                 (fn [message]
                                           (doseq [uid (-> connected-uids deref :ws)]
                                             (send-fn uid message)))
          :stop-fn                       (sente/start-server-chsk-router!

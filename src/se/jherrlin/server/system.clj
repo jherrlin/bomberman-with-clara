@@ -158,9 +158,8 @@
         (update-flying-bombs-to-gs    flying-bombs)
         (update-users-direction-in-gs user-wants-to-move))))
 
-(defn game-loop [task-execution-timestamp game-state incomming-actions-state ws-broadcast-fn]
+(defn game-loop [task-execution-timestamp game-state incomming-actions-state ws-broadcast-fn! add-event-fn!]
   (println "Game loop is now started " task-execution-timestamp)
-  (def game-state game-state)
   (try
     (let [user-action-facts   (incomming-actions incomming-actions-state game-state)
           _                   (def user-action-facts user-action-facts)
@@ -175,15 +174,13 @@
           _                   (def actions-from-enging actions-from-enging)
           new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
           _                   (def new-game-state new-game-state)]
-      (reset! game-state new-game-state)
+      ;; (reset! game-state new-game-state)
       (reset! incomming-actions-state {})
-      (ws-broadcast-fn [:new/game-state new-game-state])
+      (ws-broadcast-fn! [:new/game-state new-game-state])
       (println "Game loop is now done " (java.util.Date.))
       new-game-state)
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
-
-
 
 
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
@@ -197,7 +194,7 @@
    :logging           (components.timbre/create timbre)
    :scheduler         (component/using
                        (components.chime/create scheduler)
-                       [:game-state :incomming-actions :websocket])
+                       [:game-state :incomming-actions :websocket :event-store])
    :websocket         (component/using
                        (components.sente/create {:handler ws-handler})
                        [:game-state :incomming-actions :event-store])
@@ -217,7 +214,7 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 (Duration/ofMinutes 1)
+                                                 (Duration/ofMinutes 30)
                                                  #_(Duration/ofMillis 200))}}))
 
 
@@ -226,9 +223,11 @@
   (alter-var-root #'production component/stop)
 
   (def add-event-fn! (-> production :event-store :add-event-fn!))
-  (-> production :game-state :game-state deref)
-  (-> production :event-store :store deref)
+  (def game-state' (-> production :game-state :game-state))
+  (def event-store (-> production :event-store :store))
+  (def broadcast-fn! (get-in production [:websocket :broadcast-fn!]))
 
+  @game-state'
 
   (java.util.UUID/randomUUID)
   (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
@@ -241,20 +240,20 @@
   (add-event-fn! (events/start-game  repl-subject))
   (add-event-fn! (events/player-move repl-subject player-1-id :north))
 
-  (game-loop (java.util.Date.) game-state incomming-actions-state (get-in production [:websocket :broadcast-fn]))
+  (game-loop (java.util.Date.) game-state' incomming-actions-state broadcast-fn! add-event-fn!)
 
 
   (user-commands/register-incomming-user-action!
    incomming-actions-state
-   {:action  :move
-    :user-id 1
-    :payload {:direction :east}})
+   {:action    :move
+    :user-id   1
+    :direction :east})
 
   (user-commands/register-incomming-user-action!
    incomming-actions-state
-   {:action  :move
-    :user-id 1
-    :payload {:direction :west}})
+   {:action    :move
+    :user-id   1
+    :direction :west})
 
   (user-commands/register-incomming-user-action!
    incomming-actions-state
