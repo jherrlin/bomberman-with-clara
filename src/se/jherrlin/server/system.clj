@@ -40,7 +40,7 @@
     :fire       []}
 
 
-(defonce incomming-actions-state
+(defonce incomming-commands-state
   (atom {}))
 
 
@@ -158,10 +158,10 @@
         (update-flying-bombs-to-gs    flying-bombs)
         (update-users-direction-in-gs user-wants-to-move))))
 
-(defn game-loop [task-execution-timestamp game-state incomming-actions-state ws-broadcast-fn! add-event-fn!]
+(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-event-fn!]
   (println "Game loop is now started " task-execution-timestamp)
   (try
-    (let [user-action-facts   (incomming-actions incomming-actions-state game-state)
+    (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
           game-state-facts    (game-state->enginge-facts game-state)
           _                   (def game-state-facts game-state-facts)
@@ -175,7 +175,7 @@
           new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
           _                   (def new-game-state new-game-state)]
       ;; (reset! game-state new-game-state)
-      (reset! incomming-actions-state {})
+      (reset! incomming-commands-state {})
       (ws-broadcast-fn! [:new/game-state new-game-state])
       (println "Game loop is now done " (java.util.Date.))
       new-game-state)
@@ -186,7 +186,7 @@
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
   (timbre/info "Creating system.")
   (component/system-map
-   :incomming-actions incomming-actions-state
+   :incomming-actions incomming-commands-state
    :event-store       (components.event-store/create)
    :game-state        (component/using
                        (components.game-state/create (:projection-fn game-state))
@@ -240,28 +240,28 @@
   (add-event-fn! (events/start-game  repl-subject))
   (add-event-fn! (events/player-move repl-subject player-1-id :north))
 
-  (game-loop (java.util.Date.) game-state' incomming-actions-state broadcast-fn! add-event-fn!)
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn!)
 
 
   (user-commands/register-incomming-user-command!
-   incomming-actions-state
+   incomming-commands-state
    {:action    :move
     :user-id   1
     :direction :east})
 
   (user-commands/register-incomming-user-command!
-   incomming-actions-state
+   incomming-commands-state
    {:action    :move
     :user-id   1
     :direction :west})
 
   (user-commands/register-incomming-user-command!
-   incomming-actions-state
+   incomming-commands-state
    {:action  :place-bomb
     :user-id 1})
 
   (user-commands/register-incomming-user-command!
-   incomming-actions-state
+   incomming-commands-state
    {:action  :throw-bomb
     :user-id 1})
   )
