@@ -47,7 +47,7 @@
   [game-state {:keys [subject data] :as event}]
   (assoc-in game-state [:games subject :game-state] :started))
 
-(defmethod projection :se.jherrlin.bomberman.player/move
+(defmethod projection :se.jherrlin.bomberman.player/wants-to-move-move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction user-id]} data]
     (assoc-in game-state [:games subject :players user-id :user-facing-direction] direction)))
@@ -70,5 +70,5 @@
       (projection (events/join-game   repl-subject player-1-ws-id "John"))
       (projection (events/join-game   repl-subject player-2-ws-id "Hannah"))
       (projection (events/start-game  repl-subject))
-      (projection (events/player-move repl-subject )))
+      (projection (events/player-wants-to-move repl-subject )))
   )

@@ -43,64 +43,57 @@
 (defonce incomming-commands-state
   (atom {}))
 
+(comment
+  (reset! incomming-commands-state {})
+  )
 
+(defmulti command->engine-fact (fn [gs subject command] (:action command)))
 
-;; gs = game state
-(defn gs-player-current-xy          [game-state player-id] (get-in game-state [:players player-id :position]))
-(defn gs-player-fire-length         [game-state player-id] (get-in game-state [:players player-id :fire-length]))
-(defn gs-player-max-number-of-bombs [game-state player-id] (get-in game-state [:players player-id :max-nr-of-bombs-for-user]))
-(defn gs-player-facing-direction    [game-state player-id] (get-in game-state [:players player-id :user-facing-direction]))
-(defn gs-board                      [game-state]           (get-in game-state [:board]))
-(defn gs-stones                     [game-state]           (get-in game-state [:stones]))
-(defn gs-fires                      [game-state]           (get-in game-state [:fire]))
-(defn gs-players                    [game-state]           (get-in game-state [:players]))
-(defn gs-bombs                      [game-state]           (get-in game-state [:bombs]))
-(defn gs-flying-bombs               [game-state]           (get-in game-state [:flying-bombs]))
+(defmethod command->engine-fact :move [gs subject {:keys [user-id direction] :as command}]
+  (let [game-state'     @gs
+        user-current-xy (game-state/player-current-xy game-state' subject user-id)]
+    (bomberman-rules/->PlayerWantsToMove user-id user-current-xy direction)))
 
-
-(defmulti command->engine-fact (fn [game-state command] (:action command)))
-
-(defmethod command->engine-fact :move [game-state {:keys [user-id payload] :as command}]
-  (let [game-state' @game-state
-        user-current-xy (get-in game-state' [:players user-id :position])]
-    (bomberman-rules/->UserWantsToMove user-id user-current-xy (:direction payload))))
-
-(defmethod command->engine-fact :place-bomb [game-state {:keys [user-id] :as command}]
-  (let [game-state'         @game-state
-        user-current-xy     (gs-player-current-xy game-state' user-id)
-        user-fire-length    (gs-player-fire-length game-state' user-id)
-        max-number-of-bombs (gs-player-max-number-of-bombs game-state' user-id)
+(defmethod command->engine-fact :place-bomb [gs subject {:keys [user-id] :as command}]
+  (let [game-state'         @gs
+        user-current-xy     (game-state/player-current-xy          game-state' subject user-id)
+        user-fire-length    (game-state/player-fire-length         game-state' subject user-id)
+        max-number-of-bombs (game-state/player-max-number-of-bombs game-state' subject user-id)
         now                 (java.util.Date.)]
-    (bomberman-rules/->UserWantsToPlaceBomb user-id user-current-xy user-fire-length now max-number-of-bombs)))
+    (bomberman-rules/->PlayerWantsToPlaceBomb user-id user-current-xy user-fire-length now max-number-of-bombs)))
 
-(defmethod command->engine-fact :throw-bomb [game-state {:keys [user-id] :as command}]
-  (let [game-state'         @game-state
-        user-current-xy     (gs-player-current-xy game-state' user-id)
-        facing-direction    (gs-player-facing-direction game-state' user-id)]
-    (bomberman-rules/->UserWantsToThrowBomb user-id user-current-xy facing-direction)))
+(defmethod command->engine-fact :throw-bomb [gs subject {:keys [user-id] :as command}]
+  (let [game-state'      @gs
+        user-current-xy  (game-state/player-current-xy       game-state' subject user-id)
+        facing-direction (game-state/player-facing-direction game-state' subject user-id)]
+    (bomberman-rules/->PlayerWantsToThrowBomb user-id user-current-xy facing-direction)))
 
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
-  [incomming-state game-state]
+  [incomming-state gs]
   (some->> @incomming-state
-           vals
+           (vals)
            (map vals)
            (apply concat)
-           (map (partial command->engine-fact game-state))))
+           (map vals)
+           (apply concat)
+           (group-by :game-id)
+           (reduce-kv (fn [m k v]
+                        (assoc m k (map (partial command->engine-fact gs k) v))) {})))
 
-(defn game-state->enginge-facts [game-state]
-  (let [gs           @game-state
-        board        (bomberman-rules/->Board (gs-board gs))
-        players      (->> (gs-players gs)
+(defn game-state->enginge-facts [gs subject]
+  (let [gs           @gs
+        board        (bomberman-rules/->Board (game-state/board gs subject))
+        players      (->> (game-state/players gs subject)
                           (vals)
-                          (map (fn [{:keys [position id]}] (bomberman-rules/->UserPositionOnBoard id position))))
-        stones       (->> (gs-stones gs)
+                          (map (fn [{:keys [position player-id]}] (bomberman-rules/->PlayerPositionOnBoard player-id position))))
+        stones       (->> (game-state/stones gs subject)
                           (map bomberman-rules/->Stone))
-        fire         (->> (gs-fires gs)
+        fire         (->> (game-state/fires gs subject)
                           (map bomberman-rules/map->FireOnBoard))
-        bombs        (->> (gs-bombs gs)
+        bombs        (->> (game-state/bombs gs subject)
                           (map bomberman-rules/map->BombOnBoard))
-        flying-bombs (->> (gs-flying-bombs gs)
+        flying-bombs (->> (game-state/flying-bombs gs subject)
                           (map bomberman-rules/map->FlyingBomb))]
     (concat
      [board]
@@ -158,29 +151,57 @@
         (update-flying-bombs-to-gs    flying-bombs)
         (update-users-direction-in-gs user-wants-to-move))))
 
+(defmulti  player-command-to-event :action)
+(defmethod player-command-to-event :move       [{:keys [direction game-id user-id]}] (events/player-wants-to-move       game-id user-id direction))
+(defmethod player-command-to-event :place-bomb [{:keys [game-id user-id]}]           (events/player-wants-to-place-bomb game-id user-id))
+(defmethod player-command-to-event :throw-bomb [{:keys [game-id user-id]}]           (events/player-wants-to-throw-bomb game-id user-id))
+
+(defn add-player-events! [add-event-fn! incomming-commands-state]
+  (some->> @incomming-commands-state
+           (vals)
+           (map vals)
+           (apply concat)
+           (map vals)
+           (apply concat)
+           (map player-command-to-event)
+           (map add-event-fn!)
+           (doall)))
+
 (defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-event-fn!]
   (println "Game loop is now started " task-execution-timestamp)
   (try
-    (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
-          _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state->enginge-facts game-state)
-          _                   (def game-state-facts game-state-facts)
-          facts               (concat
-                               user-action-facts
-                               game-state-facts
-                               [(bomberman-rules/->TimestampNow (java.util.Date.))])
-          _                   (def facts facts)
-          actions-from-enging (bomberman-rules/run-rules facts)
-          _                   (def actions-from-enging actions-from-enging)
-          new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
-          _                   (def new-game-state new-game-state)]
-      ;; (reset! game-state new-game-state)
-      (reset! incomming-commands-state {})
-      (ws-broadcast-fn! [:new/game-state new-game-state])
-      (println "Game loop is now done " (java.util.Date.))
-      new-game-state)
+    (add-player-events! add-event-fn! incomming-commands-state)
+    (let [user-action-facts (incomming-actions incomming-commands-state game-state)]
+      (def user-action-facts user-action-facts)
+      ;; doseq
+      (->> user-action-facts
+           (map (fn [[subject actions]]
+                  (def actions actions)
+                  (let [game-state-facts    (game-state->enginge-facts game-state subject)
+                        _                   (def game-state-facts game-state-facts)
+                        rule-enginge-facts  (concat
+                                             actions
+                                             game-state-facts
+                                             [(bomberman-rules/->TimestampNow (java.util.Date.))])
+                        _                   (def rule-enginge-facts rule-enginge-facts)
+                        actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
+                        _                   (def actions-from-enging actions-from-enging)
+                        _                   (def events-from-enginge nil)
+                        ;; new-game-state      (apply-actions-to-game-state game-state actions-from-enging)
+                        ;; _                   (def new-game-state new-game-state)
+                        ]
+                    ;; (reset! game-state new-game-state)
+                    (reset! incomming-commands-state {})
+                    ;; (ws-broadcast-fn! [:new/game-state new-game-state])
+                    (println "Game loop is now done " (java.util.Date.)))))
+           (doall)))
+
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
+
+(let [{:keys [bombs-on-board fire-on-board stones-to-remove user-moves dead-users flying-bombs user-wants-to-move]} actions-from-enging]
+
+  )
 
 
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
@@ -228,6 +249,8 @@
   (def broadcast-fn! (get-in production [:websocket :broadcast-fn!]))
 
   @game-state'
+  @event-store
+  @incomming-commands-state
 
   (java.util.UUID/randomUUID)
   (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
@@ -238,30 +261,34 @@
   (add-event-fn! (events/join-game   repl-subject player-1-id "John"))
   (add-event-fn! (events/join-game   repl-subject player-2-id "Hannah"))
   (add-event-fn! (events/start-game  repl-subject))
-  (add-event-fn! (events/player-move repl-subject player-1-id :north))
+  (add-event-fn! (events/player-wants-to-move repl-subject player-1-id :north))
 
   (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn!)
 
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
-   {:action    :move
-    :user-id   1
+   {:game-id   repl-subject
+    :user-id   player-1-id
+    :action    :move
     :direction :east})
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
-   {:action    :move
-    :user-id   1
+   {:game-id   repl-subject
+    :user-id   player-2-id
+    :action    :move
     :direction :west})
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
-   {:action  :place-bomb
-    :user-id 1})
+   {:game-id repl-subject
+    :action  :place-bomb
+    :user-id player-1-id})
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
-   {:action  :throw-bomb
-    :user-id 1})
+   {:game-id repl-subject
+    :action  :throw-bomb
+    :user-id player-1-id})
   )

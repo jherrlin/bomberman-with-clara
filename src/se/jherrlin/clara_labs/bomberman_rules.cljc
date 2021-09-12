@@ -12,11 +12,33 @@
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
   )
 
+(defprotocol CloudEvent
+  (toCloudEvent [this]))
 
 (defrecord Board                  [game-id board])
-(defrecord BombExploading         [game-id player-id position-xy fire-length])
-(defrecord BombOnBoard            [game-id player-id bomb-position-xy       fire-length bomb-added-timestamp])
-(defrecord DeadPlayer             [game-id player-id killed-by-player-id])
+(defrecord BombExploading [game-id player-id position-xy fire-length]
+  CloudEvent
+  (toCloudEvent [_]
+    (events/template "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading"
+                     {:player-id   player-id
+                      :position-xy position-xy
+                      :fire-length fire-length})))
+
+(defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
+  CloudEvent
+  (toCloudEvent [_]
+    (events/template "urn:se:jherrlin:bomberman:game" game-id "bomb-on-board"
+                     {:player-id            player-id
+                      :bomb-position-xy     bomb-position-xy
+                      :fire-length          fire-length
+                      :bomb-added-timestamp bomb-added-timestamp})))
+
+(defrecord DeadPlayer [game-id player-id killed-by-player-id]
+  CloudEvent
+  (toCloudEvent [_]
+    (events/template "urn:se:jherrlin:bomberman:game" game-id "dead-player"
+                     {:player-id           player-id
+                      :killed-by-player-id killed-by-player-id})))
 (defrecord FireOnBoard            [game-id player-id fire-position-xy fire-start-timestamp])
 (defrecord FlyingBomb             [game-id player-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction])
 (defrecord PlayerMove             [game-id player-id next-position direction])
@@ -27,6 +49,9 @@
 (defrecord Stone                  [game-id stone-position-xy])
 (defrecord StoneToRemove          [game-id position-xy])
 (defrecord TimestampNow           [now])
+
+(instance? TimestampNow (->TimestampNow 1))
+
 
 (defrule player-throws-bomb
   "A player can throw a bomb if facing direction points to it."
