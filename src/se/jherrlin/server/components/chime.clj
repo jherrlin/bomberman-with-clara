@@ -5,6 +5,7 @@
    [clojure.core.async :as a :refer [<! go-loop close!]]
    [chime.core-async :refer [chime-ch]]))
 
+(def run-loop (atom nil))
 
 (defrecord ChimeAsync [args game-state incomming-actions websocket event-store]
   component/Lifecycle
@@ -18,11 +19,13 @@
           this)
         (do
           (timbre/info "Starting Chime component.")
+          (reset! run-loop true)
           (let [chimes (chime-ch schedule)]
             (go-loop []
               (when-let [timestamp (<! chimes)]
                 (f timestamp (:game-state game-state) incomming-actions (:broadcast-fn! websocket) (:add-event-fn! event-store))
-                (recur)))
+                (when @run-loop
+                  (recur))))
             (assoc this :chimes chimes))))))
 
   (stop [this]
@@ -30,6 +33,7 @@
       (if chimes
         (do
           (timbre/info "Stopping Chime component.")
+          (reset! run-loop nil)
           (close! chimes)
           (assoc this :chimes nil))
         (do
