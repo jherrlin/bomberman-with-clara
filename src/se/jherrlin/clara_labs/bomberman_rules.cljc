@@ -237,7 +237,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?stone <- Stone       (= ?game-id game-id) (= ?stone-position-xy stone-position-xy)]
   [:test (= ?fire-position-xy ?stone-position-xy)]
   =>
-  (retract! ?stone)
   (insert-unconditional! (->StoneToRemove ?game-id ?stone-position-xy)))
 
 (defrule fire-burns-out
