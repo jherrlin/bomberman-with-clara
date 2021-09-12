@@ -5,7 +5,7 @@
 
 (s/def ::game-id    (s/or :s string? :u uuid?))
 (s/def ::action     #{:place-bomb :move :throw-bomb})
-(s/def ::user-id    (s/or :n number? :u uuid?))
+(s/def ::user-id    (s/or :n number? :u uuid? :s string?))
 (s/def ::direction  #{:west :east :north :south})
 (s/def ::move       (s/keys :req-un [::game-id ::action ::user-id ::direction]))
 (s/def ::place-bomb (s/keys :req-un [::game-id ::action ::user-id]))
