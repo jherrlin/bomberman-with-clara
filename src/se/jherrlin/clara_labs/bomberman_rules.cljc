@@ -2,7 +2,6 @@
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [clara.rules.accumulators :as acc]
             [clara.tools.inspect :as inspect]
-            [se.jherrlin.server.events :as events]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.clara-labs.datetime :as datetime]
@@ -11,7 +10,8 @@
   (:import [se.jherrlin.server.models
             TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
-            StoneToRemove FireToRemove BombToRemove])
+            StoneToRemove FireToRemove BombToRemove
+            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb])
   (:gen-class))
 
 
@@ -245,6 +245,17 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
+  (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
+  (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
+
+
+  (run-rules
+   [(CreateGame.             repl-game-id "First game" "my-secret")
+    (JoinGame.               repl-game-id player-1-ws-id "John")
+    (JoinGame.               repl-game-id player-2-ws-id "Hannah")
+    (StartGame.              repl-game-id)
+    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+    (PlayerWantsToPlaceBomb. repl-game-id player-1-ws-id [2 1] 3 (java.util.Date.) 3)])
 
   (run-rules
    [(->Board      repl-game-id board/board2)

@@ -46,11 +46,11 @@
 
 (defn add-players-to-screen [players screen]
   (reduce
-   (fn [screen' {:keys [position sign]}]
+   (fn [screen' {:keys [position player-nr]}]
      (let [[x y] position]
        (-> screen'
            (assoc-in [y x :type] :player)
-           (assoc-in [y x :str] sign))))
+           (assoc-in [y x :str] (str player-nr)))))
    screen players))
 
 (defn add-bombs-to-screen [bombs screen]
@@ -72,6 +72,8 @@
    (fn [screen' [x y]]
      (assoc-in screen' [y x :type] :stone))
    screen stones))
+
+@re-frame.db/app-db
 
 (re-frame/reg-sub
  ::screen
@@ -155,15 +157,24 @@
                 (-> KeyHandler .-EventType .-KEY)
                 press-fn)))
 
+(def repl-subject "JOHN-HANNAS-game")
+(def player-1-id "johns-id")
+
+(defn g [m]
+  (merge
+   {:game-id   repl-subject
+    :user-id   player-1-id}
+   m))
+
 (defn reagent-content-fn []
   ;; sets up the event listener
   ;; https://tech.toryanderson.com/2020/10/22/capturing-key-presses-in-clojurescript-with-closure/
-  (capture-key {keycodes/DOWN  #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :south}}])
-                keycodes/UP    #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :north}}])
-                keycodes/LEFT  #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :west}}])
-                keycodes/RIGHT #(chsk-send! [:command/user-action {:action :move :user-id 1 :payload {:direction :east}}])
-                keycodes/SPACE #(chsk-send! [:command/user-action {:action :place-bomb :user-id 1}])
-                keycodes/T     #(chsk-send! [:command/user-action {:action :throw-bomb :user-id 1}])})
+  (capture-key {keycodes/DOWN  #(chsk-send! [:command/user-action (g {:action :move :direction :south})])
+                keycodes/UP    #(chsk-send! [:command/user-action (g {:action :move :direction :north})])
+                keycodes/LEFT  #(chsk-send! [:command/user-action (g {:action :move :direction :west})])
+                keycodes/RIGHT #(chsk-send! [:command/user-action (g {:action :move :direction :east})])
+                keycodes/SPACE #(chsk-send! [:command/user-action (g {:action :place-bomb})])
+                keycodes/T     #(chsk-send! [:command/user-action (g {:action :throw-bomb})])})
   ;; ... the actual content that the rest of the fn should produce
   ;; (like the components that will use the keybinding)
   )

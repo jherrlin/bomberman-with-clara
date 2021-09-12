@@ -32,7 +32,7 @@
     (if (get this :store)
       (do
         (timbre/info "Stopping EventStore component.")
-        (reset! store store-init)
+        ;; (reset! store store-init)
         (assoc this :store nil :add-event-fn! nil))
       (do
         (timbre/info "Stopping EventStore component but no server instance found!")

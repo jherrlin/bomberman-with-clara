@@ -35,7 +35,7 @@
     (if (get this :game-state)
       (do
         (timbre/info "Stopping GameState component.")
-        (reset! game-state initial-game-state)
+        ;; (reset! game-state initial-game-state)
         (remove-watch (:store event-store) :game-state-projection)
         (assoc this :projection-fn nil :game-state nil))
       (do

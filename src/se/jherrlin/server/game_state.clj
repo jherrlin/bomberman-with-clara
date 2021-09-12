@@ -1,6 +1,8 @@
 (ns se.jherrlin.server.game-state
-  (:require [se.jherrlin.server.events :as events]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str])
+  (:import  [se.jherrlin.server.models
+             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
+             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
 
 ;; Access data in game state
 (defn player-current-xy
@@ -105,7 +107,6 @@
   (let [{:keys [fire-position-xy]} data]
     (update-in game-state [:games subject :fire] remove (comp #{fire-position-xy} fire-position-xy))))
 
-
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")
   ;; (println game-state)
@@ -115,14 +116,19 @@
 
 (comment
   (java.util.UUID/randomUUID)
-  (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
+  (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
 
-  (-> {}
-      (projection (events/create-game repl-subject "First game" "my-secret"))
-      (projection (events/join-game   repl-subject player-1-ws-id "John"))
-      (projection (events/join-game   repl-subject player-2-ws-id "Hannah"))
-      (projection (events/start-game  repl-subject))
-      (projection (events/player-wants-to-move repl-subject )))
+
+  (reduce
+   (fn [gs m] (projection gs (.toCloudEvent m)))
+   {}
+   [(CreateGame.             repl-game-id "First game" "my-secret")
+    (JoinGame.               repl-game-id player-1-ws-id "John")
+    (JoinGame.               repl-game-id player-2-ws-id "Hannah")
+    (StartGame.              repl-game-id)
+    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+    (PlayerWantsToPlaceBomb. repl-game-id player-1-ws-id [2 1] 3 (java.util.Date.) 3)])
+
   )

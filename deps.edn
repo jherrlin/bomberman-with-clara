@@ -1,4 +1,4 @@
-{:paths   ["src" "resources"]
+{:paths   ["src" "classes" "resources"]
  :deps    {
            binaryage/devtools              {:mvn/version "1.0.2"}
            buddy/buddy                     {:mvn/version "2.0.0"}

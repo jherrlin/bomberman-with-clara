@@ -16,11 +16,13 @@
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
    [se.jherrlin.server.user-commands :as user-commands]
-   [se.jherrlin.server.events :as events]
+   [se.jherrlin.server.models :as models]
    [se.jherrlin.clara-labs.board :as board]
    [taoensso.timbre :as timbre])
   (:import [java.time Instant Duration]
-           [se.jherrlin.clara_labs.bomberman_rules PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb])
+           [se.jherrlin.server.models
+             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
+             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb])
   (:gen-class))
 
 (comment
@@ -57,7 +59,7 @@
 (defmethod command->engine-fact :move [gs {:keys [game-id user-id direction] :as command}]
   (let [game-state'     @gs
         user-current-xy (game-state/player-current-xy game-state' game-id user-id)]
-    (bomberman-rules/->PlayerWantsToMove game-id user-id user-current-xy direction)))
+    (models/->PlayerWantsToMove game-id user-id user-current-xy direction)))
 
 (defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id] :as command}]
   (let [game-state'         @gs
@@ -65,13 +67,13 @@
         user-fire-length    (game-state/player-fire-length         game-state' game-id user-id)
         max-number-of-bombs (game-state/player-max-number-of-bombs game-state' game-id user-id)
         now                 (java.util.Date.)]
-    (bomberman-rules/->PlayerWantsToPlaceBomb game-id user-id user-current-xy user-fire-length now max-number-of-bombs)))
+    (models/->PlayerWantsToPlaceBomb game-id user-id user-current-xy user-fire-length now max-number-of-bombs)))
 
 (defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id] :as command}]
   (let [game-state'      @gs
         user-current-xy  (game-state/player-current-xy       game-state' game-id user-id)
         facing-direction (game-state/player-facing-direction game-state' game-id user-id)]
-    (bomberman-rules/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
+    (models/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
 
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
@@ -92,17 +94,17 @@
        vals
        (map (fn [{:keys [subject] :as game}]
               (concat
-               [(bomberman-rules/->Board subject (game-state/board game))]
+               [(models/->Board subject (game-state/board game))]
                (->> (game-state/players game)
                     (vals)
                     (map (fn [{:keys [player-id position] :as player}]
-                           (bomberman-rules/->PlayerPositionOnBoard subject player-id position))))
+                           (models/->PlayerPositionOnBoard subject player-id position))))
                (->> (game-state/stones game)
-                    (map (partial bomberman-rules/->Stone subject)))
+                    (map (partial models/->Stone subject)))
                (->> (game-state/bombs game)
-                    (map bomberman-rules/map->BombOnBoard))
+                    (map models/map->BombOnBoard))
                (->> (game-state/fires game)
-                    (map bomberman-rules/map->FireOnBoard))
+                    (map models/map->FireOnBoard))
                ;; flying-bombs
                )))
        (apply concat)))
@@ -116,13 +118,17 @@
          (map add-event-fn!)
          (doall))
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
+          _                   (->> (incomming-actions incomming-commands-state game-state)
+                                   first
+                                   type
+                                   )
           _                   (def user-action-facts user-action-facts)
           game-state-facts    (game-state->enginge-facts game-state)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
                                game-state-facts
-                               [(bomberman-rules/->TimestampNow (java.util.Date.))])
+                               [(models/->TimestampNow (java.util.Date.))])
           _                   (def rule-enginge-facts rule-enginge-facts)
           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
           _                   (def actions-from-enging actions-from-enging)]
@@ -134,9 +140,9 @@
            (sort-by :time #(compare %2 %1))
            (map add-event-fn!)
            (doall))
-      ;; (reset! game-state new-game-state)
       (reset! incomming-commands-state {})
-      ;; (ws-broadcast-fn! [:new/game-state new-game-state])
+      (doseq [game (-> @game-state :games (vals))]
+        (ws-broadcast-fn! [:new/game-state game]))
       (println "Game loop is now done " (java.util.Date.)))
 
     (catch Exception e
@@ -173,8 +179,8 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 (Duration/ofMinutes 30)
-                                                 #_(Duration/ofMillis 200))}}))
+                                                 #_(Duration/ofMinutes 30)
+                                                 (Duration/ofMillis 200))}}))
 
 
 (comment
@@ -196,11 +202,10 @@
   (def player-1-id "johns-id")
   (def player-2-id "hannahs-id")
 
-  (add-event-fn! (events/create-game repl-subject "First game" "my-secret"))
-  (add-event-fn! (events/join-game   repl-subject player-1-id "John"))
-  (add-event-fn! (events/join-game   repl-subject player-2-id "Hannah"))
-  (add-event-fn! (events/start-game  repl-subject))
-  (add-event-fn! (events/player-wants-to-move repl-subject player-1-id :north))
+  (add-event-fn! (CreateGame. repl-subject "First game" "my-secret"))
+  (add-event-fn! (JoinGame.   repl-subject player-1-id "John"))
+  (add-event-fn! (JoinGame.   repl-subject player-2-id "Hannah"))
+  (add-event-fn! (StartGame.  repl-subject))
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
@@ -232,9 +237,9 @@
   (def simon-id "SIMONS-id")
   (def jakob-id "JAKOBS-id")
   (def repl-subject-2 "SIMON-JAKOBS-game")
-  (add-event-fn! (events/create-game repl-subject-2 "Second game" "my-second-secret"))
-  (add-event-fn! (events/join-game   repl-subject-2 simon-id "Simon"))
-  (add-event-fn! (events/join-game   repl-subject-2 jakob-id "Jakob"))
+  (add-event-fn! (CreateGame. repl-subject-2 "Second game" "my-second-secret"))
+  (add-event-fn! (JoinGame.   repl-subject-2 simon-id "Simon"))
+  (add-event-fn! (JoinGame.   repl-subject-2 jakob-id "Jakob"))
 
 
   (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn!)
