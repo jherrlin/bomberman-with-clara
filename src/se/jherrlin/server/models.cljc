@@ -13,8 +13,7 @@
             :type         type
             :time         (java.util.Date.)
             :content-type "application/edn"}
-     data (assoc :data data))))
-
+     data (assoc :data (into {} data)))))
 
 (defprotocol CloudEvent
   (toCloudEvent [this]))
@@ -83,11 +82,11 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "stone-to-remove" this)))
 
-(defrecord FireToRemove           [game-id position-xy]
+(defrecord FireToRemove [game-id fire-position-xy]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "fire-to-remove" this)))
 
-(defrecord BombToRemove           [game-id position-xy]
+(defrecord BombToRemove [game-id bomb-position-xy]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-remove" this)))
 
@@ -101,16 +100,15 @@
                                :fire         '()
                                :flying-bombs '()
                                :bombs        '()}]
-                 (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge this defaults)))))
+                 (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
 
 (defrecord JoinGame [game-id player-id player-name]
   CloudEvent (toCloudEvent [this]
-               (let [this (merge this
-                                 {:user-facing-direction    :south
-                                  :max-nr-of-bombs-for-user 3
-                                  :position                 [1 1]
-                                  :fire-length              3})])
-               (template "urn:se:jherrlin:bomberman:game" game-id "join-game" this)))
+               (let [default {:user-facing-direction    :south
+                              :max-nr-of-bombs-for-user 3
+                              :position                 [1 1]
+                              :fire-length              3}]
+                 (template "urn:se:jherrlin:bomberman:game" game-id "join-game" (merge default this)))))
 
 (defrecord StartGame [game-id]
   CloudEvent (toCloudEvent [this]

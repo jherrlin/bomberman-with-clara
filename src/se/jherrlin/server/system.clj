@@ -109,41 +109,41 @@
                )))
        (apply concat)))
 
-(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-event-fn!]
-  (println "Game loop is now started " task-execution-timestamp)
-  (try
-    (->> (incomming-actions incomming-commands-state game-state)
-         (map #(.toCloudEvent %))
-         (sort-by :time #(compare %2 %1))
-         (map add-event-fn!)
-         (doall))
-    (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
-          _                   (->> (incomming-actions incomming-commands-state game-state)
-                                   first
-                                   type
-                                   )
-          _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state->enginge-facts game-state)
-          _                   (def game-state-facts game-state-facts)
-          rule-enginge-facts  (concat
-                               user-action-facts
-                               game-state-facts
-                               [(models/->TimestampNow (java.util.Date.))])
-          _                   (def rule-enginge-facts rule-enginge-facts)
-          actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
-          _                   (def actions-from-enging actions-from-enging)]
-      (->> actions-from-enging
+(defn sort-events [x]
+  (some->> x
            :actions
            vals
            (apply concat)
            (map #(.toCloudEvent %))
-           (sort-by :time #(compare %2 %1))
-           (map add-event-fn!)
-           (doall))
-      (reset! incomming-commands-state {})
-      (doseq [game (-> @game-state :games (vals))]
-        (ws-broadcast-fn! [:new/game-state game]))
-      (println "Game loop is now done " (java.util.Date.)))
+           (sort-by :time #(compare %2 %1))))
+
+(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-event-fn!]
+  (println "Game loop is now started " task-execution-timestamp)
+  (try
+    (let [user-action-facts (incomming-actions incomming-commands-state game-state)
+          _                 (def user-action-facts user-action-facts)]
+      (doseq [event (some->> user-action-facts
+                             (map #(.toCloudEvent %))
+                             (sort-by :time #(compare %2 %1)))]
+        (add-event-fn! event))
+      (let [game-state-facts    (game-state->enginge-facts game-state)
+            _                   (def game-state-facts game-state-facts)
+            rule-enginge-facts  (concat
+                                 user-action-facts
+                                 game-state-facts
+                                 [(models/->TimestampNow (java.util.Date.))])
+            _                   (def rule-enginge-facts rule-enginge-facts)
+            actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
+            _                   (def actions-from-enging actions-from-enging)
+            _                  (def sorted )]
+        (doseq [event (sort-events actions-from-enging)]
+          (def event' event)
+          (add-event-fn! event))
+
+        (reset! incomming-commands-state {})
+        (doseq [game (-> @game-state :games (vals))]
+          (ws-broadcast-fn! [:new/game-state game]))
+        (println "Game loop is now done " (java.util.Date.))))
 
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
@@ -179,8 +179,13 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 #_(Duration/ofMinutes 30)
-                                                 (Duration/ofMillis 200))}}))
+                                                 (Duration/ofMinutes 30)
+                                                 #_(Duration/ofMillis 500))}}))
+
+
+(defn trunc
+  [s n]
+  (subs s 0 (min (count s) n)))
 
 
 (comment
@@ -197,15 +202,27 @@
   @incomming-commands-state
   (reset! incomming-commands-state {})
 
+  (->> @event-store
+       :events
+       count) ;; => 30
+
+  (->> @event-store
+       :events
+       (map (fn [{:keys [data] :as event}]
+              (-> event
+                  (dissoc :id :content-type)
+                  (assoc :data (trunc (str data) 100)))))
+       (clojure.pprint/print-table))
+
   (java.util.UUID/randomUUID)
   (def repl-subject "JOHN-HANNAS-game")
   (def player-1-id "johns-id")
   (def player-2-id "hannahs-id")
 
-  (add-event-fn! (CreateGame. repl-subject "First game" "my-secret"))
-  (add-event-fn! (JoinGame.   repl-subject player-1-id "John"))
-  (add-event-fn! (JoinGame.   repl-subject player-2-id "Hannah"))
-  (add-event-fn! (StartGame.  repl-subject))
+  (add-event-fn! (.toCloudEvent (CreateGame. repl-subject "First game" "my-secret")))
+  (add-event-fn! (.toCloudEvent (JoinGame.   repl-subject player-1-id "John")))
+  (add-event-fn! (.toCloudEvent (JoinGame.   repl-subject player-2-id "Hannah")))
+  (add-event-fn! (.toCloudEvent (StartGame.  repl-subject)))
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
@@ -216,16 +233,21 @@
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state
+   {:game-id repl-subject
+    :action  :place-bomb
+    :user-id player-1-id})
+
+
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn!)
+
+  (user-commands/register-incomming-user-command!
+   incomming-commands-state
    {:game-id   repl-subject
     :user-id   player-2-id
     :action    :move
     :direction :west})
 
-  (user-commands/register-incomming-user-command!
-   incomming-commands-state
-   {:game-id repl-subject
-    :action  :place-bomb
-    :user-id player-1-id})
+
 
   (user-commands/register-incomming-user-command!
    incomming-commands-state

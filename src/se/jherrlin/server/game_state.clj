@@ -1,8 +1,13 @@
 (ns se.jherrlin.server.game-state
-  (:require [clojure.string :as str])
+  (:require [clojure.string :as str]
+            [se.jherrlin.server.components.event-store :as components.event-store])
   (:import  [se.jherrlin.server.models
              PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
              CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
+
+(comment
+  (remove-ns 'se.jherrlin.server.game-state)
+  )
 
 ;; Access data in game state
 (defn player-current-xy
@@ -90,12 +95,20 @@
 (defmethod projection :se.jherrlin.bomberman.game/bomb-on-board
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id bomb-position-xy fire-length bomb-added-timestamp]} data]
+    (def data data)
+    (def game-state' game-state)
+    (def subject subject)
     (update-in game-state [:games subject :bombs] conj data)))
 
 (defmethod projection :se.jherrlin.bomberman.game/bomb-to-remove
   [game-state {:keys [subject data] :as event}]
+  (let [{:keys [bomb-position-xy]} data]
+    (update-in game-state [:games subject :bombs] #(remove (comp #{bomb-position-xy} :bomb-position-xy) %))))
+
+(defmethod projection :se.jherrlin.bomberman.game/stone-to-remove
+  [game-state {:keys [subject data] :as event}]
   (let [{:keys [position-xy]} data]
-    (update-in game-state [:games subject :bombs] remove position-xy)))
+    (update-in game-state [:games subject :stones] #(remove (comp #{position-xy}) %))))
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-on-board
   [game-state {:keys [subject data] :as event}]
@@ -105,7 +118,7 @@
 (defmethod projection :se.jherrlin.bomberman.game/fire-to-remove
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [fire-position-xy]} data]
-    (update-in game-state [:games subject :fire] remove (comp #{fire-position-xy} fire-position-xy))))
+    (update-in game-state [:games subject :fire] #(remove (comp #{fire-position-xy} :fire-position-xy) %))))
 
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")
@@ -121,6 +134,7 @@
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
 
 
+
   (reduce
    (fn [gs m] (projection gs (.toCloudEvent m)))
    {}
@@ -129,6 +143,12 @@
     (JoinGame.               repl-game-id player-2-ws-id "Hannah")
     (StartGame.              repl-game-id)
     (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    (PlayerWantsToPlaceBomb. repl-game-id player-1-ws-id [2 1] 3 (java.util.Date.) 3)])
+    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+    (StoneToRemove.          repl-game-id [3 3])])
+
+  (reduce
+   (fn [gs m] (projection gs m))
+   {}
+   (->> @components.event-store/store :events reverse))
 
   )
