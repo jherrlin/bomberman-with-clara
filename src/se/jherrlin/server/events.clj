@@ -60,7 +60,7 @@
   (template
    "urn:se:jherrlin:bomberman:player"
    subject
-   "wants-to-move-move"
+   "wants-to-move"
    {:user-id   user-id
     :direction direction}))
 
