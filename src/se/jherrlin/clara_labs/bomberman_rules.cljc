@@ -6,86 +6,18 @@
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.clara-labs.datetime :as datetime]
-            [clojure.set :as set]))
+            se.jherrlin.server.models
+            [clojure.set :as set])
+  (:import [se.jherrlin.server.models
+            TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
+            PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
+            StoneToRemove FireToRemove BombToRemove])
+  (:gen-class))
+
 
 (comment
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
   )
-
-(defprotocol CloudEvent
-  (toCloudEvent [this]))
-
-
-(defrecord TimestampNow [now])
-(defrecord Board        [game-id board]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template
-     "urn:se:jherrlin:bomberman:game" game-id "board" this)))
-
-(defrecord BombExploading [game-id player-id position-xy fire-length]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template
-     "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading" this)))
-
-(defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template "urn:se:jherrlin:bomberman:game" game-id "bomb-on-board" this)))
-
-(defrecord DeadPlayer [game-id player-id killed-by-player-id]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template "urn:se:jherrlin:bomberman:game" game-id "dead-player" this)))
-
-(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template
-     "urn:se:jherrlin:bomberman:game" game-id "fire-on-board" this)))
-
-(defrecord FlyingBomb [game-id player-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction]
-  CloudEvent
-  (toCloudEvent [this]
-    (events/template
-     "urn:se:jherrlin:bomberman:game" game-id "flying-bomb" this)))
-
-(defrecord PlayerMove [game-id player-id next-position direction]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:player" game-id "move" this)))
-
-(defrecord PlayerPositionOnBoard [game-id player-id player-current-xy]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:player" game-id "position-on-board" this)))
-
-(defrecord PlayerWantsToMove [game-id player-id current-xy direction]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:player" game-id "wants-to-move" this)))
-
-(defrecord PlayerWantsToPlaceBomb [game-id player-id current-xy fire-length timestamp max-nr-of-bombs-for-player]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:player" game-id "wants-to-place-bomb" this)))
-
-(defrecord PlayerWantsToThrowBomb [game-id player-id players-current-xy       player-facing-direction]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:player" game-id "wants-to-throw-bomb" this)))
-
-(defrecord Stone [game-id stone-position-xy]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:game" game-id "stone" this)))
-
-(defrecord StoneToRemove [game-id position-xy]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:game" game-id "stone-to-remove" this)))
-
-(defrecord FireToRemove           [game-id position-xy]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:game" game-id "fire-to-remove" this)))
-
-(defrecord BombToRemove           [game-id position-xy]
-  CloudEvent (toCloudEvent [this]
-               (events/template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-remove" this)))
 
 
 (defrule player-throws-bomb
@@ -104,8 +36,8 @@
   =>
   (retract! ?player-wants-to-throw-bomb)
   (retract! ?bomb-on-board)
-  (insert-unconditional! (->BombToRemove ?game-id ?bomb-position-xy))
-  (insert-unconditional! (->FlyingBomb
+  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (FlyingBomb.
                           ?game-id
                           ?player-id
                           (board/next-xy-position ?players-current-xy ?player-facing-direction)
@@ -130,7 +62,7 @@
   [:test (#{:floor} (board/target-position-type ?board ?flying-bomb-current-xy ?flying-bomb-direction))]
   =>
   (retract! ?flying-bomb)
-  (insert-unconditional! (->BombOnBoard
+  (insert-unconditional! (BombOnBoard.
                           ?game-id
                           ?player-id
                           (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
@@ -155,7 +87,7 @@
    [:test (not (#{:floor} (board/target-position-type ?board ?flying-bomb-current-xy ?flying-bomb-direction)))]]
   =>
   (retract! ?flying-bomb)
-  (insert-unconditional! (->FlyingBomb
+  (insert-unconditional! (FlyingBomb.
                           ?game-id
                           ?player-id
                           (board/next-xy-board-position ?board ?flying-bomb-current-xy ?flying-bomb-direction)
@@ -171,7 +103,7 @@
   [:not [Stone       (= ?game-id game-id) (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= ?game-id game-id) (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
-  (insert-unconditional! (->PlayerMove ?game-id ?player-id (board/next-xy-position ?current-xy ?direction) ?direction)))
+  (insert-unconditional! (PlayerMove. ?game-id ?player-id (board/next-xy-position ?current-xy ?direction) ?direction)))
 
 (defrule place-bomb
   "Player place bomb in her current location."
@@ -188,7 +120,7 @@
   [?bombs-placed-by-player <- (acc/count) from [BombOnBoard (= ?game-id game-id) (= player-id ?place-bomb-player-id)]]
   [:test (< ?bombs-placed-by-player ?max-nr-of-bombs-for-player)]
   =>
-  (insert-unconditional! (->BombOnBoard ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
+  (insert-unconditional! (BombOnBoard. ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
 
 (defrule player-dies
   "Player dies if she gets hit by fire."
@@ -196,7 +128,7 @@
   [FireOnBoard         (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)
    (= ?fire-current-xy ?player-current-xy)]
   =>
-  (insert! (->DeadPlayer ?game-id ?player-id ?fire-player-id)))
+  (insert! (DeadPlayer. ?game-id ?player-id ?fire-player-id)))
 
 (defrule exploading-bomb-throws-fire-flames
   "When a bomb exploads, fire is created in all four directions.
@@ -207,7 +139,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [BombExploading (= ?game-id game-id) (= ?player-id player-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)]
   [?stones <- (acc/all) :from [Stone (= ?game-id game-id)]]
   =>
-  (let [fire-on-board (mapv (fn [[x y]] (->FireOnBoard ?game-id ?player-id [x y] ?now))
+  (let [fire-on-board (mapv (fn [[x y]] (FireOnBoard. ?game-id ?player-id [x y] ?now))
                             (fire-spread/fire-after-it-hit-objects ?bomb-position-xy ?fire-length ?board ?stones))]
     (apply insert! fire-on-board)))
 
@@ -218,8 +150,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (< 3000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
   =>
   (retract! ?bomb)
-  (insert-unconditional! (->BombToRemove ?game-id ?bomb-position-xy))
-  (insert-unconditional! (->BombExploading ?game-id ?player-id ?bomb-position-xy ?fire-length)))
+  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (BombExploading. ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule bomb-exploading-when-hit-by-fire
   "Bomb is exploading if it's hit by fire."
@@ -228,8 +160,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
-  (insert-unconditional! (->BombToRemove ?game-id ?bomb-position-xy))
-  (insert-unconditional! (->BombExploading ?game-id ?player-id ?bomb-position-xy ?fire-length)))
+  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (BombExploading. ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule remove-stones-hit-by-fire
   "If a stone is hit by fire, remove it."
@@ -237,7 +169,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?stone <- Stone       (= ?game-id game-id) (= ?stone-position-xy stone-position-xy)]
   [:test (= ?fire-position-xy ?stone-position-xy)]
   =>
-  (insert-unconditional! (->StoneToRemove ?game-id ?stone-position-xy)))
+  (insert-unconditional! (StoneToRemove. ?game-id ?stone-position-xy)))
 
 (defrule fire-burns-out
   "Fire on board burns out after some time."
@@ -246,7 +178,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (< 1500 (datetime/milliseconds-between ?fire-start-timestamp ?now))]
   =>
   (retract! ?fire)
-  (insert-unconditional! (->FireToRemove ?game-id ?fire-position-xy)))
+  (insert-unconditional! (FireToRemove. ?game-id ?fire-position-xy)))
 
 
 ;; Queries
@@ -316,13 +248,13 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
   (run-rules
    [(->Board      repl-game-id board/board2)
-    (->FlyingBomb repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
+    (FlyingBomb. repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
     (->Stone      repl-game-id [3 1])])
   (run-rules
    [(->Board        repl-game-id (board/init 6))
     (->TimestampNow                           #inst "2021-08-28T15:04:00.100-00:00")
-    (->BombOnBoard  repl-game-id   1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
-    (->BombOnBoard  repl-game-id   1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
+    (BombOnBoard.  repl-game-id   1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+    (BombOnBoard.  repl-game-id   1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
     (->Stone        repl-game-id     [3 1])
     (->Stone        repl-game-id     [3 3])
     (->Stone        666              [5 5])
@@ -330,8 +262,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (let [session (insert-all bomberman-session
                             [(->TimestampNow              #inst "2021-08-28T15:03:50.100-00:00")
                              (->Board         repl-game-id (board/init 6))
-                             (->BombOnBoard   repl-game-id  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
-                             (->BombOnBoard   repl-game-id  1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
+                             (BombOnBoard.   repl-game-id  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
+                             (BombOnBoard.   repl-game-id  1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
                              (->Stone         repl-game-id    [3 1])
                              (->Stone         repl-game-id    [3 3])])
         session' (fire-rules session)]
