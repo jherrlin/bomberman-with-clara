@@ -56,50 +56,50 @@
    "end"
    {:winner winner}))
 
-(defn player-wants-to-move [subject user-id direction]
+(defn player-wants-to-move [subject player-id direction]
   (template
    "urn:se:jherrlin:bomberman:player"
    subject
    "wants-to-move"
-   {:user-id   user-id
+   {:player-id player-id
     :direction direction}))
 
-(defn player-wants-to-place-bomb [subject user-id]
+(defn player-wants-to-place-bomb [subject player-id]
   (template
    "urn:se:jherrlin:bomberman:player"
    subject
    "wants-to-place-bomb"
-   {:user-id user-id}))
+   {:player-id player-id}))
 
-(defn player-wants-to-throw-bomb [subject user-id]
+(defn player-wants-to-throw-bomb [subject player-id]
   (template
    "urn:se:jherrlin:bomberman:player"
    subject
    "wants-to-throw-bomb"
-   {:user-id user-id}))
+   {:player-id player-id}))
 
-(defn engine-action-move [subject user-id next-position direction]
+(defn engine-action-move [subject player-id next-position direction]
   (template
    "urn:se:jherrlin:bomberman:rule-engine-action"
    subject
    "move"
-   {:user-id       user-id
+   {:player-id     player-id
     :next-position next-position
     :direction     direction}))
 
-(defn engine-action-place-bomb [subject user-id]
+(defn engine-action-place-bomb [subject player-id]
   (template
    "urn:se:jherrlin:bomberman:rule-engine-action"
    subject
    "place-bomb"
-   {:user-id user-id}))
+   {:player-id player-id}))
 
-(defn engine-action-throw-bomb [subject user-id]
+(defn engine-action-throw-bomb [subject player-id]
   (template
    "urn:se:jherrlin:bomberman:rule-engine-action"
    subject
    "throw-bomb"
-   {:user-id user-id}))
+   {:player-id player-id}))
 
 (comment
   (def repl-subject #uuid "c03e430f-2b24-4109-a923-08c986a682a8")

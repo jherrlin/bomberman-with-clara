@@ -49,8 +49,8 @@
 
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
-  (let [{:keys [direction user-id]} data]
-    (assoc-in game-state [:games subject :players user-id :user-facing-direction] direction)))
+  (let [{:keys [direction player-id]} data]
+    (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction)))
 
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")
