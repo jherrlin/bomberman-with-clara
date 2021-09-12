@@ -3,17 +3,45 @@
             [clojure.string :as str]))
 
 ;; Access data in game state
-(defn player-current-xy          [game-state subject player-id] (get-in game-state [:games subject :players player-id :position]))
-(defn player-fire-length         [game-state subject player-id] (get-in game-state [:games subject :players player-id :fire-length]))
-(defn player-max-number-of-bombs [game-state subject player-id] (get-in game-state [:games subject :players player-id :max-nr-of-bombs-for-user]))
-(defn player-facing-direction    [game-state subject player-id] (get-in game-state [:games subject :players player-id :user-facing-direction]))
-(defn board                      [game-state subject]           (get-in game-state [:games subject :board]))
-(defn stones                     [game-state subject]           (get-in game-state [:games subject :stones]))
-(defn fires                      [game-state subject]           (get-in game-state [:games subject :fire]))
-(defn players                    [game-state subject]           (get-in game-state [:games subject :players]))
-(defn bombs                      [game-state subject]           (get-in game-state [:games subject :bombs]))
-(defn flying-bombs               [game-state subject]           (get-in game-state [:games subject :flying-bombs]))
+(defn player-current-xy
+  ([game-state player-id]         (get-in game-state                [:players player-id :position]))
+  ([game-state subject player-id] (get-in game-state [:games subject :players player-id :position])))
 
+(defn player-fire-length
+  ([game-state player-id]         (get-in game-state                [:players player-id :fire-length]))
+  ([game-state subject player-id] (get-in game-state [:games subject :players player-id :fire-length])))
+
+(defn player-max-number-of-bombs
+  ([game-state player-id]         (get-in game-state                [:players player-id :max-nr-of-bombs-for-user]))
+  ([game-state subject player-id] (get-in game-state [:games subject :players player-id :max-nr-of-bombs-for-user])))
+
+(defn player-facing-direction
+  ([game-state player-id]         (get-in game-state                [:players player-id :user-facing-direction]))
+  ([game-state subject player-id] (get-in game-state [:games subject :players player-id :user-facing-direction])))
+
+(defn board
+  ([game-state]                   (get-in game-state                [:board]))
+  ([game-state subject]           (get-in game-state [:games subject :board])))
+
+(defn stones
+  ([game-state]                   (get-in game-state                [:stones]))
+  ([game-state subject]           (get-in game-state [:games subject :stones])))
+
+(defn fires
+  ([game-state]                   (get-in game-state                [:fire]))
+  ([game-state subject]           (get-in game-state [:games subject :fire])))
+
+(defn players
+  ([game-state]                   (get-in game-state                [:players]))
+  ([game-state subject]           (get-in game-state [:games subject :players])))
+
+(defn bombs
+  ([game-state]                   (get-in game-state                [:bombs]))
+  ([game-state subject]           (get-in game-state [:games subject :bombs])))
+
+(defn flying-bombs
+  ([game-state]                   (get-in game-state                [:flying-bombs]))
+  ([game-state subject]           (get-in game-state [:games subject :flying-bombs])))
 
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."
@@ -51,6 +79,32 @@
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction player-id]} data]
     (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction)))
+
+(defmethod projection :se.jherrlin.bomberman.player/move
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [player-id next-position direction]} data]
+    (assoc-in game-state [:games subject :players player-id :position] next-position)))
+
+(defmethod projection :se.jherrlin.bomberman.game/bomb-on-board
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [player-id bomb-position-xy fire-length bomb-added-timestamp]} data]
+    (update-in game-state [:games subject :bombs] conj data)))
+
+(defmethod projection :se.jherrlin.bomberman.game/bomb-to-remove
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [position-xy]} data]
+    (update-in game-state [:games subject :bombs] remove position-xy)))
+
+(defmethod projection :se.jherrlin.bomberman.game/fire-on-board
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [player-id fire-position-xy fire-start-timestamp]} data]
+    (update-in game-state [:games subject :fire] conj data)))
+
+(defmethod projection :se.jherrlin.bomberman.game/fire-to-remove
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [fire-position-xy]} data]
+    (update-in game-state [:games subject :fire] remove (comp #{fire-position-xy} fire-position-xy))))
+
 
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")

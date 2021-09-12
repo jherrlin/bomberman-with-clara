@@ -78,14 +78,67 @@
    "wants-to-throw-bomb"
    {:player-id player-id}))
 
-(defn engine-action-move [subject player-id next-position direction]
+(defn player-move [subject player-id next-position direction]
   (template
-   "urn:se:jherrlin:bomberman:rule-engine-action"
+   "urn:se:jherrlin:bomberman:player"
    subject
    "move"
    {:player-id     player-id
     :next-position next-position
     :direction     direction}))
+
+(defn bomb-exploading [subject player-id position-xy fire-length]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "bomb-exploading"
+   {:player-id   player-id
+    :position-xy position-xy
+    :fire-length fire-length}))
+
+(defn stone-to-remove [subject position-xy]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "stone-to-remove"
+   {:position-xy position-xy}))
+
+(defn bomb-to-remove [subject position-xy]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "bomb-to-remove"
+   {:position-xy position-xy}))
+
+(defn bomb-on-board [subject player-id bomb-position-xy fire-length bomb-added-timestamp]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "bomb-on-board"
+   {:player-id            player-id
+    :bomb-position-xy     bomb-position-xy
+    :fire-length          fire-length
+    :bomb-added-timestamp bomb-added-timestamp}))
+
+(defn fire-on-board [subject player-id fire-position-xy fire-start-timestamp]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "fire-on-board"
+   {:player-id            player-id
+    :fire-position-xy     fire-position-xy
+    :fire-start-timestamp fire-start-timestamp}))
+
+(defn fire-to-remove [subject position-xy]
+  (template
+   "urn:se:jherrlin:bomberman:game"
+   subject
+   "fire-to-remove"
+   {:position-xy position-xy}))
+
+
+
+
 
 (defn engine-action-place-bomb [subject player-id]
   (template
