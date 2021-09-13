@@ -1,4 +1,35 @@
 
+* Events and facts
+
+  Event is a single point in time
+  Fact can range over a longer period of time
+
+** Throw bomb
+
+   | Event           | Fact           | Event       | Fact          |
+   |-----------------+----------------+-------------+---------------|
+   | WantToThrowBomb | + FlyingBomb   | BombLands   | + BombOnBoard |
+   |                 | + BombToRemove |             | + BombToAdd   |
+   |                 | - BombOnBoard  |             | - FlyingBomb  |
+   |-----------------+----------------+-------------+---------------|
+   | Event store     | Game state     | Event store | Game state    |
+
+** Placing bomb
+
+   | Event            | Event       | Fact        | Event          | Event        | Fact        | Event        | Fact               |
+   |------------------+-------------+-------------+----------------+--------------+-------------+--------------+--------------------|
+   | WantsToPlaceBomb | PlaceBomb   | BombOnBoard | BombExploading | FireStarts   | FireOnBoard | FireBurnsOut | RemoveFireFromBord |
+   |------------------+-------------+-------------+----------------+--------------+-------------+--------------+--------------------|
+   | Events store     | Event store | Game state  | Event store    | Events store | Game state  | Event store  | Game state         |
+
+** Move
+
+   | Event       | Event       |
+   |-------------+-------------|
+   | WantsToMove | Move        |
+   |-------------+-------------|
+   | Event store | Event store |
+
 * Introduction
 
   This bomberman clone is mainly to explore technologies.

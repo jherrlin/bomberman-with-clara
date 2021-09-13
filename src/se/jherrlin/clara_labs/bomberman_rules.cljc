@@ -10,7 +10,7 @@
   (:import [se.jherrlin.server.models
             TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
-            StoneToRemove FireToRemove BombToRemove
+            StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb])
   (:gen-class))
 
@@ -34,7 +34,6 @@
    (= ?bomb-added-timestamp bomb-added-timestamp)]
   [:test (= ?bomb-position-xy (board/next-xy-position ?players-current-xy ?player-facing-direction))]
   =>
-  (retract! ?player-wants-to-throw-bomb)
   (retract! ?bomb-on-board)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
   (insert-unconditional! (FlyingBomb.
@@ -62,6 +61,12 @@
   [:test (#{:floor} (board/target-position-type ?board ?flying-bomb-current-xy ?flying-bomb-direction))]
   =>
   (retract! ?flying-bomb)
+  (insert-unconditional! (BombToAdd.
+                          ?game-id
+                          ?player-id
+                          (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
+                          ?fire-length
+                          ?bomb-added-timestamp))
   (insert-unconditional! (BombOnBoard.
                           ?game-id
                           ?player-id
@@ -107,7 +112,7 @@
 
 (defrule place-bomb
   "Player place bomb in her current location."
-  [?player-wants-to-placebomb <- PlayerWantsToPlaceBomb
+  [PlayerWantsToPlaceBomb
    (= ?game-id game-id)
    (= ?place-bomb-player-id player-id)
    (= ?fire-length fire-length)
@@ -120,7 +125,7 @@
   [?bombs-placed-by-player <- (acc/count) from [BombOnBoard (= ?game-id game-id) (= player-id ?place-bomb-player-id)]]
   [:test (< ?bombs-placed-by-player ?max-nr-of-bombs-for-player)]
   =>
-  (retract! ?player-wants-to-placebomb)
+  (insert-unconditional! (BombToAdd.   ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp))
   (insert-unconditional! (BombOnBoard. ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
 
 (defrule player-dies
@@ -140,15 +145,18 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [BombExploading (= ?game-id game-id) (= ?player-id player-id) (= ?bomb-position-xy position-xy) (= ?fire-length fire-length)]
   [?stones <- (acc/all) :from [Stone (= ?game-id game-id)]]
   =>
-  (let [fire-on-board (mapv (fn [[x y]] (FireOnBoard. ?game-id ?player-id [x y] ?now))
-                            (fire-spread/fire-after-it-hit-objects ?bomb-position-xy ?fire-length ?board ?stones))]
+  (let [fire-on-board (->> (fire-spread/fire-after-it-hit-objects ?bomb-position-xy ?fire-length ?board ?stones)
+                           (mapv (fn [[x y]]
+                                   [(FireOnBoard. ?game-id ?player-id [x y] ?now)
+                                    (FireToAdd.   ?game-id ?player-id [x y] ?now)]))
+                           (apply concat))]
     (apply insert! fire-on-board)))
 
 (defrule bomb-exploding-after-timeout
   "Bomb that been on board for a time threshold should expload."
   [TimestampNow (= ?now now)]
   [?bomb <- BombOnBoard (= ?game-id game-id) (= ?player-id player-id) (= ?bomb-added-timestamp bomb-added-timestamp) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
-  [:test (< 3000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
+  [:test (< 30000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
   =>
   (retract! ?bomb)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
@@ -231,6 +239,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?player-wants-to-throw-bomb <- PlayerWantsToThrowBomb])
 
+(defquery fire-to-add?
+  []
+  [?fire-to-add <- FireToAdd])
+
+(defquery bomb-to-add?
+  []
+  [?bomb-to-add <- BombToAdd])
+
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
@@ -242,10 +258,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
     {:actions
      {:player-moves         (map :?player-move           (query session' player-move?))
       :exploading-bombs     (map :?exploading-bombs      (query session' exploading-bombs?))
-      :bombs-on-board       (map :?bomb-on-board         (query session' bomb-on-board?))
-      :fire-on-board        (map :?fire-on-board         (query session' fire-on-board?))
+      ;; :bombs-on-board       (map :?bomb-on-board         (query session' bomb-on-board?))      ;; Should not be turned into events, they are facts
+      ;; :fire-on-board        (map :?fire-on-board         (query session' fire-on-board?))      ;; Should not be turned into events, they are facts
       :stones-to-remove     (map :?stones-to-remove      (query session' stones-to-remove?))
-      :dead-players         (map :?dead-players          (query session' dead-players?))
+      ;; :dead-players         (map :?dead-players          (query session' dead-players?))       ;; TEMPORARY
       :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
       :fire-to-remove       (map :?fire-to-remove        (query session' fire-to-remove?))
       :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))
@@ -253,6 +269,9 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :player-wants-to-move        (map :?player-wants-to-move        (query session' player-wants-to-move?))
       :player-wants-to-place-bomb  (map :?player-wants-to-place-bomb  (query session' player-wants-to-place-bomb?))
       :player-wants-to-throw-bomb  (map :?player-wants-to-throw-bomb  (query session' player-wants-to-throw-bomb?))
+
+      :fire-to-add                 (map :?fire-to-add                 (query session' fire-to-add?))
+      :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
       }}))
 
 (comment

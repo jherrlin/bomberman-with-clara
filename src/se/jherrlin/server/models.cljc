@@ -37,6 +37,11 @@
   (toCloudEvent [this]
     (template "urn:se:jherrlin:bomberman:game" game-id "bomb-on-board" this)))
 
+(defrecord BombToAdd [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
+  CloudEvent
+  (toCloudEvent [this]
+    (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-add" this)))
+
 (defrecord DeadPlayer [game-id player-id killed-by-player-id]
   CloudEvent
   (toCloudEvent [this]
@@ -47,6 +52,12 @@
   (toCloudEvent [this]
     (template
      "urn:se:jherrlin:bomberman:game" game-id "fire-on-board" this)))
+
+(defrecord FireToAdd [game-id player-id fire-position-xy fire-start-timestamp]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     "urn:se:jherrlin:bomberman:game" game-id "fire-to-add" this)))
 
 (defrecord FlyingBomb [game-id player-id flying-bomb-current-xy fire-length bomb-added-timestamp flying-bomb-direction]
   CloudEvent

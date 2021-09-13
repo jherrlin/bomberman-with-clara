@@ -92,14 +92,11 @@
   (let [{:keys [player-id next-position direction]} data]
     (assoc-in game-state [:games subject :players player-id :position] next-position)))
 
-(defmethod projection :se.jherrlin.bomberman.game/bomb-on-board
+(defmethod projection :se.jherrlin.bomberman.game/bomb-to-add
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id bomb-position-xy fire-length bomb-added-timestamp]} data
         data' (into {} data)]
-    (def data data)
-    (def game-state' game-state)
-    (def subject subject)
-    (update-in game-state [:games subject :bombs] #(-> % (conj data') (set)))))
+    (update-in game-state [:games subject :bombs] conj data')))
 
 (defmethod projection :se.jherrlin.bomberman.game/bomb-to-remove
   [game-state {:keys [subject data] :as event}]
@@ -111,11 +108,11 @@
   (let [{:keys [position-xy]} data]
     (update-in game-state [:games subject :stones] #(remove (comp #{position-xy}) %))))
 
-(defmethod projection :se.jherrlin.bomberman.game/fire-on-board
+(defmethod projection :se.jherrlin.bomberman.game/fire-to-add
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id fire-position-xy fire-start-timestamp]} data
         data' (into {} data)]
-    (update-in game-state [:games subject :fire] #(-> % (conj data') (set)))))
+    (update-in game-state [:games subject :fire] conj data')))
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-to-remove
   [game-state {:keys [subject data] :as event}]
