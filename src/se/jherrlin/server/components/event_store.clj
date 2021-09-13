@@ -12,6 +12,16 @@
 (defn add-event! [store event]
   (swap! store update :events conj event))
 
+(defn add-events! [store events]
+  (swap! store update :events #(concat events %)))
+
+(comment
+  (sort #(compare %2 %1)
+        [#inst "2021-09-12T21:25:14.159-00:00"
+         #inst "2021-09-12T21:26:14.159-00:00"
+         #inst "2021-09-12T21:24:14.159-00:00"
+         #inst "2021-09-12T21:27:14.159-00:00"])
+  )
 
 
 (defrecord EventStore [args]
@@ -26,7 +36,8 @@
         (timbre/info "Starting EventStore component.")
         (assoc this
                :store     store
-               :add-event-fn! (partial add-event! store)))))
+               :add-event-fn! (partial add-event! store)
+               :add-events-fn! (partial add-events! store)))))
 
   (stop [this]
     (if (get this :store)
@@ -56,10 +67,6 @@
 
   @store
   (reset! store store-init)
-
-  (add-event! {:a :b})
-  (add-event! {:c :d})
-  (add-event! {:abc :def})
 
   ;; https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
   ;; Används av Google Docs

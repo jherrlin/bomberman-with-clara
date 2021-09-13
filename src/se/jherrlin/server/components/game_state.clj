@@ -11,6 +11,8 @@
   (reset! game-state initial-game-state)
   )
 
+
+
 (defrecord GameState [args event-store]
   component/Lifecycle
 
@@ -21,12 +23,15 @@
         this)
       (let [projection-fn (:projection-fn args)]
         (timbre/info "Starting GameState component.")
-        (add-watch (:store event-store) :game-state-projection
+        #_(add-watch (:store event-store) :game-state-projection
                    (fn [key atom old-state new-state]
-                     (when-let [latest-event (-> new-state :events first)]
-                       (let [old-game-state @game-state
-                             new-game-state (projection-fn old-game-state latest-event)]
-                         (reset! game-state new-game-state)))))
+                     (when (seq (:events new-state))
+                       (let [diffcount (- (-> new-state :events count)
+                                          (-> old-state :events count))]
+                         (reset! game-state
+                                 (projection-fn
+                                  @game-state
+                                  (take diffcount (-> new-state :events))))))))
         (assoc this
                :projection-fn projection-fn
                :game-state    game-state))))

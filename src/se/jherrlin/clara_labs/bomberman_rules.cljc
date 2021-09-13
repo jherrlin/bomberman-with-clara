@@ -107,7 +107,7 @@
 
 (defrule place-bomb
   "Player place bomb in her current location."
-  [PlayerWantsToPlaceBomb
+  [?player-wants-to-placebomb <- PlayerWantsToPlaceBomb
    (= ?game-id game-id)
    (= ?place-bomb-player-id player-id)
    (= ?fire-length fire-length)
@@ -120,6 +120,7 @@
   [?bombs-placed-by-player <- (acc/count) from [BombOnBoard (= ?game-id game-id) (= player-id ?place-bomb-player-id)]]
   [:test (< ?bombs-placed-by-player ?max-nr-of-bombs-for-player)]
   =>
+  (retract! ?player-wants-to-placebomb)
   (insert-unconditional! (BombOnBoard. ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
 
 (defrule player-dies
@@ -222,9 +223,16 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?player-wants-to-move <- PlayerWantsToMove])
 
+(defquery player-wants-to-place-bomb?
+  []
+  [?player-wants-to-place-bomb <- PlayerWantsToPlaceBomb])
+
+(defquery player-wants-to-throw-bomb?
+  []
+  [?player-wants-to-throw-bomb <- PlayerWantsToThrowBomb])
+
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
-
 
 
 
@@ -240,7 +248,12 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :dead-players         (map :?dead-players          (query session' dead-players?))
       :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
       :fire-to-remove       (map :?fire-to-remove        (query session' fire-to-remove?))
-      :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))}}))
+      :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))
+
+      :player-wants-to-move        (map :?player-wants-to-move        (query session' player-wants-to-move?))
+      :player-wants-to-place-bomb  (map :?player-wants-to-place-bomb  (query session' player-wants-to-place-bomb?))
+      :player-wants-to-throw-bomb  (map :?player-wants-to-throw-bomb  (query session' player-wants-to-throw-bomb?))
+      }}))
 
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")

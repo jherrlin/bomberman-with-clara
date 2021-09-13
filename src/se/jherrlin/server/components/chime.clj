@@ -23,7 +23,7 @@
           (let [chimes (chime-ch schedule)]
             (go-loop []
               (when-let [timestamp (<! chimes)]
-                (f timestamp (:game-state game-state) incomming-actions (:broadcast-fn! websocket) (:add-event-fn! event-store))
+                (f timestamp (:game-state game-state) incomming-actions (:broadcast-fn! websocket) (:add-event-fn! event-store) (:add-events-fn! event-store))
                 (when @run-loop
                   (recur))))
             (assoc this :chimes chimes))))))

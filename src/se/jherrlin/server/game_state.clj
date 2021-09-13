@@ -94,11 +94,12 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/bomb-on-board
   [game-state {:keys [subject data] :as event}]
-  (let [{:keys [player-id bomb-position-xy fire-length bomb-added-timestamp]} data]
+  (let [{:keys [player-id bomb-position-xy fire-length bomb-added-timestamp]} data
+        data' (into {} data)]
     (def data data)
     (def game-state' game-state)
     (def subject subject)
-    (update-in game-state [:games subject :bombs] conj data)))
+    (update-in game-state [:games subject :bombs] #(-> % (conj data') (set)))))
 
 (defmethod projection :se.jherrlin.bomberman.game/bomb-to-remove
   [game-state {:keys [subject data] :as event}]
@@ -112,8 +113,9 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-on-board
   [game-state {:keys [subject data] :as event}]
-  (let [{:keys [player-id fire-position-xy fire-start-timestamp]} data]
-    (update-in game-state [:games subject :fire] conj data)))
+  (let [{:keys [player-id fire-position-xy fire-start-timestamp]} data
+        data' (into {} data)]
+    (update-in game-state [:games subject :fire] #(-> % (conj data') (set)))))
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-to-remove
   [game-state {:keys [subject data] :as event}]
@@ -125,6 +127,11 @@
   ;; (println game-state)
   (clojure.pprint/pprint event)
   game-state)
+
+
+(defn the-projection [state events]
+  (reduce
+   (fn [gs m] (projection gs m)) state events))
 
 
 (comment
