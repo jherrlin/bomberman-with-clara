@@ -23,15 +23,24 @@
 (defmethod handler :game/create
   [req]
   (def req req)
-  (let [{:keys [?reply-fn incomming-actions ?data client-id event-store]} req
+  (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [game-name password]}                                      ?data]
-    (application-service/create-game! (:add-event-fn! event-store) game-name password)))
+
+    (send-fn client-id [:game/create-response] (application-service/create-game! game-state projection-fn (:add-events-fn! event-store) game-name password))))
+
+{:action        :create-game
+ :game-name     ""
+ :game-password ""}
+
+
+
+
 
 (defmethod handler :game/list
   [req]
   (let [{:keys [?data ?reply-fn client-id event-store game-state incomming-actions]} req
         {:keys [game-name password]}                                                 ?data]
-    (?reply-fn (->> req :game-state :game-state deref :games vals
+    (?reply-fn (->> req :game-state deref :games vals
                     (filter (comp #{:created} :game-state))
                     (map #(select-keys % [:game-name :subject]))))))
 

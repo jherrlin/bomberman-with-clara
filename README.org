@@ -30,6 +30,14 @@
    |-------------+-------------|
    | Event store | Event store |
 
+** Create new game
+
+   | Event             | Fact       |
+   |-------------------+------------|
+   | WantsToCreateGame | ActiveGame |
+   |-------------------+------------|
+   | Event store       | Game state |
+
 * Introduction
 
   This bomberman clone is mainly to explore technologies.

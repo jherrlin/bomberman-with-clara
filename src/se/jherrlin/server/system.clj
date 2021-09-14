@@ -26,7 +26,7 @@
   (:import [java.time Instant Duration]
            [se.jherrlin.server.models
             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb])
+            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame])
   (:gen-class))
 
 (comment
@@ -79,6 +79,8 @@
         facing-direction (game-state/player-facing-direction game-state' game-id user-id)]
     (models/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
 
+
+
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
   [incomming-commands-state gs]
@@ -91,6 +93,12 @@
            (map (partial command->engine-fact gs))))
 
 ;; (partial command->engine-fact gs k)
+
+(defn game-state->active-game-facts [gs]
+  (->> gs
+       (game-state/games)
+       (map (fn [{:keys [game-name game-id password game-state]}]
+              (ActiveGame. game-id game-name password game-state)))))
 
 (defn game-state->enginge-facts [gs]
   (->> @gs
@@ -140,9 +148,9 @@
           _                   (println "Count rule-enginge-facts: " (count rule-enginge-facts))
           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
           _                   (def actions-from-enging actions-from-enging)
-          _                   (def the-sorted (to-cloud-events (sort-events actions-from-enging)))]
-      (add-events-fn! the-sorted)
-      (reset! game-state (game-state/the-projection @game-state the-sorted))
+          _                   (def the-sorted-events (to-cloud-events (sort-events actions-from-enging)))]
+      (add-events-fn! the-sorted-events)
+      ;; (reset! game-state (game-state/the-projection @game-state the-sorted))
       (reset! incomming-commands-state {})
       (doseq [game (-> @game-state :games (vals))]
         (ws-broadcast-fn! [:new/game-state game]))
@@ -184,30 +192,10 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 (Duration/ofMinutes 30)
-                                                 #_(Duration/ofMillis 300))}}))
+                                                 #_(Duration/ofMinutes 30)
+                                                 (Duration/ofMillis 300))}}))
 
 
-(def test-tom (atom {:events '()}))
-
-(concat
- [:a :b :c]
- [:d :e :f])
-
-(add-watch test-tom :test-tom
-           (fn [key atom old-state new-state]
-             (def old-state old-state)
-             (def new-state new-state)))
-
-(let [diffcount (- (-> new-state :events count)
-                   (-> old-state :events count))]
-  (take diffcount (-> new-state :events)))
-
-@test-tom
-
-(swap! test-tom update :events #(concat [:a :b :c] %))
-(swap! test-tom update :events #(concat [:d :e :f] %))
-(swap! test-tom update :events #(concat [:g :h :i] %))
 
 
 (defn trunc
@@ -310,7 +298,7 @@
            _                   (def actions-from-enging actions-from-enging)
            _                   (def the-sorted (to-cloud-events (sort-events actions-from-enging)))]
        (add-events-fn! the-sorted)
-       (reset! game-state (game-state/the-projection @game-state' the-sorted))
+       ;; (reset! game-state (game-state/the-projection @game-state' the-sorted))
        (reset! incomming-commands-state {})
        @game-state'))
 
