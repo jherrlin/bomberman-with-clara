@@ -68,10 +68,4 @@
   @store
   (reset! store store-init)
 
-  ;; https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
-  ;; Används av Google Docs
-
-  ;; https://en.wikipedia.org/wiki/Raft_(algorithm)
-
-  ;; https://orbitdb.org/
   )

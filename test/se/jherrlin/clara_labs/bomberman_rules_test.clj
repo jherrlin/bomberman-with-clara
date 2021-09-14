@@ -23,6 +23,69 @@
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
+(t/deftest player-join-game
+  (t/testing "Users can join game is state and password is correct"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->ActiveGame            2 "first-game" "pwd" :created)
+                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "pwd")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/join-game-error?)
+                      (map (comp #(into {} %) :?join-game-error))
+                      (set))
+         :joins  (->> (query session' bomberman/join-game?)
+                      (map (comp #(into {} %) :?join-game))
+                      (set))})
+      {:errors #{},
+       :joins
+       #{{:game-id 2, :player-id 3, :player-name "Kalle"}
+         {:game-id 2, :player-id 1, :player-name "John"}}})))
+
+  (t/testing "User cant join game if password is wrong"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->ActiveGame            2 "first-game" "pwd" :created)
+                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "WRONG")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/join-game-error?)
+                      (map (comp #(into {} %) :?join-game-error))
+                      (set))
+         :joins  (->> (query session' bomberman/join-game?)
+                      (map (comp #(into {} %) :?join-game))
+                      (set))})
+      {:errors
+       #{{:game-id 2,
+          :game-name "first-game",
+          :message "Password to game is wrong!"}},
+       :joins #{{:game-id 2, :player-id 3, :player-name "Kalle"}}}))
+    )
+
+  (t/testing "Users cant join game if state is wrong"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->ActiveGame            2 "first-game" "pwd" :started)
+                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "WRONG")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/join-game-error?)
+                      (map (comp #(into {} %) :?join-game-error))
+                      (set))
+         :joins  (->> (query session' bomberman/join-game?)
+                      (map (comp #(into {} %) :?join-game))
+                      (set))})
+      {:errors
+       #{{:game-id 2,
+          :game-name "first-game",
+          :message "Password is correct but game is noy lobby any more."}},
+       :joins #{}}))))
 
 (t/deftest create-new-games
   (t/testing "Two player cant start a game with the same name at the same time."

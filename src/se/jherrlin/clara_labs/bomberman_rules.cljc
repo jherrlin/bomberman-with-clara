@@ -12,7 +12,7 @@
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
-            WantsToCreateGame])
+            WantsToCreateGame PlayerWantsToJoinGame JoinGameError])
   (:gen-class))
 
 
@@ -215,9 +215,38 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (CreateGame. ?game-id ?game-name ?password)))
 
+(defrule player-wants-to-join-game
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
+  [ActiveGame (= ?game-id game-id) (= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [:test (= ?player-password ?game-password)]
+  =>
+  (insert! (JoinGame. ?game-id ?player-id ?player-name)))
 
+(defrule player-wants-to-join-game-but-password-is-wrong
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password)]
+  [ActiveGame (= ?game-id game-id) (= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [:test (not= ?player-password ?game-password)]
+  =>
+  (retract! ?player-wants-to-join-game)
+  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password to game is wrong!")))
+
+(defrule player-wants-to-join-game-but-game-state-is-wrong
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame        (= ?game-name game-name) (= ?player-password password)]
+  [ActiveGame (= ?game-id game-id) (not= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [:test (not= ?player-password ?game-password)]
+  =>
+  (retract! ?player-wants-to-join-game)
+  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password is correct but game is noy lobby any more.")))
 
 ;; Queries
+(defquery join-game-error?
+  []
+  [?join-game-error <- JoinGameError])
+
+(defquery join-game?
+  []
+  [?join-game <- JoinGame])
+
 (defquery create-game-error?
   []
   [?create-game-error <- CreateGameError])
@@ -313,8 +342,15 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (let [session  (insert-all bomberman-session facts)
         session' (fire-rules session)]
     {:actions
-     {:create-game-errors   (map :?create-game-error (query session' create-game-error?))
-      :create-games         (map :?create-game       (query session' create-game?))}}))
+     {:create-game-errors (map :?create-game-error (query session' create-game-error?))
+      :create-games       (map :?create-game       (query session' create-game?))}}))
+
+(defn run-join-game-rules [facts]
+  (let [session  (insert-all bomberman-session facts)
+        session' (fire-rules session)]
+    {:actions
+     {:join-game-errors (map :?join-game-error (query session' join-game-error?))
+      :join-games       (map :?join-game       (query session' join-game?))}}))
 
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
