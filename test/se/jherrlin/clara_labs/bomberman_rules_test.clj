@@ -24,6 +24,69 @@
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
 
+(t/deftest create-new-games
+  (t/testing "Two player cant start a game with the same name at the same time."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                  (models/->WantsToCreateGame 2 "first-game" "my-second-game")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/create-game-error?)
+                      (map (comp #(into {} %) :?create-game-error))
+                      (set))
+         :games  (->> (query session' bomberman/create-game?)
+                      (map (comp #(into {} %) :?create-game))
+                      (set))})
+      {:errors
+       #{{:game-id 2,
+          :game-name "first-game",
+          :message "Game with that name already exists!"}
+         {:game-id 1,
+          :game-name "first-game",
+          :message "Game with that name already exists!"}},
+       :games #{}})))
+
+  (t/testing "A new game cant be started with the same name as an active game."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                  (models/->ActiveGame        2 "first-game")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/create-game-error?)
+                      (map (comp #(into {} %) :?create-game-error))
+                      (set))
+         :games  (->> (query session' bomberman/create-game?)
+                      (map (comp #(into {} %) :?create-game))
+                      (set))})
+      {:errors
+       #{{:game-id 1,
+          :game-name "first-game",
+          :message "Game with that name already exists!"}},
+       :games #{}})))
+
+  (t/testing "If there is no name collisions, games can be started."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                  (models/->WantsToCreateGame 2 "second-game" "my-second-game")
+                                  (models/->ActiveGame        3 "some-active-game")])
+            session' (fire-rules session)]
+        {:errors (->> (query session' bomberman/create-game-error?)
+                      (map (comp #(into {} %) :?create-game-error))
+                      (set))
+         :games  (->> (query session' bomberman/create-game?)
+                      (map (comp #(into {} %) :?create-game))
+                      (set))})
+      {:errors #{},
+       :games
+       #{{:game-id 2, :game-name "second-game", :password "my-second-game"}
+         {:game-id 1, :game-name "first-game", :password "game-password"}}}))))
+
 
 (t/deftest player-wants-to-move
   (t/is

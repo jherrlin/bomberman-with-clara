@@ -11,7 +11,8 @@
             TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb])
+            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
+            WantsToCreateGame])
   (:gen-class))
 
 
@@ -156,7 +157,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   "Bomb that been on board for a time threshold should expload."
   [TimestampNow (= ?now now)]
   [?bomb <- BombOnBoard (= ?game-id game-id) (= ?player-id player-id) (= ?bomb-added-timestamp bomb-added-timestamp) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
-  [:test (< 30000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
+  [:test (< 3000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
   =>
   (retract! ?bomb)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
@@ -189,8 +190,42 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (retract! ?fire)
   (insert-unconditional! (FireToRemove. ?game-id ?fire-position-xy)))
 
+(defrule warn-player-about-game-name-collision
+  [?wants-to-create-game <- WantsToCreateGame (= ?game-name game-name) (= ?game-id game-id)]
+  [                         ActiveGame        (= ?game-name game-name)]
+  =>
+  (retract! ?wants-to-create-game)
+  (insert-unconditional! (CreateGameError. ?game-id ?game-name "Game with that name already exists!")))
+
+(defrule warn-player-about-game-name-collision-in-the-same-time
+  [?game-1 <- WantsToCreateGame (= ?game-name-1 game-name) (= ?game-id-1 game-id)]
+  [?game-2 <- WantsToCreateGame (= ?game-name-2 game-name) (= ?game-id-2 game-id)]
+  [:test (= ?game-name-1 ?game-name-2) (not= ?game-id-1 ?game-id-2)]
+  =>
+  (retract! ?game-1)
+  (retract! ?game-2)
+  (insert-unconditional! (CreateGameError. ?game-id-1 ?game-name-1 "Game with that name already exists!"))
+  (insert-unconditional! (CreateGameError. ?game-id-2 ?game-name-2 "Game with that name already exists!")))
+
+(defrule create-game
+  [?wants-to-create-game <- WantsToCreateGame
+   (= ?game-name game-name)
+   (= ?game-id game-id)
+   (= ?password password)]
+  =>
+  (insert! (CreateGame. ?game-id ?game-name ?password)))
+
+
 
 ;; Queries
+(defquery create-game-error?
+  []
+  [?create-game-error <- CreateGameError])
+
+(defquery create-game?
+  []
+  [?create-game <- CreateGame])
+
 (defquery player-move?
   []
   [?player-move <- PlayerMove])
@@ -274,10 +309,28 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
       }}))
 
+(defn run-create-game-rules [facts]
+  (let [session  (insert-all bomberman-session facts)
+        session' (fire-rules session)]
+    {:actions
+     {:create-game-errors   (map :?create-game-error (query session' create-game-error?))
+      :create-games         (map :?create-game       (query session' create-game?))}}))
+
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
+
+  (run-create-game-rules
+   [(WantsToCreateGame. 1 "first-game" "game-password")])
+
+  (run-create-game-rules
+   [(WantsToCreateGame. 1 "first-game" "game-password")
+    (WantsToCreateGame. 2 "first-game" "my-second-game")])
+
+  (run-create-game-rules
+   [(WantsToCreateGame. 1 "first-game" "game-password")
+    (ActiveGame.        2 "first-game")])
 
 
   (run-rules
