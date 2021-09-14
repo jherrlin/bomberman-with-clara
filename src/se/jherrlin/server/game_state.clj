@@ -50,6 +50,9 @@
   ([game-state]                   (get-in game-state                [:flying-bombs]))
   ([game-state subject]           (get-in game-state [:games subject :flying-bombs])))
 
+(defn games
+  [game-state]                   (-> game-state (get-in [:games]) (vals)))
+
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."
   [source type]
@@ -67,7 +70,10 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/create-game
   [game-state {:keys [subject data] :as event}]
-  (assoc-in game-state [:games subject] (assoc data :subject subject)))
+  (let [{:keys [game-id game-name]} data]
+    (-> game-state
+        (assoc-in [:games subject] (assoc (into {} data) :subject subject))
+        (assoc-in [:active-games game-name] game-id))))
 
 (defmethod projection :se.jherrlin.bomberman.game/join-game
   [game-state {:keys [subject data] :as event}]

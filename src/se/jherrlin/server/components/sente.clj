@@ -33,7 +33,8 @@
                 (fn event-msg-handler [ws-event]
                   (future (handler
                            (assoc ws-event
-                                  :game-state        game-state
+                                  :game-state        (:game-state game-state)
+                                  :projection-fn     (:projection-fn game-state)
                                   :incomming-actions incomming-actions
                                   :event-store       event-store)))))
             sch-adapter                                (get-sch-adapter)

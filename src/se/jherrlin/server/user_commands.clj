@@ -1,17 +1,25 @@
 (ns se.jherrlin.server.user-commands
   (:require [clojure.spec.alpha :as s]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [clojure.string :as str]))
 
+(s/def ::non-blank-string (s/and string? (complement str/blank?)))
 
 (s/def ::game-id    (s/or :s string? :u uuid?))
-(s/def ::action     #{:place-bomb :move :throw-bomb})
+(s/def ::action     #{:place-bomb :move :throw-bomb :create-game :join-game})
 (s/def ::user-id    (s/or :n number? :u uuid? :s string?))
 (s/def ::direction  #{:west :east :north :south})
+(s/def ::game-name  ::non-blank-string)
+(s/def ::game-password ::non-blank-string)
+(s/def ::create-game (s/keys :req-un [::game-name ::game-password]))
+(s/def ::join-game (s/keys :req-un [::game-name ::game-password]))
 (s/def ::move       (s/keys :req-un [::game-id ::action ::user-id ::direction]))
 (s/def ::place-bomb (s/keys :req-un [::game-id ::action ::user-id]))
 (s/def ::commands
   (s/or :move       ::move
-        :place-bomb ::place-bomb))
+        :place-bomb ::place-bomb
+        :create     ::create-game
+        :join       ::join-game))
 
 (defmulti register-incomming-user-command!
   (fn [incomming-commands-state command]
@@ -33,6 +41,16 @@
 
 
 (comment
+  (s/valid? ::commands
+            {:action        :join-game
+             :game-name     "asd"
+             :game-password "pwd"})
+
+  (s/valid? ::commands
+            {:action        :create-game
+             :game-name     "asd"
+             :game-password "pwd"})
+
   (s/valid? ::move
             {:game-id   (java.util.UUID/randomUUID)
              :user-id   1

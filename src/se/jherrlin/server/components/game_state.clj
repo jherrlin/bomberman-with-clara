@@ -23,7 +23,7 @@
         this)
       (let [projection-fn (:projection-fn args)]
         (timbre/info "Starting GameState component.")
-        #_(add-watch (:store event-store) :game-state-projection
+        (add-watch (:store event-store) :game-state-projection
                    (fn [key atom old-state new-state]
                      (when (seq (:events new-state))
                        (let [diffcount (- (-> new-state :events count)
@@ -51,3 +51,29 @@
   "Create a new GameState component."
   [projection-fn]
   (map->GameState {:args {:projection-fn projection-fn}}))
+
+
+(comment
+  (def test-tom (atom {:events '()}))
+
+  (concat
+   [:a :b :c]
+   [:d :e :f])
+
+  (add-watch test-tom :test-tom
+             (fn [key atom old-state new-state]
+               (def old-state old-state)
+               (def new-state new-state)))
+
+  (let [diffcount (- (-> new-state :events count)
+                     (-> old-state :events count))]
+    (take diffcount (-> new-state :events)))
+
+  @test-tom
+
+  (swap! test-tom update :events #(concat [:a :b :c] %))
+  (swap! test-tom update :events #(concat [:d :e :f] %))
+  (swap! test-tom update :events #(concat [:g :h :i :j] %))
+  (swap! test-tom update :events #(concat [:k :l :m :n :o :p :q] %))
+
+  )
