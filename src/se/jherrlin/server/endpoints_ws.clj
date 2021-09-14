@@ -1,5 +1,6 @@
 (ns se.jherrlin.server.endpoints-ws
   (:require [taoensso.timbre :as timbre]
+            [clojure.spec.alpha :as s]
             [se.jherrlin.server.user-commands :as user-commands]
             [se.jherrlin.server.application-service :as application-service]))
 
@@ -24,9 +25,9 @@
   [req]
   (def req req)
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
-        {:keys [game-name password]}                                      ?data]
-
-    (send-fn client-id [:game/create-response] (application-service/create-game! game-state projection-fn (:add-events-fn! event-store) game-name password))))
+        {:keys [add-events-fn!]}                                                                           event-store]
+    (send-fn client-id [:game/create-response
+                        (application-service/create-game! game-state add-events-fn! (assoc ?data :action :create-game))])))
 
 {:action        :create-game
  :game-name     ""

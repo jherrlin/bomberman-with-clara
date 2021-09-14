@@ -12,8 +12,7 @@
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
-            WantsToCreateGame PlayerWantsToJoinGame JoinGameError])
-  (:gen-class))
+            WantsToCreateGame PlayerWantsToJoinGame JoinGameError]))
 
 
 (comment
@@ -341,9 +340,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defn run-create-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)
         session' (fire-rules session)]
-    {:actions
-     {:create-game-errors (map :?create-game-error (query session' create-game-error?))
-      :create-games       (map :?create-game       (query session' create-game?))}}))
+    {:create-game-errors (map :?create-game-error (query session' create-game-error?))
+     :create-games       (map :?create-game       (query session' create-game?))}))
 
 (defn run-join-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)

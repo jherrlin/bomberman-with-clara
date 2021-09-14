@@ -94,11 +94,7 @@
 
 ;; (partial command->engine-fact gs k)
 
-(defn game-state->active-game-facts [gs]
-  (->> gs
-       (game-state/games)
-       (map (fn [{:keys [game-name game-id password game-state]}]
-              (ActiveGame. game-id game-name password game-state)))))
+
 
 (defn game-state->enginge-facts [gs]
   (->> @gs
@@ -193,7 +189,7 @@
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
                                                  #_(Duration/ofMinutes 30)
-                                                 (Duration/ofMillis 300))}}))
+                                                 (Duration/ofMillis 10000))}}))
 
 
 

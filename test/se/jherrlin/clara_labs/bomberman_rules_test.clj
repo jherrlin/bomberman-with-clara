@@ -88,6 +88,21 @@
        :joins #{}}))))
 
 (t/deftest create-new-games
+  (t/testing "When no games exists, create one."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")])
+            session' (fire-rules session)]
+        {:errors (->> (query session' bomberman/create-game-error?)
+                      (map (comp #(into {} %) :?create-game-error))
+                      (set))
+         :games  (->> (query session' bomberman/create-game?)
+                      (map (comp #(into {} %) :?create-game))
+                      (set))})
+      {:errors #{},
+       :games #{{:game-id 1, :game-name "first-game", :password "game-password"}}})))
+
   (t/testing "Two player cant start a game with the same name at the same time."
     (t/is
      (=

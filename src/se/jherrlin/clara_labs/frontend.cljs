@@ -181,7 +181,8 @@
 
 
 (comment
-  (chsk-send! [:game/create {:game-name "FireGame" :password "pwd"}])
+  (chsk-send! [:game/create {:game-name "FireGame" :game-password "pwd"}])
+
   (chsk-send! [:game/list nil]
               5000
                  (fn [cb-reply]
