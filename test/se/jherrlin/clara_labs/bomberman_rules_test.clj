@@ -53,7 +53,7 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->WantsToCreateGame 1 "first-game" "game-password")
-                                  (models/->ActiveGame        2 "first-game")])
+                                  (models/->ActiveGame        2 "first-game" "pwd" :created)])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/create-game-error?)
@@ -74,7 +74,7 @@
       (let [session  (insert-all bomberman-session
                                  [(models/->WantsToCreateGame 1 "first-game" "game-password")
                                   (models/->WantsToCreateGame 2 "second-game" "my-second-game")
-                                  (models/->ActiveGame        3 "some-active-game")])
+                                  (models/->ActiveGame        3 "some-active-game" "pwd" :created)])
             session' (fire-rules session)]
         {:errors (->> (query session' bomberman/create-game-error?)
                       (map (comp #(into {} %) :?create-game-error))

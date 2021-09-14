@@ -114,7 +114,7 @@
                  (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
 
 (defrecord WantsToCreateGame [game-id game-name password])
-(defrecord ActiveGame        [game-id game-name])
+(defrecord ActiveGame        [game-id game-name password game-state])
 (defrecord CreateGameError   [game-id game-name message])
 (defrecord CreateGame        [game-id game-name password]
   CloudEvent (toCloudEvent [this]

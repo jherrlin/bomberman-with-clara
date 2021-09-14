@@ -330,7 +330,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
   (run-create-game-rules
    [(WantsToCreateGame. 1 "first-game" "game-password")
-    (ActiveGame.        2 "first-game")])
+    (ActiveGame.        2 "first-game" "pwd" :created)])
 
 
   (run-rules
