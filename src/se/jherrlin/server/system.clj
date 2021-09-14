@@ -189,7 +189,7 @@
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
                                                  #_(Duration/ofMinutes 30)
-                                                 (Duration/ofMillis 10000))}}))
+                                                 (Duration/ofMillis 200))}}))
 
 
 

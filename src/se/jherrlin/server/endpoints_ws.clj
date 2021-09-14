@@ -34,9 +34,6 @@
  :game-password ""}
 
 
-
-
-
 (defmethod handler :game/list
   [req]
   (let [{:keys [?data ?reply-fn client-id event-store game-state incomming-actions]} req
@@ -47,6 +44,7 @@
 
 (defmethod handler :game/join
   [req]
-  (let [{:keys [?data ?reply-fn client-id event-store game-state incomming-actions]} req
-        {:keys [subject player-id player-name password]}                             ?data]
-    (application-service/join-game! (:add-event-fn! event-store) subject player-id player-name)))
+  (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
+        {:keys [add-events-fn!]}                                                                           event-store]
+    (?reply-fn
+     (application-service/join-game! game-state add-events-fn! (assoc ?data :action :join-game)))))

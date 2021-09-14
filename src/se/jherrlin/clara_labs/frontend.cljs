@@ -2,15 +2,22 @@
   (:require [reagent.dom :as rd]
             ["semantic-ui-react" :as semantic-ui]
             [taoensso.timbre :as timbre]
+            [cljs.pprint :as pprint]
             [re-frame.core :as re-frame]
             [taoensso.sente :as sente :refer [cb-success?]]
             [goog.events.KeyCodes :as keycodes]
+            [se.jherrlin.client.input.events :as events]
+            [se.jherrlin.client.input.inputs :as inputs]
+            [clojure.spec.alpha :as s]
+            [se.jherrlin.server.user-commands :as user-commands]
             [goog.events :as gev])
   (:import [goog.events EventType KeyHandler]))
 
+(set! *warn-on-infer* true)
+
 (re-frame/reg-event-db
  ::initialize-db
- (fn [_ _] {}))
+ (fn [_ _] {:view :welcome}))
 
 (declare chsk-send!)
 (declare chsk)
@@ -34,7 +41,22 @@
 (re-frame/reg-event-db
  ::game-state
  (fn [db [_ game-state]]
-   (assoc db :game-state game-state)))
+   (let [{:keys [game-id]} (get db ::current-playing-game)]
+     (if (= game-id (:game-id game-state))
+       (assoc db :game-state game-state)
+       db))))
+
+(re-frame/reg-event-db ::change-view (fn [db [_ view]] (assoc db :view view)))
+(re-frame/reg-sub ::view (fn [db] (:view db)))
+
+(re-frame/reg-event-db ::game-list (fn [db [_ view]] (assoc db ::game-list view)))
+(re-frame/reg-sub ::game-list (fn [db] (::game-list db)))
+
+
+(re-frame/reg-event-db ::current-playing-game (fn [db [_ view]] (assoc db ::current-playing-game view)))
+(re-frame/reg-sub ::current-playing-game (fn [db] (::current-playing-game db)))
+
+
 
 (re-frame/reg-sub ::game-state (fn [db] (:game-state db)))
 (re-frame/reg-sub ::players (fn [db] (get-in db [:game-state :players] [])))
@@ -125,21 +147,174 @@
   (catch js/Error e
     (js/console.log e)))
 
-(defn root-component []
+(defn create-game-form []
+  (let [create-game-name     @(re-frame/subscribe [:form-value :create-game :game-name])
+        create-game-password @(re-frame/subscribe [:form-value :create-game :game-password])
+        form-values          @(re-frame/subscribe [:form-values :create-game])
+        form-valid?          @(re-frame/subscribe [:form-valid? :create-game ::user-commands/create-game])]
+    (re-frame/dispatch [:form-value :create-game :action :create-game])
+    [:div
+     [:h2 "Create a new game."]
+     [:p "You need to send you game name and password to your friends."]
+     [inputs/text
+      {:placeholder "Game name"
+       :on-change   #(re-frame/dispatch [:form-value :create-game :game-name %])
+       :value       create-game-name}]
+     [:br]
+     [inputs/text
+      {:placeholder "Game password"
+       :on-change   #(re-frame/dispatch [:form-value :create-game :game-password %])
+       :value       create-game-password}]
+
+     [:pre
+         (str "Create game form values:\n"
+              (with-out-str (pprint/pprint form-values)))]
+
+     (when-not form-valid?
+       [:h4 (str "Is NOT form valid?")])
+
+     [inputs/button
+      {:on-click  #(chsk-send! [:game/create form-values])
+       :body      "Start new game"
+       :disabled? (not form-valid?)}]]))
+
+
+
+(defn welcome-component []
+  [:div
+   #_[create-game-form]
+   [:h3 "Welcome to Claraman, a Bomberman clone."]
+   [:p "Claraman is mainly an experimental design project."]
+   [:p "It uses the rule engine Clara for all of it's logic and event sourcing
+   for state management."]])
+
+(defn game-screen []
   (let [screen @(re-frame/subscribe [::screen])]
-    (if screen
-      [:div
-       (for [[i row]  (map-indexed list screen)
-             [j cell] (map-indexed list row)]
-         (let [t (:type cell)]
-           [:<>
-            [:div {:style {:width   "20px"
-                           :height  "20px"
-                           :display "inline-block"}}
-             (:str cell)]
-            (when (= (-> screen first count dec) j)
-              [:div {:style {:display "block"}}])]))]
-      [:div "loading..."])))
+    [:div
+     (if screen
+       [:div
+        (for [[i row]  (map-indexed list screen)
+              [j cell] (map-indexed list row)]
+          (let [t (:type cell)]
+            [:<>
+             [:div {:style {:width   "20px"
+                            :height  "20px"
+                            :display "inline-block"}}
+              (:str cell)]
+             (when (= (-> screen first count dec) j)
+               [:div {:style {:display "block"}}])]))]
+       [:div "loading..."])
+     [:div
+      [:br]
+      [:p "Arrow keys to go up, down, left and right."]
+      [:p "Space bar to place bomb."]
+      [:p "T to throw bomb."]]]))
+
+(defn list-games []
+  (let [the-list              @(re-frame/subscribe [::game-list])
+        join-game-form-values @(re-frame/subscribe [:form-values :join-game])
+        join-game-password    @(re-frame/subscribe [:form-value :join-game :game-password])
+        join-game-player-name @(re-frame/subscribe [:form-value :join-game :player-name])
+        join-selected-game    @(re-frame/subscribe [:input-value :join-selected-game])
+        form-valid?           @(re-frame/subscribe [:form-valid? :join-game ::user-commands/join-game])
+        ]
+    [:div
+     [:p "List of games:"]
+     [:div
+      (for [{:keys [game-name subject]} the-list]
+        ^{:key (str subject)}
+        [:<>
+         [:br]
+         [:br]
+         [:div game-name
+
+          (when-not (= join-selected-game subject)
+            [inputs/button
+             {:on-click  #(do
+                            (re-frame/dispatch [:form-value :join-game :game-name game-name])
+                            (re-frame/dispatch [:input-value :join-selected-game subject]))
+              :body      "Join game"
+              :disabled? false}])
+          #_[inputs/button
+             {:on-click  #(js/console.log "soon")
+              :body      "Spectate game"
+              :disabled? false}]
+          (when (= join-selected-game subject)
+            [:div
+             [inputs/text
+              {:placeholder "Game password"
+               :on-change   #(re-frame/dispatch [:form-value :join-game :game-password %])
+               :value       join-game-password}]
+             [:br]
+             [inputs/text
+              {:placeholder "Your player name for this game"
+               :on-change   #(re-frame/dispatch [:form-value :join-game :player-name %])
+               :value       join-game-player-name}]
+             [:br]
+             (when form-valid?
+               [:p "Form is valid!"])
+             [inputs/button
+              {:on-click  #(chsk-send! [:game/join join-game-form-values]
+                                       5000
+                                       (fn [cb-reply]
+                                         {:status :ok
+                                          :data   {:game-id     #uuid "34c69976-f863-4f7f-abf1-d2805a4c208f",
+                                                   :player-id   #uuid "7c64548e-687c-4ccd-b37a-52d0f39127e0",
+                                                   :player-name "Pupas"}}
+                                         (if (cb-success? cb-reply)
+                                           (let [{:keys [status message data]} cb-reply]
+                                             (println "Join success: "cb-reply)
+                                             (if (= :ok status)
+                                               (do
+                                                 (re-frame/dispatch [::current-playing-game data])
+                                                 (re-frame/dispatch [::change-view :game]))
+                                               (js/alert message)))
+
+                                           (println "Join errors: "cb-reply))))
+               :body      "Lets join the game!"
+               :disabled? false}]])
+          [:br]]])]
+     [:pre
+         (str "Create game form values:\n"
+              (with-out-str (pprint/pprint join-game-form-values)))]
+     [:pre
+         (str "join-selected-game:\n"
+              (with-out-str (pprint/pprint join-selected-game)))]]))
+
+(defn root-component []
+  (let [view @(re-frame/subscribe [::view])]
+    [:<>
+     [:div
+      [inputs/button
+       {:on-click  #(re-frame/dispatch [::change-view :welcome])
+        :body      "Home"}]
+      [inputs/button
+       {:on-click  #(re-frame/dispatch [::change-view :game])
+        :body      "Game"}]
+      [inputs/button
+       {:on-click  #(re-frame/dispatch [::change-view :create-game])
+        :body      "Create game"}]
+      [inputs/button
+       {:on-click  (fn [_]
+                     (chsk-send! [:game/list nil]
+                                 5000
+                                 (fn [cb-reply]
+                                   (if (cb-success? cb-reply)
+                                     (do (println "Success: "cb-reply)
+                                         (re-frame/dispatch [::game-list cb-reply]))
+                                     (println "Error: "cb-reply))))
+                     (re-frame/dispatch [::change-view :list-games]))
+        :body      "List games"}]]
+     (case view
+       :welcome [welcome-component]
+       :game [game-screen]
+       :create-game [create-game-form]
+       :list-games [list-games]
+       )
+     #_[:pre
+         (str "Create game form values:\n"
+              (with-out-str (pprint/pprint @re-frame.db/app-db)))]
+     ]))
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
@@ -162,8 +337,8 @@
 
 (defn g [m]
   (merge
-   {:game-id   repl-subject
-    :user-id   player-1-id}
+   {:game-id   (get-in @re-frame.db/app-db [::current-playing-game :game-id])
+    :user-id   (get-in @re-frame.db/app-db [::current-playing-game :player-id])}
    m))
 
 (defn reagent-content-fn []
@@ -185,7 +360,7 @@
 
   (chsk-send! [:game/list nil]
               5000
-                 (fn [cb-reply]
+              (fn [cb-reply]
                    (if (cb-success? cb-reply)
                      (println "Success: "cb-reply)
                      (println "Error: "cb-reply))))

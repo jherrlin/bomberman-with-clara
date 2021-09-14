@@ -237,6 +237,11 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (retract! ?player-wants-to-join-game)
   (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password is correct but game is noy lobby any more.")))
 
+;; TODO
+;; (defrule player-wants-to-join-game-but-player-name-is-already-three
+;;   =>
+;;   )
+
 ;; Queries
 (defquery join-game-error?
   []
@@ -346,9 +351,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defn run-join-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)
         session' (fire-rules session)]
-    {:actions
-     {:join-game-errors (map :?join-game-error (query session' join-game-error?))
-      :join-games       (map :?join-game       (query session' join-game?))}}))
+    {:join-game-errors (map :?join-game-error (query session' join-game-error?))
+     :join-games       (map :?join-game       (query session' join-game?))}))
 
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")

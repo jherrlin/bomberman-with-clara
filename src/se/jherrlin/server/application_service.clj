@@ -37,5 +37,38 @@
         :else
         (timbre/error "No actions from enginge on:" create-event-data)))))
 
-(defn join-game! [add-event-fn! subject player-id player-name]
-  (add-event-fn! (JoinGame. subject player-id player-name)))
+(defn join-game! [game-state add-events-fn! join-game-event-data]
+  (def game-state game-state)
+  (def add-events-fn! add-events-fn!)
+  (def join-game-event-data join-game-event-data)
+  (if-not (s/valid? ::user-commands/join-game join-game-event-data)
+    (s/explain-data ::user-commands/join-game join-game-event-data)
+    (let [{:keys [game-name game-password player-name]} join-game-event-data
+          player-id                                     (java.util.UUID/randomUUID)
+          player-wants-to-join-game                     (models/->PlayerWantsToJoinGame player-id player-name game-name game-password)
+          {:keys [join-game-errors join-games] :as actions}
+          (bomberman-rules/run-join-game-rules
+           (concat (game-state->active-game-facts @game-state)
+                   [player-wants-to-join-game]))]
+      actions
+      (cond
+        (seq join-game-errors)
+        {:status  :error
+         :message (-> join-game-errors first :message)}
+        (seq join-games)
+        (do
+          (add-events-fn! [(some->> join-games first ((fn [x] (.toCloudEvent x))))])
+          {:status :ok
+           :data   (->> join-games first (into {}))})
+        :else
+        (do (timbre/error "No actions from enginge on:" join-game-event-data)
+            {:status  :error
+             :message "unknown"}))
+      ;;(->> join-games first (into {}))
+      ))
+  )
+
+{:action        :join-game
+ :game-name     "asd"
+ :game-password "pwd"
+ :player-name   "John"}

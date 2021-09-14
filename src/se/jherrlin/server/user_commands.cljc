@@ -11,8 +11,9 @@
 (s/def ::direction  #{:west :east :north :south})
 (s/def ::game-name  ::non-blank-string)
 (s/def ::game-password ::non-blank-string)
+(s/def ::player-name ::non-blank-string)
 (s/def ::create-game (s/keys :req-un [::game-name ::game-password]))
-(s/def ::join-game (s/keys :req-un [::game-name ::game-password]))
+(s/def ::join-game  (s/keys :req-un [::game-name ::game-password ::player-name]))
 (s/def ::move       (s/keys :req-un [::game-id ::action ::user-id ::direction]))
 (s/def ::place-bomb (s/keys :req-un [::game-id ::action ::user-id]))
 (s/def ::commands
@@ -37,14 +38,15 @@
   (swap! incomming-commands-state assoc-in [game-id user-id action] m))
 
 (defmethod register-incomming-user-command! :default [incomming-commands-state m]
-  (throw (Exception. (str "In dont know what to do with" m))))
+  (timbre/error "In dont know what to do with" m))
 
 
 (comment
-  (s/valid? ::commands
+  (s/valid? ::join-game
             {:action        :join-game
              :game-name     "asd"
-             :game-password "pwd"})
+             :game-password "pwd"
+             :player-name   "John"})
 
   (s/valid? ::commands
             {:action        :create-game
