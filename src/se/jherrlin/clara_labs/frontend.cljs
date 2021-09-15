@@ -415,7 +415,7 @@
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
-  (rd/render [root-component] (.getElementById js/document "root")))
+  (rd/render [root-component] (.getElementById js/document "app")))
 
 
 (defn capture-key

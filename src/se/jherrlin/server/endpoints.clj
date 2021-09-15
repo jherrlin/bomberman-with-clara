@@ -12,6 +12,7 @@
    [reitit.ring :as ring]
    [reitit.ring.coercion :as ring.coercion]
    [reitit.ring.malli]
+   [se.jherrlin.server.pages :as pages]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
    [reitit.swagger :as swagger]
@@ -29,7 +30,9 @@
 (defn handler [{:keys [websocket game-state incomming-actions middleware] :as deps} req]
   ((ring/ring-handler
     (ring/router
-     [
+     [["/" {:summary "Index page"
+            :get (fn [req]
+                   {:status 200 :body (pages/index-html req)})}]
 
       (websocket-endpoints websocket)
 
