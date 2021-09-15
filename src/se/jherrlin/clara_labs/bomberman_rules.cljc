@@ -9,10 +9,11 @@
             [clojure.set :as set])
   (:import [se.jherrlin.server.models
             TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
-            PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
+            PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
-            WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState]))
+            WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState PlayerWantsToStartGame
+            StartGameError]))
 
 
 (comment
@@ -103,6 +104,7 @@
 (defrule player-move
   "Player move"
   [Board (= ?game-id game-id) (= ?board board)]
+  [GameState (= ?game-id game-id) (= :started game-state)]
   [?player-wants-to-move <- PlayerWantsToMove (= ?game-id game-id) (= ?player-id player-id) (= ?current-xy current-xy) (= ?direction direction)
    (#{:floor} (board/target-position-type ?board current-xy direction))]
   [:not [Stone       (= ?game-id game-id) (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
@@ -119,6 +121,7 @@
    (= ?player-current-xy current-xy)
    (= ?timestamp timestamp)
    (= ?max-nr-of-bombs-for-player max-nr-of-bombs-for-player)]
+  [GameState (= ?game-id game-id) (= :started game-state)]
   [:not [BombOnBoard
          (= ?game-id game-id)
          (= bomb-position-xy ?player-current-xy)]]
@@ -140,7 +143,7 @@
 
 (defrule game-ends-if-there-is-only-one-player-left
   [GameState (= ?game-id game-id) (= :started game-state)]
-  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)] (= ?player-id player-id)]
+  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
   [:test (= (count ?players-alive) 1)]
   =>
   (let [end-game-id     (-> ?players-alive first :game-id)
@@ -232,6 +235,24 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (CreateGame. ?game-id ?game-name ?password)))
 
+(defrule player-wants-to-start-game
+  [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
+  [GameState                                             (= ?game-id game-id) (= :created game-state)]
+  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [:test (<= 2 (count ?players-alive))]
+  =>
+  (retract! ?player-wants-to-start-game)
+  (insert-unconditional! (StartGame. ?game-id)))
+
+(defrule player-wants-to-start-game-but-not-enough-player-have-joined
+  [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
+  [GameState                                             (= ?game-id game-id) (= :created game-state)]
+  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [:test (< (count ?players-alive) 2)]
+  =>
+  (retract! ?player-wants-to-start-game)
+  (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
+
 (defrule player-wants-to-join-game
   [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
   [ActiveGame (= ?game-id game-id) (= :created game-state) (= ?game-name game-name) (= ?game-password password)]
@@ -268,6 +289,15 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defquery join-game?
   []
   [?join-game <- JoinGame])
+
+(defquery start-game-error?
+  []
+  [?start-game-error <- StartGameError])
+
+(defquery start-game?
+  []
+  [?start-game <- StartGame])
+
 
 (defquery create-game-error?
   []
@@ -377,10 +407,27 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
     {:join-game-errors (map :?join-game-error (query session' join-game-error?))
      :join-games       (map :?join-game       (query session' join-game?))}))
 
+(defn run-start-game-rules [facts]
+  (let [session  (insert-all bomberman-session facts)
+        session' (fire-rules session)]
+    {:start-game-errors (map :?start-game-error (query session' start-game-error?))
+     :start-games       (map :?start-game       (query session' start-game?))}))
+
 (comment
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
+
+  (run-start-game-rules
+   [(PlayerWantsToStartGame. repl-game-id)
+    (GameState.              repl-game-id :created)
+    (PlayerPositionOnBoard.  repl-game-id player-1-ws-id [1 1])
+    (PlayerPositionOnBoard.  repl-game-id player-2-ws-id [1 1])])
+
+  (run-start-game-rules
+   [(PlayerWantsToStartGame. repl-game-id)
+    (GameState.              repl-game-id :created)
+    (PlayerPositionOnBoard.  repl-game-id player-1-ws-id [1 1])])
 
   (run-create-game-rules
    [(WantsToCreateGame. 1 "first-game" "game-password")])

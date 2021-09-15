@@ -1,6 +1,7 @@
 (ns se.jherrlin.server.game-state
   (:require [clojure.string :as str]
-            [se.jherrlin.server.components.event-store :as components.event-store])
+            [se.jherrlin.server.components.event-store :as components.event-store]
+            [se.jherrlin.server.models :as models])
   (:import  [se.jherrlin.server.models
              PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
              CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
@@ -8,6 +9,7 @@
 (comment
   (remove-ns 'se.jherrlin.server.game-state)
   )
+
 
 ;; Access data in game state
 (defn player-current-xy
@@ -55,6 +57,28 @@
 
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
+
+
+(defn game-state->enginge-facts [gs]
+  (->> @gs
+       :games
+       vals
+       (filter (comp #{:started :created} :game-state))
+       (map (fn [{:keys [subject game-id game-state] :as game}]
+              (concat
+               [(models/->Board subject (board game))
+                (models/->GameState game-id game-state)]
+               (->> (players game)
+                    (vals)
+                    (map (fn [{:keys [player-id position] :as player}]
+                           (models/->PlayerPositionOnBoard subject player-id position))))
+               (->> (stones game)
+                    (map (partial models/->Stone subject)))
+               (->> (bombs game)
+                    (map models/map->BombOnBoard))
+               (->> (fires game)
+                    (map models/map->FireOnBoard)))))
+       (apply concat)))
 
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."

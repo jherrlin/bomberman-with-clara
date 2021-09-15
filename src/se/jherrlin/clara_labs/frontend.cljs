@@ -46,6 +46,7 @@
        (assoc db :game-state game-state)
        db))))
 
+
 (re-frame/reg-event-db ::change-view (fn [db [_ view]] (assoc db :view view)))
 (re-frame/reg-sub ::view (fn [db] (:view db)))
 
@@ -198,10 +199,26 @@
    for state management."]])
 
 (defn game-screen []
-  (let [screen @(re-frame/subscribe [::screen])
-        winner @(re-frame/subscribe [::winner])]
+  (let [screen               @(re-frame/subscribe [::screen])
+        winner               @(re-frame/subscribe [::winner])
+        game-state           @(re-frame/subscribe [::game-state])
+        {:keys [game-id]} @(re-frame/subscribe [::current-playing-game])]
     [:div
      (cond
+       (= (:game-state game-state) :created)
+       [:div
+        [inputs/button
+         {:on-click #(chsk-send! [:game/start {:game-id game-id}]
+                                 5000
+                                 (fn [cb-reply]
+                                   (if (cb-success? cb-reply)
+                                     (let [{:keys [status message data]} cb-reply]
+                                       (if (= :ok status)
+                                         (println "Start game success: "cb-reply)
+                                         (js/alert message)))
+                                     (println "Start game errors: "cb-reply))))
+          :body      "Start game!"
+          :disabled? false}]]
        screen
        [:div
         (for [[i row]  (map-indexed list screen)
@@ -214,9 +231,11 @@
               (:str cell)]
              (when (= (-> screen first count dec) j)
                [:div {:style {:display "block"}}])]))]
-       winner
+       (contains? game-state :winner)
        [:div
-        [:h3 (str "The winner is: " winner)]]
+        [:h3 (if (nil? winner)
+               "No winner!"
+               (str "The winner is: " winner))]]
        :else
        [:div "loading..."])
      [:div

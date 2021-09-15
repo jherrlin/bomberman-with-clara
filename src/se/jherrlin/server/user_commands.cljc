@@ -6,21 +6,23 @@
 (s/def ::non-blank-string (s/and string? (complement str/blank?)))
 
 (s/def ::game-id    (s/or :s string? :u uuid?))
-(s/def ::action     #{:place-bomb :move :throw-bomb :create-game :join-game})
+(s/def ::action     #{:place-bomb :move :throw-bomb :create-game :join-game :start-game})
 (s/def ::user-id    (s/or :n number? :u uuid? :s string?))
 (s/def ::direction  #{:west :east :north :south})
 (s/def ::game-name  ::non-blank-string)
 (s/def ::game-password ::non-blank-string)
 (s/def ::player-name ::non-blank-string)
-(s/def ::create-game (s/keys :req-un [::game-name ::game-password]))
-(s/def ::join-game  (s/keys :req-un [::game-name ::game-password ::player-name]))
-(s/def ::move       (s/keys :req-un [::game-id ::action ::user-id ::direction]))
-(s/def ::place-bomb (s/keys :req-un [::game-id ::action ::user-id]))
+(s/def ::start-game (s/keys :req-un  [::action ::game-id]))
+(s/def ::create-game (s/keys :req-un [::action ::game-name ::game-password]))
+(s/def ::join-game  (s/keys :req-un  [::action ::game-name ::game-password ::player-name]))
+(s/def ::move       (s/keys :req-un  [::action ::game-id ::user-id ::direction]))
+(s/def ::place-bomb (s/keys :req-un  [::action ::game-id ::user-id]))
 (s/def ::commands
   (s/or :move       ::move
         :place-bomb ::place-bomb
         :create     ::create-game
-        :join       ::join-game))
+        :join       ::join-game
+        :start      ::start-game))
 
 (defmulti register-incomming-user-command!
   (fn [incomming-commands-state command]
@@ -42,6 +44,11 @@
 
 
 (comment
+
+  (s/valid? ::start-game
+            {:action  :start-game
+             :game-id "1"})
+
   (s/valid? ::join-game
             {:action        :join-game
              :game-name     "asd"

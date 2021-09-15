@@ -37,6 +37,35 @@
         :else
         (timbre/error "No actions from enginge on:" create-event-data)))))
 
+(defn start-game! [game-state add-events-fn! start-game-event-data]
+  (def game-state game-state)
+  (def add-events-fn! add-events-fn!)
+  (def start-game-event-data start-game-event-data)
+  (if-not (s/valid? ::user-commands/start-game start-game-event-data)
+    (s/explain-data ::user-commands/start-game start-game-event-data)
+    (let [{:keys [game-id]}          start-game-event-data
+          player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
+          {:keys [start-game-errors start-games] :as actions}
+          (bomberman-rules/run-start-game-rules
+           (concat (game-state->active-game-facts @game-state)
+                   (game-state/game-state->enginge-facts game-state)
+                   [player-wants-to-start-game]))]
+      (cond
+        (seq start-game-errors)
+        {:status  :error
+         :message (-> start-game-errors first :message)}
+        (seq start-games)
+        (do
+          (add-events-fn! [(some->> start-games first ((fn [x] (.toCloudEvent x))))])
+          {:status :ok
+           :data   (->> start-games first (into {}))})
+        :else
+        (do (timbre/error "No actions from enginge on:" start-game-event-data)
+            {:status  :error
+             :message "unknown"})))))
+{:action  :start-game
+ :game-id "1"}
+
 (defn join-game! [game-state add-events-fn! join-game-event-data]
   (def game-state game-state)
   (def add-events-fn! add-events-fn!)
@@ -63,10 +92,7 @@
         :else
         (do (timbre/error "No actions from enginge on:" join-game-event-data)
             {:status  :error
-             :message "unknown"}))
-      ;;(->> join-games first (into {}))
-      ))
-  )
+             :message "unknown"})))))
 
 {:action        :join-game
  :game-name     "asd"

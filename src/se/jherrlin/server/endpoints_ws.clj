@@ -48,3 +48,11 @@
         {:keys [add-events-fn!]}                                                                           event-store]
     (?reply-fn
      (application-service/join-game! game-state add-events-fn! (assoc ?data :action :join-game)))))
+
+(defmethod handler :game/start
+  [req]
+  (def req req)
+  (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
+        {:keys [add-events-fn!]}                                                                           event-store]
+    (?reply-fn
+     (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game)))))

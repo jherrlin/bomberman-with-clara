@@ -139,6 +139,8 @@
                               :fire-length              3}]
                  (template "urn:se:jherrlin:bomberman:game" game-id "join-game" (merge default this)))))
 
+(defrecord PlayerWantsToStartGame [game-id])
+(defrecord StartGameError [game-id message])
 (defrecord StartGame [game-id]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "start")))

@@ -33,23 +33,6 @@
   (remove-ns 'se.jherrlin.server.system)
   )
 
-{:players    {1 {:position                 [1 1]
-                 :fire-length              3
-                 :id                       1
-                 :sign                     "1"
-                 :max-nr-of-bombs-for-user 3
-                 :user-facing-direction    :south
-                 }}
- :stones     [#_[2 1] [3 1] [4 1] [5 1]
-              [4 1] [3 3] [5 5] [5 6] [5 7] [5 8] [6 5] [7 5] [8 5] [9 5]
-              [1 3]
-              [1 4]
-              ]
- :board      board/board2
- :dead-users {}
- :bombs      []
-    :fire       []}
-
 
 (defonce incomming-commands-state
   (atom {}))
@@ -80,7 +63,6 @@
     (models/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
 
 
-
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
   [incomming-commands-state gs]
@@ -95,27 +77,6 @@
 ;; (partial command->engine-fact gs k)
 
 
-
-(defn game-state->enginge-facts [gs]
-  (->> @gs
-       :games
-       vals
-       (filter (comp #{:started :created} :game-state))
-       (map (fn [{:keys [subject game-id game-state] :as game}]
-              (concat
-               [(models/->Board subject (game-state/board game))
-                (models/->GameState game-id game-state)]
-               (->> (game-state/players game)
-                    (vals)
-                    (map (fn [{:keys [player-id position] :as player}]
-                           (models/->PlayerPositionOnBoard subject player-id position))))
-               (->> (game-state/stones game)
-                    (map (partial models/->Stone subject)))
-               (->> (game-state/bombs game)
-                    (map models/map->BombOnBoard))
-               (->> (game-state/fires game)
-                    (map models/map->FireOnBoard)))))
-       (apply concat)))
 
 (defn sort-events [x]
   (some->> x
@@ -134,7 +95,7 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state->enginge-facts game-state)
+          game-state-facts    (game-state/game-state->enginge-facts game-state)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
@@ -216,12 +177,15 @@
   (reset! event-store se.jherrlin.server.components.event-store/store-init)
   (reset! incomming-commands-state {})
 
+  (require '[se.jherrlin.server.saved-event-store])
+
+
 
   (->> @event-store
        :events
        count)
 
-  (count (game-state->enginge-facts game-state'))
+  (count (game-state/game-state->enginge-facts game-state'))
 
   (->> @event-store
        :events
@@ -240,6 +204,11 @@
   (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-1-id "John"))])
   (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-2-id "Hannah"))])
   (add-events-fn! [(.toCloudEvent (StartGame.  repl-subject))])
+  ;; (add-events-fn! [(.toCloudEvent (PlayerWantsToPlaceBomb. repl-subject player-1-id [1 1] 3 (java.util.Date.) 3))])
+  @game-state'
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
+
+
 
   (game-state/the-projection @game-state' (->> @event-store :events reverse (take 20))
                              )
@@ -282,7 +251,7 @@
      (let [game-state          game-state'
            user-action-facts   (incomming-actions incomming-commands-state game-state)
            _                   (def user-action-facts user-action-facts)
-           game-state-facts    (game-state->enginge-facts game-state)
+           game-state-facts    (game-state/game-state->enginge-facts game-state)
            _                   (def game-state-facts game-state-facts)
            rule-enginge-facts  (concat
                                 user-action-facts
