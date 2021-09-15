@@ -1,10 +1,6 @@
 (ns se.jherrlin.server.game-state
   (:require [clojure.string :as str]
-            [se.jherrlin.server.components.event-store :as components.event-store]
-            [se.jherrlin.server.models :as models])
-  (:import  [se.jherrlin.server.models
-             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
-             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb PlayerPicksFireIncItemFromBoard]))
+            [se.jherrlin.server.models :as models]))
 
 (comment
   (remove-ns 'se.jherrlin.server.game-state)
@@ -193,7 +189,7 @@
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:")
   ;; (println game-state)
-  (clojure.pprint/pprint event)
+  ;; (clojure.pprint/pprint event)
   game-state)
 
 
@@ -213,11 +209,11 @@
   (reduce
    (fn [gs m] (projection gs (.toCloudEvent m)))
    {}
-   [(CreateGame.                      repl-game-id "First game" "my-secret")
-    (JoinGame.                        repl-game-id player-1-ws-id "John")
-    (JoinGame.                        repl-game-id player-2-ws-id "Hannah")
-    (StartGame.                       repl-game-id)
-    (PlayerPicksFireIncItemFromBoard. repl-game-id player-1-ws-id [1 1] 3)
+   [(models/->CreateGame                      repl-game-id "First game" "my-secret")
+    (models/->JoinGame                        repl-game-id player-1-ws-id "John")
+    (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
+    (models/->StartGame                       repl-game-id)
+    (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (StoneToRemove.          repl-game-id [3 3])
@@ -226,9 +222,9 @@
 
   (.toCloudEvent (EndGame. repl-game-id nil))
 
-  (reduce
-   (fn [gs m] (projection gs m))
-   {}
-   (->> @components.event-store/store :events reverse))
+  ;; (reduce
+  ;;  (fn [gs m] (projection gs m))
+  ;;  {}
+  ;;  (->> @components.event-store/store :events reverse))
 
   )
