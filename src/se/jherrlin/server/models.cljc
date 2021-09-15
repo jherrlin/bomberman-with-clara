@@ -1,17 +1,21 @@
 (ns se.jherrlin.server.models
-  (:require [se.jherrlin.clara-labs.board :as board])
-  (:gen-class))
+  (:require [se.jherrlin.clara-labs.board :as board]
+            [se.jherrlin.datetime :as datetime]))
 
+
+(defn rand-uuid []
+  #?(:cljs (random-uuid)
+     :clj (java.util.UUID/randomUUID)))
 
 (defn template
   ([source subject type]
    (template source subject type nil))
   ([source subject type data]
-   (cond-> {:id           (java.util.UUID/randomUUID) ;; event id
+   (cond-> {:id           (rand-uuid) ;; event id
             :source       source
             :subject      subject
             :type         type
-            :time         (java.util.Date.)
+            :time         (datetime/now)
             :content-type "application/edn"}
      data (assoc :data (into {} data)))))
 
@@ -187,4 +191,4 @@
                (template "urn:se:jherrlin:bomberman:game" game-id "end" this)))
 
 
-(compile 'se.jherrlin.server.models)
+;; (compile 'se.jherrlin.server.models)

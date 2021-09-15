@@ -23,7 +23,7 @@
 
 (defmethod handler :game/create
   [req]
-  (def req req)
+  (def req nil)
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [add-events-fn!]}                                                                           event-store]
     (send-fn client-id [:game/create-response
@@ -51,8 +51,24 @@
 
 (defmethod handler :game/start
   [req]
-  (def req req)
+  (def req nil)
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [add-events-fn!]}                                                                           event-store]
     (?reply-fn
      (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game)))))
+
+
+(defmethod handler :game/events
+  [req]
+  (def req req)
+  (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
+        {:keys [game-id]}                                                                                  ?data
+        {:keys [add-events-fn!]}                                                                           event-store]
+    (?reply-fn
+     (->> event-store
+          :store
+          deref
+          :events
+          (filter (comp #{game-id} :subject))
+          (sort-by :time #(compare %2 %1))
+          (reverse)))))

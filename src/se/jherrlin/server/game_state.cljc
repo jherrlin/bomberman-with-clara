@@ -1,5 +1,6 @@
 (ns se.jherrlin.server.game-state
   (:require [clojure.string :as str]
+            [se.jherrlin.server.saved-event-store :as saved-event-store]
             [se.jherrlin.server.models :as models]))
 
 (comment
@@ -187,9 +188,10 @@
     (update-in game-state [:games subject :fire] #(remove (comp #{fire-position-xy} :fire-position-xy) %))))
 
 (defmethod projection :default [game-state event]
-  (println "Error! Could not find projection for event:")
+  (println "Error! Could not find projection for event:" event)
   ;; (println game-state)
   ;; (clojure.pprint/pprint event)
+
   game-state)
 
 
@@ -204,7 +206,7 @@
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
 
-
+  (the-projection {} (take 10 (reverse saved-event-store/events2)))
 
   (reduce
    (fn [gs m] (projection gs (.toCloudEvent m)))

@@ -26,8 +26,7 @@
   (:import [java.time Instant Duration]
            [se.jherrlin.server.models
             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame])
-  (:gen-class))
+            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame]))
 
 (comment
   (remove-ns 'se.jherrlin.server.system)
@@ -153,7 +152,13 @@
                                                  (Duration/ofMillis 200))}}))
 
 
-
+;; (game-state/the-projection {} (->> @event-store :events reverse (take 20))
+;;                              )
+;; (->> @event-store
+;;      :events
+;;      (filter (comp #{#uuid "c1b5bc52-a5e0-4f48-ac4d-da76bbe1d747"} :subject))
+;;      (sort-by :time #(compare %2 %1))
+;;      )
 
 (defn trunc
   [s n]
@@ -169,6 +174,7 @@
   (def game-state' (-> production :game-state :game-state))
   (def event-store (-> production :event-store :store))
   (def broadcast-fn! (get-in production [:websocket :broadcast-fn!]))
+
 
   @game-state'
   @event-store

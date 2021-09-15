@@ -6,6 +6,8 @@
             [re-frame.core :as re-frame]
             [taoensso.sente :as sente :refer [cb-success?]]
             [goog.events.KeyCodes :as keycodes]
+            [se.jherrlin.server.saved-event-store :as saved-event-store]
+            [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.client.input.events :as events]
             [se.jherrlin.client.input.inputs :as inputs]
             [clojure.spec.alpha :as s]
@@ -45,6 +47,11 @@
      (if (= game-id (:game-id game-state))
        (assoc db :game-state game-state)
        db))))
+
+(re-frame/reg-event-db
+ ::game-state-force
+ (fn [db [_ game-state]]
+   (assoc db :game-state (->> game-state :games (vals) (first)))))
 
 
 (re-frame/reg-event-db ::change-view (fn [db [_ view]] (assoc db :view view)))
@@ -324,9 +331,56 @@
          (str "join-selected-game:\n"
               (with-out-str (pprint/pprint join-selected-game)))]]))
 
+(chsk-send! [:game/events {:game-id #uuid "c1b5bc52-a5e0-4f48-ac4d-da76bbe1d747"}]
+              5000
+              (fn [cb-reply]
+                   (if (cb-success? cb-reply)
+                     (do (println "Success: "cb-reply)
+                         (re-frame/dispatch [:input-value ::events cb-reply]))
+
+                     (println "Error: "cb-reply))))
+
+
+;; (->> (game-state/the-projection {} (take 10 @(re-frame/subscribe [:input-value ::events])))
+;;      :games
+;;      (vals)
+;;      (first)
+;;      )
+
+(defn time-travel []
+  (let [time-travel-location @(re-frame/subscribe [:input-value ::time-travel-value])
+        events               @(re-frame/subscribe [:input-value ::events])
+        screen               @(re-frame/subscribe [::screen])]
+    [:div
+     [:h3 "Time travel"]
+     [:input
+      {:type      "range"
+       :min       1
+       :max       (dec (count saved-event-store/events2))
+       :step      1
+       :value     time-travel-location
+       :on-change #(do
+                     (let [nr (js/parseInt (.. % -target -value))]
+                       (re-frame/dispatch [:input-value ::time-travel-value nr])
+                       (re-frame/dispatch [::game-state-force (game-state/the-projection {} (take nr (reverse saved-event-store/events2)))])))}]
+     [:div
+        (for [[i row]  (map-indexed list screen)
+              [j cell] (map-indexed list row)]
+          (let [t (:type cell)]
+            [:<>
+             [:div {:style {:width   "20px"
+                            :height  "20px"
+                            :display "inline-block"}}
+              (:str cell)]
+             (when (= (-> screen first count dec) j)
+               [:div {:style {:display "block"}}])]))]
+     ])
+  )
+
 (defn root-component []
   (let [view @(re-frame/subscribe [::view])]
     [:<>
+     [time-travel]
      [:div
       [inputs/button
        {:on-click  #(re-frame/dispatch [::change-view :welcome])
@@ -372,7 +426,7 @@
                    (when-let [f (get keycode-map (.. key-press -keyCode))]
                      (f)))]
     (gev/listen key-handler
-                (-> KeyHandler .-EventType .-KEY)
+                 (-> ^js KeyHandler .-EventType .-KEY)
                 press-fn)))
 
 (def repl-subject "JOHN-HANNAS-game")
@@ -407,6 +461,9 @@
                    (if (cb-success? cb-reply)
                      (println "Success: "cb-reply)
                      (println "Error: "cb-reply))))
+
+
+
   (chsk-send! [:game/join {:subject     #uuid "7efd2079-701a-4f85-9e99-f1a365af81c2"
                            :player-id   #uuid "c4ca7cfe-ae84-4792-b90a-67fdb8544787"
                            :player-name "John"
