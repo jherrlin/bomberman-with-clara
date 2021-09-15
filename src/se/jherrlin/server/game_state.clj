@@ -53,6 +53,9 @@
 (defn games
   [game-state]                   (-> game-state (get-in [:games]) (vals)))
 
+(defn game
+  [game-state subject] (get-in game-state [:games subject]))
+
 (defn urn->qualified-keyword
   "Convert event `source` and `type` to qualified keyword."
   [source type]
@@ -87,6 +90,18 @@
 (defmethod projection :se.jherrlin.bomberman.game/start
   [game-state {:keys [subject data] :as event}]
   (assoc-in game-state [:games subject :game-state] :started))
+
+(defmethod projection :se.jherrlin.bomberman.game/end
+  [game-state {:keys [subject data] :as event}]
+  (let [winner (:winner data)
+        game   (game game-state subject)
+        game' (-> game
+                  (assoc-in [:game-state] :ended)
+                  (assoc-in [:winner] winner))]
+    (-> game-state
+        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :winner]))
+        (assoc-in [:old-games subject] game')
+        (update-in [:active-games] dissoc (:game-name game)))))
 
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
@@ -154,7 +169,10 @@
     (StartGame.              repl-game-id)
     (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    (StoneToRemove.          repl-game-id [3 3])])
+    (StoneToRemove.          repl-game-id [3 3])
+    (EndGame.                repl-game-id nil)])
+
+  (.toCloudEvent (EndGame. repl-game-id nil))
 
   (reduce
    (fn [gs m] (projection gs m))

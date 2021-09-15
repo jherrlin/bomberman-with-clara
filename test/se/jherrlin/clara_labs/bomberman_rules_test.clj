@@ -23,6 +23,56 @@
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
+(t/deftest game-ends
+  (t/testing "Only one player left in the game, it wins."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->TimestampNow                               #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->Board                 repl-game-id board)
+                                  (models/->FireOnBoard           repl-game-id 1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->PlayerPositionOnBoard repl-game-id 1 [1 1])
+                                  (models/->FireOnBoard           repl-game-id 1 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->PlayerPositionOnBoard repl-game-id 2 [2 1])
+
+                                  (models/->PlayerPositionOnBoard repl-game-id 3 [3 1])])
+            session' (fire-rules session)]
+        {:dead-players
+         (->> (query session' bomberman/dead-players?)
+              (map (comp #(into {} %) :?dead-players))
+              (set))
+         :end-games
+         (->> (query session' bomberman/end-game?)
+              (map (comp #(into {} %) :?end-game))
+              (set))})
+      {:dead-players
+       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+          :player-id 1,
+          :killed-by-player-id 1}
+         {:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+          :player-id 2,
+          :killed-by-player-id 1}},
+       :end-games
+       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :winner 3}}})))
+
+  (t/testing "If no player is left, end the game."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->Board repl-game-id board)])
+            session' (fire-rules session)]
+        {:dead-players
+         (->> (query session' bomberman/dead-players?)
+              (map (comp #(into {} %) :?dead-players))
+              (set))
+         :end-games
+         (->> (query session' bomberman/end-game?)
+              (map (comp #(into {} %) :?end-game))
+              (set))})
+      {:dead-players #{},
+       :end-games
+       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :winner nil}}}))))
+
 (t/deftest player-join-game
   (t/testing "Users can join game is state and password is correct"
     (t/is

@@ -130,11 +130,28 @@
 
 (defrule player-dies
   "Player dies if she gets hit by fire."
-  [PlayerPositionOnBoard (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
-  [FireOnBoard         (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)
-   (= ?fire-current-xy ?player-current-xy)]
+  [?dead-player <- PlayerPositionOnBoard (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
+  [FireOnBoard                           (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
+  [:test (= ?fire-current-xy ?player-current-xy)]
   =>
-  (insert! (DeadPlayer. ?game-id ?player-id ?fire-player-id)))
+  (println "dead-player:" ?dead-player)
+  (retract! ?dead-player)
+  (insert-unconditional! (DeadPlayer. ?game-id ?player-id ?fire-player-id)))
+
+(defrule game-ends-if-there-is-only-one-player-left
+  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)] (= ?player-id player-id)]
+  [:test (= (count ?players-alive) 1)]
+  =>
+  (let [end-game-id     (-> ?players-alive first :game-id)
+        alive-player-id (-> ?players-alive first :player-id)]
+    (insert-unconditional! (EndGame. end-game-id alive-player-id))))
+
+(defrule game-ends-if-there-is-no-player-left
+  [Board (= ?game-id game-id)]
+  [?player-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [:test (empty? ?player-alive)]
+  =>
+  (insert-unconditional! (EndGame. ?game-id nil)))
 
 (defrule exploading-bomb-throws-fire-flames
   "When a bomb exploads, fire is created in all four directions.
@@ -310,6 +327,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defquery fire-to-add?
   []
   [?fire-to-add <- FireToAdd])
+
+(defquery end-game?
+  []
+  [?end-game <- EndGame])
 
 (defquery bomb-to-add?
   []
