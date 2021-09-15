@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - run: clojure -R:default-deps
-      - run: clojure -R:test
+      - run: clojure -A:test
 
 workflows:
   version: 2
