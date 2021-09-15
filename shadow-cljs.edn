@@ -3,4 +3,4 @@
  :builds   {:frontend {:target     :browser
                        :output-dir "resources/public/js"
                        :devtools   {:preloads [devtools.preload]}
-                       :modules    {:main {:init-fn se.jherrlin.clara-labs.frontend/init}}}}}
+                       :modules    {:main {:init-fn se.jherrlin.client.main/init}}}}}
