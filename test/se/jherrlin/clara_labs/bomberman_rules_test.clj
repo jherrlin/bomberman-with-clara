@@ -221,6 +221,7 @@
    (=
     (let [session  (insert-all bomberman-session
                                [(models/->Board           repl-game-id board)
+                                (models/->GameState       repl-game-id :started)
                                 (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
                                 (models/->PlayerWantsToMove repl-game-id 2 [1 1] :south)
                                 (models/->PlayerWantsToMove repl-game-id 3 [1 1] :west)
@@ -242,6 +243,7 @@
    (=
     (let [session  (insert-all bomberman-session
                                [(models/->Board           repl-game-id board)
+                                (models/->GameState       repl-game-id :started)
                                 (models/->PlayerWantsToMove repl-game-id 1 [3 1] :south)
                                 (models/->PlayerWantsToMove repl-game-id 2 [3 3] :east)])
           session' (fire-rules session)]
@@ -257,6 +259,7 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->TimestampNow    (datetime/now!))
+                                  (models/->GameState       repl-game-id :started)
                                   (models/->Board           repl-game-id board)
                                   (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
                                   (models/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
@@ -274,6 +277,7 @@
       (let [session  (insert-all bomberman-session
                                  [(models/->TimestampNow         #inst "2021-09-05T19:16:52.292-00:00")
                                   (models/->Board                repl-game-id board)
+                                  (models/->GameState            repl-game-id :started)
                                   (models/->PlayerWantsToPlaceBomb repl-game-id 1 [1 1] 3 #inst "2021-09-05T19:16:52.292-00:00" 3)])
             session' (fire-rules session)]
         {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
@@ -445,6 +449,7 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->PlayerWantsToPlaceBomb repl-game-id 1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 3)
+                                  (models/->GameState            repl-game-id :started)
                                   (models/->BombOnBoard          repl-game-id 1 [2 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
                                   (models/->BombOnBoard          repl-game-id 1 [3 1] 10 #inst "2021-08-28T15:03:47.100-00:00")])
             session' (fire-rules session)]
@@ -515,7 +520,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->PlayerWantsToPlaceBomb repl-game-id 1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 1)])
+                                 [(models/->GameState              repl-game-id :started)
+                                  (models/->PlayerWantsToPlaceBomb repl-game-id 1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00" 1)])
             session' (fire-rules session)]
         {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
                               (map (comp #(into {} %) :?bomb-on-board))

@@ -101,17 +101,40 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-remove" this)))
 
-(defrecord PlayerWantsToCreateGame [game-id game-name password]
-  CloudEvent (toCloudEvent [this]
-               (let [defaults {:game-state    :created
-                               :game-name     game-name
-                               :game-password password
-                               :board         board/board2
-                               :stones        [[1 5] [2 5] [3 4] [3 3] [5 1]]
-                               :fire         '()
-                               :flying-bombs '()
-                               :bombs        '()}]
-                 (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
+(def reserved-floors
+  #{[1 1]
+    [1 2]
+    [2 1]
+
+    [1 8]
+    [1 9]
+    [2 9]
+
+    [16 1]
+    [17 1]
+    [17 2]
+
+    [17 8]
+    [17 9]
+    [16 9]})
+
+(defn generate-stones [board reserved-positions]
+  (->> (flatten board)
+       (filter (comp #{:floor} :type))
+       (map (fn [{:keys [x y]}]
+              (let [n (rand-int 10)]
+                (cond
+                  (#{0 1 2 3} n)     nil
+                  (#{4 5 6 7 8 9} n) [x y]))))
+       (remove reserved-positions)
+       (remove nil?)
+       (vec)))
+
+(def player-positions
+  {1 [1  1]
+   2 [17 9]
+   3 [1  9]
+   4 [17 1]})
 
 (defrecord WantsToCreateGame [game-id game-name password])
 (defrecord ActiveGame        [game-id game-name password game-state])
@@ -122,7 +145,7 @@
                                :game-name     game-name
                                :game-password password
                                :board         board/board2
-                               :stones        [[1 5] [2 5] [3 4] [3 3] [5 1]]
+                               :stones        (generate-stones board/board2 reserved-floors)
                                :fire         '()
                                :flying-bombs '()
                                :bombs        '()}]
