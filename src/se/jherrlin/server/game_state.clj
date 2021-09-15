@@ -4,7 +4,7 @@
             [se.jherrlin.server.models :as models])
   (:import  [se.jherrlin.server.models
              PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
-             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
+             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb PlayerPicksFireIncItemFromBoard]))
 
 (comment
   (remove-ns 'se.jherrlin.server.game-state)
@@ -48,6 +48,10 @@
   ([game-state]                   (get-in game-state                [:bombs]))
   ([game-state subject]           (get-in game-state [:games subject :bombs])))
 
+(defn items
+  ([game-state]                   (get-in game-state                [:items]))
+  ([game-state subject]           (get-in game-state [:games subject :items])))
+
 (defn flying-bombs
   ([game-state]                   (get-in game-state                [:flying-bombs]))
   ([game-state subject]           (get-in game-state [:games subject :flying-bombs])))
@@ -72,10 +76,17 @@
                     (vals)
                     (map (fn [{:keys [player-id position] :as player}]
                            (models/->PlayerPositionOnBoard subject player-id position))))
+               (->> (players game)
+                    (vals)
+                    (map (fn [{:keys [player-id position fire-length] :as player}]
+                           (models/->PlayerOnBoardFireLength subject player-id position fire-length))))
                (->> (stones game)
                     (map (partial models/->Stone subject)))
                (->> (bombs game)
                     (map models/map->BombOnBoard))
+               (->> (items game)
+                    (map (fn [{:keys [item-position-xy item-power]}]
+                           (models/->ItemOnBoard game-id item-position-xy item-power))))
                (->> (fires game)
                     (map models/map->FireOnBoard)))))
        (apply concat)))
@@ -102,6 +113,12 @@
         (assoc-in [:games subject] (assoc (into {} data) :subject subject))
         (assoc-in [:active-games game-name] game-id))))
 
+(def player-positions
+  {1 [1  1]
+   2 [17 9]
+   3 [1  9]
+   4 [17 1]})
+
 (defmethod projection :se.jherrlin.bomberman.game/join-game
   [game-state {:keys [subject data] :as event}]
   (let [players-in-game    (get-in game-state [:games subject :players])
@@ -109,7 +126,9 @@
         player-gets-number (inc number-of-players)]
     (assoc-in game-state
               [:games subject :players (:player-id data)]
-              (assoc data :player-nr player-gets-number))))
+              (-> data
+                  (assoc :player-nr player-gets-number)
+                  (assoc :position (get player-positions player-gets-number))))))
 
 (defmethod projection :se.jherrlin.bomberman.game/start
   [game-state {:keys [subject data] :as event}]
@@ -131,6 +150,13 @@
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction player-id]} data]
     (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction)))
+
+(defmethod projection :se.jherrlin.bomberman.player/picks-fire-inc-item
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [direction player-id new-fire-length item-position-xy]} data]
+    (-> game-state
+        (assoc-in  [:games subject :players player-id :fire-length] new-fire-length)
+        (update-in [:games subject :items] #(remove (comp #{item-position-xy} :item-position-xy) %)))))
 
 (defmethod projection :se.jherrlin.bomberman.player/move
   [game-state {:keys [subject data] :as event}]
@@ -187,10 +213,11 @@
   (reduce
    (fn [gs m] (projection gs (.toCloudEvent m)))
    {}
-   [(CreateGame.             repl-game-id "First game" "my-secret")
-    (JoinGame.               repl-game-id player-1-ws-id "John")
-    (JoinGame.               repl-game-id player-2-ws-id "Hannah")
-    (StartGame.              repl-game-id)
+   [(CreateGame.                      repl-game-id "First game" "my-secret")
+    (JoinGame.                        repl-game-id player-1-ws-id "John")
+    (JoinGame.                        repl-game-id player-2-ws-id "Hannah")
+    (StartGame.                       repl-game-id)
+    (PlayerPicksFireIncItemFromBoard. repl-game-id player-1-ws-id [1 1] 3)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (StoneToRemove.          repl-game-id [3 3])

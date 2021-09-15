@@ -90,6 +90,13 @@
        (assoc-in screen' [y x :type] :fire)))
    screen fire))
 
+(defn add-items-to-screen [items screen]
+  (reduce
+   (fn [screen' {:keys [item-position-xy item-power]}]
+     (let [[x y] item-position-xy]
+       (assoc-in screen' [y x :type] item-power #_:inc-fire-length)))
+   screen items))
+
 (defn add-stones-to-screen [stones screen]
   (reduce
    (fn [screen' [x y]]
@@ -109,23 +116,25 @@
 (re-frame/reg-sub
  ::screen
  (fn [{:keys [game-state] :as db}]
-   (let [{:keys [players stones board bombs fire game-state winner]} game-state]
+   (let [{:keys [players stones board bombs fire game-state items]} game-state]
      (when (#{:started :created} game-state)
        (some->> board
                 (add-players-to-screen (vals players))
-                (add-bombs-to-screen bombs)
-                (add-fire-to-screen fire)
-                (add-stones-to-screen stones)
+                (add-bombs-to-screen   bombs)
+                (add-fire-to-screen    fire)
+                (add-items-to-screen   items)
+                (add-stones-to-screen  stones)
                 (mapv (fn [row]
                         (mapv (fn [cell]
                                 (let [t (:type cell)]
                                   (case t
                                     ;; :player (assoc cell :str "W")
-                                    :wall   (assoc cell :str "W")
-                                    :floor  (assoc cell :str " ")
-                                    :fire   (assoc cell :str "F")
-                                    :stone  (assoc cell :str "S")
-                                    :bomb   (assoc cell :str "B")
+                                    :wall            (assoc cell :str "W")
+                                    :floor           (assoc cell :str " ")
+                                    :fire            (assoc cell :str "F")
+                                    :stone           (assoc cell :str "S")
+                                    :inc-fire-length (assoc cell :str "+")
+                                    :bomb            (assoc cell :str "B")
                                     cell)))
                               row))))))))
 

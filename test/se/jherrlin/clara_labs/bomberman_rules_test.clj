@@ -23,6 +23,37 @@
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
+(t/deftest picks-fire-inc-item-from-board
+  (t/testing "When player walks on fire inc item, fire length incs."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->ItemOnBoard             1   [1 1] :inc-fire-length)
+                                  (models/->PlayerOnBoardFireLength 1 2 [1 1] 2)])
+            session' (fire-rules session)]
+        {:picks-fire-inc-item-from-board
+         (->> (query session' bomberman/picks-fire-inc-item-from-board?)
+              (map (comp #(into {} %) :?picks-fire-inc-item-from-board))
+              (set))})
+      {:picks-fire-inc-item-from-board
+       #{{:game-id 1, :player-id 2, :item-position-xy [1 1], :new-fire-length 3}}})))
+
+  (t/testing "If xy positions doesnt match, dont pick item"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->PlayerOnBoardFireLength 1 2 [1 1] 2)
+                                  (models/->ItemOnBoard             1   [1 2] :inc-fire-length)
+                                  (models/->ItemOnBoard             1   [1 3] :inc-fire-length)
+                                  (models/->ItemOnBoard             0   [1 3] :inc-fire-length)
+                                  ])
+            session' (fire-rules session)]
+        {:picks-fire-inc-item-from-board
+         (->> (query session' bomberman/picks-fire-inc-item-from-board?)
+              (map (comp #(into {} %) :?picks-fire-inc-item-from-board))
+              (set))})
+      {:picks-fire-inc-item-from-board #{}}))))
+
 (t/deftest game-ends
   (t/testing "Only one player left in the game, it wins."
     (t/is

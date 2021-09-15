@@ -89,6 +89,12 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "stone" this)))
 
+(defrecord PlayerOnBoardFireLength  [game-id player-id player-position-xy fire-length])
+(defrecord ItemOnBoard              [game-id item-position-xy item-power])
+(defrecord PlayerPicksFireIncItemFromBoard [game-id player-id item-position-xy new-fire-length]
+  CloudEvent (toCloudEvent [this]
+               (template "urn:se:jherrlin:bomberman:player" game-id "picks-fire-inc-item" this)))
+
 (defrecord StoneToRemove [game-id position-xy]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "stone-to-remove" this)))
@@ -127,28 +133,36 @@
                   (#{0 1 2 3} n)     nil
                   (#{4 5 6 7 8 9} n) [x y]))))
        (remove reserved-positions)
-       (remove nil?)
-       (vec)))
+       (remove nil?)))
 
-(def player-positions
-  {1 [1  1]
-   2 [17 9]
-   3 [1  9]
-   4 [17 1]})
+(defn generate-items [stones]
+  (->> stones
+       (map (fn [[x y]]
+              (let [n (rand-int 10)]
+                (cond
+                  (#{0 1}             n) {:item-position-xy [x y] :item-power :inc-fire-length}
+                  (#{2 3 4 5 6 7 8 9} n) nil))))
+       (remove nil?)))
+
+(comment
+  (generate-items (generate-stones board/board2 reserved-floors))
+  )
 
 (defrecord WantsToCreateGame [game-id game-name password])
 (defrecord ActiveGame        [game-id game-name password game-state])
 (defrecord CreateGameError   [game-id game-name message])
 (defrecord CreateGame        [game-id game-name password]
   CloudEvent (toCloudEvent [this]
-               (let [defaults {:game-state    :created
+               (let [stones   (generate-stones board/board2 reserved-floors)
+                     defaults {:game-state    :created
                                :game-name     game-name
                                :game-password password
                                :board         board/board2
-                               :stones        (generate-stones board/board2 reserved-floors)
-                               :fire         '()
-                               :flying-bombs '()
-                               :bombs        '()}]
+                               :stones        stones
+                               :fire          '()
+                               :flying-bombs  '()
+                               :bombs         '()
+                               :items         (generate-items stones)}]
                  (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
 
 (defrecord GameState [game-id game-state])
@@ -159,7 +173,7 @@
                (let [default {:user-facing-direction    :south
                               :max-nr-of-bombs-for-user 3
                               :position                 [1 1]
-                              :fire-length              3}]
+                              :fire-length              2}]
                  (template "urn:se:jherrlin:bomberman:game" game-id "join-game" (merge default this)))))
 
 (defrecord PlayerWantsToStartGame [game-id])

@@ -13,7 +13,7 @@
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
             WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState PlayerWantsToStartGame
-            StartGameError]))
+            StartGameError PlayerPicksFireIncItemFromBoard ItemOnBoard PlayerOnBoardFireLength]))
 
 
 (comment
@@ -276,12 +276,23 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (retract! ?player-wants-to-join-game)
   (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password is correct but game is noy lobby any more.")))
 
+(defrule player-picks-up-fire-length-inc-item-from-board
+  [ItemOnBoard             (= ?game-id game-id) (= ?item-position-xy item-position-xy) (= item-power :inc-fire-length)]
+  [PlayerOnBoardFireLength (= ?game-id game-id) (= ?player-id player-id) (= ?player-position-xy player-position-xy) (= ?fire-length fire-length)]
+  [:test (= ?item-position-xy ?player-position-xy)]
+  =>
+  (insert! (PlayerPicksFireIncItemFromBoard. ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
+
 ;; TODO
 ;; (defrule player-wants-to-join-game-but-player-name-is-already-three
 ;;   =>
 ;;   )
 
 ;; Queries
+(defquery picks-fire-inc-item-from-board?
+  []
+  [?picks-fire-inc-item-from-board <- PlayerPicksFireIncItemFromBoard])
+
 (defquery join-game-error?
   []
   [?join-game-error <- JoinGameError])
@@ -393,7 +404,9 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :fire-to-add                 (map :?fire-to-add                 (query session' fire-to-add?))
       :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
 
-      :end-games                   (map :?end-game             (query session' end-game?))}}))
+      :end-games                   (map :?end-game             (query session' end-game?))
+
+      :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board (query session' picks-fire-inc-item-from-board?))}}))
 
 (defn run-create-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)

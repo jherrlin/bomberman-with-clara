@@ -181,6 +181,7 @@
 
 
 
+
   (->> @event-store
        :events
        count)
@@ -204,9 +205,25 @@
   (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-1-id "John"))])
   (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-2-id "Hannah"))])
   (add-events-fn! [(.toCloudEvent (StartGame.  repl-subject))])
+  (add-events-fn! [(.toCloudEvent (command->engine-fact
+                                   game-state'
+                                   {:game-id   repl-subject
+                                    :user-id   player-1-id
+                                    :action    :move
+                                    :direction :west}))])
+  (bomberman-rules/run-rules
+   (concat
+    (incomming-actions incomming-commands-state game-state')
+    (game-state/game-state->enginge-facts game-state')
+    [(models/->TimestampNow (java.util.Date.))]))
+
+
+
+
   ;; (add-events-fn! [(.toCloudEvent (PlayerWantsToPlaceBomb. repl-subject player-1-id [1 1] 3 (java.util.Date.) 3))])
   @game-state'
   (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
+
 
 
 
