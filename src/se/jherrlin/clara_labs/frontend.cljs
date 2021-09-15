@@ -97,27 +97,36 @@
 
 @re-frame.db/app-db
 
+
+(re-frame/reg-sub
+ ::winner
+ (fn [{:keys [game-state] :as db}]
+   (let [{:keys [winner]} game-state]
+     (when winner
+       winner))))
+
 (re-frame/reg-sub
  ::screen
  (fn [{:keys [game-state] :as db}]
-   (let [{:keys [players stones board bombs fire]} game-state]
-     (some->> board
-              (add-players-to-screen (vals players))
-              (add-bombs-to-screen bombs)
-              (add-fire-to-screen fire)
-              (add-stones-to-screen stones)
-              (mapv (fn [row]
-                      (mapv (fn [cell]
-                              (let [t (:type cell)]
-                                (case t
-                                  ;; :player (assoc cell :str "W")
-                                  :wall   (assoc cell :str "W")
-                                  :floor  (assoc cell :str " ")
-                                  :fire   (assoc cell :str "F")
-                                  :stone  (assoc cell :str "S")
-                                  :bomb   (assoc cell :str "B")
-                                  cell)))
-                            row)))))))
+   (let [{:keys [players stones board bombs fire game-state winner]} game-state]
+     (when (#{:started :created} game-state)
+       (some->> board
+                (add-players-to-screen (vals players))
+                (add-bombs-to-screen bombs)
+                (add-fire-to-screen fire)
+                (add-stones-to-screen stones)
+                (mapv (fn [row]
+                        (mapv (fn [cell]
+                                (let [t (:type cell)]
+                                  (case t
+                                    ;; :player (assoc cell :str "W")
+                                    :wall   (assoc cell :str "W")
+                                    :floor  (assoc cell :str " ")
+                                    :fire   (assoc cell :str "F")
+                                    :stone  (assoc cell :str "S")
+                                    :bomb   (assoc cell :str "B")
+                                    cell)))
+                              row))))))))
 
 (defmethod wevent :new/game-state
   [{:as ev-msg :keys [event id ?data]}]
@@ -189,9 +198,11 @@
    for state management."]])
 
 (defn game-screen []
-  (let [screen @(re-frame/subscribe [::screen])]
+  (let [screen @(re-frame/subscribe [::screen])
+        winner @(re-frame/subscribe [::winner])]
     [:div
-     (if screen
+     (cond
+       screen
        [:div
         (for [[i row]  (map-indexed list screen)
               [j cell] (map-indexed list row)]
@@ -203,6 +214,10 @@
               (:str cell)]
              (when (= (-> screen first count dec) j)
                [:div {:style {:display "block"}}])]))]
+       winner
+       [:div
+        [:h3 (str "The winner is: " winner)]]
+       :else
        [:div "loading..."])
      [:div
       [:br]

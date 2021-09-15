@@ -167,10 +167,11 @@
     (JoinGame.               repl-game-id player-1-ws-id "John")
     (JoinGame.               repl-game-id player-2-ws-id "Hannah")
     (StartGame.              repl-game-id)
-    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    (StoneToRemove.          repl-game-id [3 3])
-    (EndGame.                repl-game-id nil)])
+    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+    ;; (StoneToRemove.          repl-game-id [3 3])
+    ;; (EndGame.                repl-game-id nil)
+    ])
 
   (.toCloudEvent (EndGame. repl-game-id nil))
 

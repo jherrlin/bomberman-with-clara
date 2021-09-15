@@ -100,9 +100,11 @@
   (->> @gs
        :games
        vals
-       (map (fn [{:keys [subject] :as game}]
+       (filter (comp #{:started :created} :game-state))
+       (map (fn [{:keys [subject game-id game-state] :as game}]
               (concat
-               [(models/->Board subject (game-state/board game))]
+               [(models/->Board subject (game-state/board game))
+                (models/->GameState game-id game-state)]
                (->> (game-state/players game)
                     (vals)
                     (map (fn [{:keys [player-id position] :as player}]
@@ -112,9 +114,7 @@
                (->> (game-state/bombs game)
                     (map models/map->BombOnBoard))
                (->> (game-state/fires game)
-                    (map models/map->FireOnBoard))
-               ;; flying-bombs
-               )))
+                    (map models/map->FireOnBoard)))))
        (apply concat)))
 
 (defn sort-events [x]
