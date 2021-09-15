@@ -12,7 +12,7 @@
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToPlaceBomb PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
-            WantsToCreateGame PlayerWantsToJoinGame JoinGameError]))
+            WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState]))
 
 
 (comment
@@ -139,6 +139,7 @@
   (insert-unconditional! (DeadPlayer. ?game-id ?player-id ?fire-player-id)))
 
 (defrule game-ends-if-there-is-only-one-player-left
+  [GameState (= ?game-id game-id) (= :started game-state)]
   [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)] (= ?player-id player-id)]
   [:test (= (count ?players-alive) 1)]
   =>
@@ -147,7 +148,7 @@
     (insert-unconditional! (EndGame. end-game-id alive-player-id))))
 
 (defrule game-ends-if-there-is-no-player-left
-  [Board (= ?game-id game-id)]
+  [GameState (= ?game-id game-id) (= :started game-state)]
   [?player-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
   [:test (empty? ?player-alive)]
   =>
@@ -361,7 +362,8 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
       :fire-to-add                 (map :?fire-to-add                 (query session' fire-to-add?))
       :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
-      }}))
+
+      :end-games                   (map :?end-game             (query session' end-game?))}}))
 
 (defn run-create-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)

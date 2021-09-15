@@ -29,7 +29,7 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->TimestampNow                               #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->Board                 repl-game-id board)
+                                  (models/->GameState repl-game-id :started)
                                   (models/->FireOnBoard           repl-game-id 1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->PlayerPositionOnBoard repl-game-id 1 [1 1])
                                   (models/->FireOnBoard           repl-game-id 1 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
@@ -59,7 +59,7 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->Board repl-game-id board)])
+                                 [(models/->GameState repl-game-id :started)])
             session' (fire-rules session)]
         {:dead-players
          (->> (query session' bomberman/dead-players?)
