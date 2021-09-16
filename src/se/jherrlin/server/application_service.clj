@@ -6,7 +6,7 @@
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
             [taoensso.timbre :as timbre])
   (:import [se.jherrlin.server.models
-            PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard DeadPlayer BombOnBoard FlyingBomb
+            PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard PlayerDies BombOnBoard FlyingBomb
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
 
 

@@ -46,7 +46,7 @@
   (toCloudEvent [this]
     (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-add" this)))
 
-(defrecord DeadPlayer [game-id player-id killed-by-player-id]
+(defrecord PlayerDies [game-id player-id killed-by-player-id]
   CloudEvent
   (toCloudEvent [this]
     (template "urn:se:jherrlin:bomberman:game" game-id "dead-player" this)))

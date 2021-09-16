@@ -8,7 +8,7 @@
             se.jherrlin.server.models
             [clojure.set :as set])
   (:import [se.jherrlin.server.models
-            TimestampNow Board BombExploading BombOnBoard DeadPlayer FireOnBoard FlyingBomb PlayerMove
+            TimestampNow Board BombExploading BombOnBoard PlayerDies FireOnBoard FlyingBomb PlayerMove
             PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
@@ -139,7 +139,7 @@
   =>
   (println "dead-player:" ?dead-player)
   (retract! ?dead-player)
-  (insert-unconditional! (DeadPlayer. ?game-id ?player-id ?fire-player-id)))
+  (insert-unconditional! (PlayerDies. ?game-id ?player-id ?fire-player-id)))
 
 (defrule game-ends-if-there-is-only-one-player-left
   [GameState (= ?game-id game-id) (= :started game-state)]
@@ -353,7 +353,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 (defquery dead-players?
   []
-  [?dead-players <- DeadPlayer])
+  [?dead-players <- PlayerDies])
 
 (defquery bomb-on-board?
   []
