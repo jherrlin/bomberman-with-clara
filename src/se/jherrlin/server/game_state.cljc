@@ -72,12 +72,12 @@
                 (models/->GameState game-id game-state)]
                (->> (players game)
                     (vals)
-                    (filter (comp not #{:dead} :status))
+                    (filter (comp not #{:dead} :player-status))
                     (map (fn [{:keys [player-id position] :as player}]
                            (models/->PlayerOnBoardPosition subject player-id position))))
                (->> (players game)
                     (vals)
-                    (filter (comp not #{:dead} :status))
+                    (filter (comp not #{:dead} :player-status))
                     (map (fn [{:keys [player-id position fire-length] :as player}]
                            (models/->PlayerOnBoardFireLength subject player-id position fire-length))))
                (->> (stones game)
@@ -162,7 +162,7 @@
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id killed-by-player-id]} data]
     (-> game-state
-        (assoc-in [:games subject :players player-id :status] :dead)
+        (assoc-in [:games subject :players player-id :player-status] :dead)
         (assoc-in [:games subject :players player-id :killed-by] killed-by-player-id))))
 
 (defmethod projection :se.jherrlin.bomberman.player/move
