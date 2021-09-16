@@ -125,6 +125,27 @@
        #{{:game-id 2, :player-id 3, :player-name "Kalle"}
          {:game-id 2, :player-id 1, :player-name "John"}}})))
 
+  (t/testing "Player cant join game cause it's full."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->ActiveGame            1 "first-game" "pwd" :created)
+                                  (models/->PlayerPositionOnBoard 1 1  [1 1])
+                                  (models/->PlayerPositionOnBoard 1 2  [2 1])
+                                  (models/->PlayerPositionOnBoard 1 3  [3 1])
+                                  (models/->PlayerPositionOnBoard 1 4  [4 1])
+                                  (models/->PlayerWantsToJoinGame 5 "Preben" "first-game" "pwd")])
+            session' (fire-rules session)]
+
+        {:errors (->> (query session' bomberman/join-game-error?)
+                      (map (comp #(into {} %) :?join-game-error))
+                      (set))
+         :joins  (->> (query session' bomberman/join-game?)
+                      (map (comp #(into {} %) :?join-game))
+                      (set))})
+      {:errors #{{:game-id 1, :game-name "first-game", :message "Game is full!"}},
+       :joins #{}})))
+
   (t/testing "User cant join game if password is wrong"
     (t/is
      (=

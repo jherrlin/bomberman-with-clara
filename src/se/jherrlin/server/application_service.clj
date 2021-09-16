@@ -78,6 +78,7 @@
           {:keys [join-game-errors join-games] :as actions}
           (bomberman-rules/run-join-game-rules
            (concat (game-state->active-game-facts @game-state)
+                   (game-state/game-state->enginge-facts game-state)
                    [player-wants-to-join-game]))]
       actions
       (cond

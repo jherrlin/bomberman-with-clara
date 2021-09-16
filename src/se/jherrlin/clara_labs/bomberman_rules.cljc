@@ -268,6 +268,15 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (retract! ?player-wants-to-join-game)
   (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password to game is wrong!")))
 
+(defrule player-wants-to-join-game-but-game-is-full
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password)]
+  [ActiveGame (= ?game-id game-id) (= ?game-name game-name)]
+  [?players-joined <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [:test (= (count ?players-joined) 4)]
+  =>
+  (retract! ?player-wants-to-join-game)
+  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Game is full!")))
+
 (defrule player-wants-to-join-game-but-game-state-is-wrong
   [?player-wants-to-join-game <- PlayerWantsToJoinGame        (= ?game-name game-name) (= ?player-password password)]
   [ActiveGame (= ?game-id game-id) (not= :created game-state) (= ?game-name game-name) (= ?game-password password)]
