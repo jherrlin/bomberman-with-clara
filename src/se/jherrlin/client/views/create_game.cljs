@@ -2,6 +2,7 @@
   (:require [se.jherrlin.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
+            [se.jherrlin.client.views.join-game :as join-game]
             [se.jherrlin.server.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]))
 
@@ -9,11 +10,12 @@
 (re-frame/reg-event-fx
  ::create-game
  (fn [_ [_ create-game-value]]
-   {:ws-send {:data       [:game/create create-game-value]
+   (def create-game-value create-game-value)
+   {:ws-send {:data       [:game/create (select-keys create-game-value [:action :game-name :game-password])]
               :on-success (fn [{:keys [status data message] :as m}]
                             (if (= status :error)
                               (js/alert message)
-                              (re-frame/dispatch [:push-state :se.jherrlin.client.views.game-lobby/view (select-keys data [:game-id])])))}}))
+                              (re-frame/dispatch [::join-game/join-game (assoc create-game-value :action :join-game)])))}}))
 {:status :ok,
  :data
  {:game-id   #uuid "5ef147ca-8caa-4ecf-b3c1-5cef2a2a5dee",

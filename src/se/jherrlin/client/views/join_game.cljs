@@ -2,6 +2,7 @@
   (:require [se.jherrlin.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
+            [se.jherrlin.client.views.game-lobby :as game-lobby]
             [se.jherrlin.server.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]))
 
@@ -11,6 +12,29 @@
 (comment
   (::available-games @re-frame.db/app-db)
   )
+
+{:status :ok,
+ :data
+ {:game-id #uuid "355d82d6-e038-4dac-ada5-080570be7921",
+  :player-id #uuid "a6a0bc9c-9845-471c-a726-aa53c1c4c5a5",
+  :player-name "asd"}}
+(re-frame/reg-event-fx
+ ::join-game
+ (fn [_ [_ join-game-data]]
+   {:ws-send {:data       [:game/join join-game-data]
+              :on-success (fn [{:keys [status data message] :as m}]
+                            (def m m)
+                            (if (= status :error)
+                              (js/alert message)
+                              (do
+                                (re-frame/dispatch [:listen-to-game-id (:game-id data)])
+                                (re-frame/dispatch [:player data])
+                                (re-frame/dispatch [:push-state ::game-lobby/view {:game-id (:game-id data)}])
+                                )
+
+                              ;;(re-frame/dispatch [::join-lobby])
+                              ))}}))
+
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
@@ -83,9 +107,11 @@
    ["/game/join/:game-name/:game-id"
     {:name        ::login
      :view        [#'login]
-     :controllers [{:start
-                    (fn [_]
-                      ;; (re-frame/dispatch [::get-available-games])
+     :controllers [{:parameters {:path [:game-id :game-name]}
+                    :start
+                    (fn [{{:keys [game-id game-name]} :path :as a}]
+                      (re-frame/dispatch [:form-value ::join-game :action :join-game])
+                      (re-frame/dispatch [:form-value ::join-game :game-name game-name])
                       (println "enter login"))
                     :stop
                     (fn [_]

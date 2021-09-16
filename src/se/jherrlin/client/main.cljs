@@ -62,6 +62,11 @@
   #_(re-frame/clear-subscription-cache!)
   (rd/render [main-component {:router (client.router/handler)}] (.getElementById js/document "app")))
 
+
+(defmethod websocket/wevent :new/game-state
+  [{:as ev-msg :keys [event id ?data]}]
+  (re-frame/dispatch [:game-state ?data]))
+
 (defn init []
   (re-frame/dispatch-sync [::events/initialize-db])
   (client.router/init)

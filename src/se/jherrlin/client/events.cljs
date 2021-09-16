@@ -5,3 +5,75 @@
 (re-frame/reg-event-db
  ::initialize-db
  (fn [db _] {}))
+
+(defn add-players-to-screen [players screen]
+  (reduce
+   (fn [screen' {:keys [position player-nr]}]
+     (let [[x y] position]
+       (-> screen'
+           (assoc-in [y x :type] :player)
+           (assoc-in [y x :str] (str player-nr)))))
+   screen players))
+
+(defn add-bombs-to-screen [bombs screen]
+  (reduce
+   (fn [screen' {:keys [bomb-position-xy]}]
+     (let [[x y] bomb-position-xy]
+       (assoc-in screen' [y x :type] :bomb)))
+   screen bombs))
+
+(defn add-fire-to-screen [fire screen]
+  (reduce
+   (fn [screen' {:keys [fire-position-xy]}]
+     (let [[x y] fire-position-xy]
+       (assoc-in screen' [y x :type] :fire)))
+   screen fire))
+
+(defn add-items-to-screen [items screen]
+  (reduce
+   (fn [screen' {:keys [item-position-xy item-power]}]
+     (let [[x y] item-position-xy]
+       (assoc-in screen' [y x :type] item-power #_:inc-fire-length)))
+   screen items))
+
+(defn add-stones-to-screen [stones screen]
+  (reduce
+   (fn [screen' [x y]]
+     (assoc-in screen' [y x :type] :stone))
+   screen stones))
+
+(def events
+  [{:n :listen-to-game-id}
+   {:n :player}
+   {:n :screen
+    :s (fn [{:keys [game-state] :as db}]
+         (let [{:keys [players stones board bombs fire game-state items]} game-state]
+           (when (#{:started :created} game-state)
+             (some->> board
+                      (add-players-to-screen (vals players))
+                      (add-bombs-to-screen   bombs)
+                      (add-fire-to-screen    fire)
+                      (add-items-to-screen   items)
+                      (add-stones-to-screen  stones)
+                      (mapv (fn [row]
+                              (mapv (fn [cell]
+                                      (let [t (:type cell)]
+                                        (case t
+                                          :wall            (assoc cell :str "W")
+                                          :floor           (assoc cell :str " ")
+                                          :fire            (assoc cell :str "F")
+                                          :stone           (assoc cell :str "S")
+                                          :inc-fire-length (assoc cell :str "+")
+                                          :bomb            (assoc cell :str "B")
+                                          cell)))
+                                    row)))))))}
+   {:n :game-state
+    :e (fn [db [_ game-state]]
+         (let [game-id (get db :listen-to-game-id)]
+           (if (= game-id (:game-id game-state))
+             (assoc db :game-state game-state)
+             db)))}])
+
+(doseq [{:keys [n s e]} events]
+  (re-frame/reg-sub n (or s (fn [db _] (n db))))
+  (re-frame/reg-event-db n (or e (fn [db [_ e]] (assoc db n e)))))
