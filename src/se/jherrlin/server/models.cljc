@@ -73,7 +73,7 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:player" game-id "move" this)))
 
-(defrecord PlayerPositionOnBoard [game-id player-id player-current-xy]
+(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:player" game-id "position-on-board" this)))
 

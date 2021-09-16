@@ -74,7 +74,7 @@
                     (vals)
                     (filter (comp not #{:dead} :status))
                     (map (fn [{:keys [player-id position] :as player}]
-                           (models/->PlayerPositionOnBoard subject player-id position))))
+                           (models/->PlayerOnBoardPosition subject player-id position))))
                (->> (players game)
                     (vals)
                     (filter (comp not #{:dead} :status))

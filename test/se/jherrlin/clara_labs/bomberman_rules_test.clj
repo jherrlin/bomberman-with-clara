@@ -62,11 +62,11 @@
                                  [(models/->TimestampNow                               #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->GameState repl-game-id :started)
                                   (models/->FireOnBoard           repl-game-id 1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->PlayerPositionOnBoard repl-game-id 1 [1 1])
+                                  (models/->PlayerOnBoardPosition repl-game-id 1 [1 1])
                                   (models/->FireOnBoard           repl-game-id 1 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->PlayerPositionOnBoard repl-game-id 2 [2 1])
+                                  (models/->PlayerOnBoardPosition repl-game-id 2 [2 1])
 
-                                  (models/->PlayerPositionOnBoard repl-game-id 3 [3 1])])
+                                  (models/->PlayerOnBoardPosition repl-game-id 3 [3 1])])
             session' (fire-rules session)]
         {:dead-players
          (->> (query session' bomberman/dead-players?)
@@ -130,10 +130,10 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->ActiveGame            1 "first-game" "pwd" :created)
-                                  (models/->PlayerPositionOnBoard 1 1  [1 1])
-                                  (models/->PlayerPositionOnBoard 1 2  [2 1])
-                                  (models/->PlayerPositionOnBoard 1 3  [3 1])
-                                  (models/->PlayerPositionOnBoard 1 4  [4 1])
+                                  (models/->PlayerOnBoardPosition 1 1  [1 1])
+                                  (models/->PlayerOnBoardPosition 1 2  [2 1])
+                                  (models/->PlayerOnBoardPosition 1 3  [3 1])
+                                  (models/->PlayerOnBoardPosition 1 4  [4 1])
                                   (models/->PlayerWantsToJoinGame 5 "Preben" "first-game" "pwd")])
             session' (fire-rules session)]
 
@@ -471,7 +471,7 @@
                                [(models/->TimestampNow                #inst "2021-08-28T15:03:02.000-00:00")
                                 (models/->Board                 repl-game-id board)
                                 (models/->FireOnBoard           repl-game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->PlayerPositionOnBoard repl-game-id 1 [1 1])])
+                                (models/->PlayerOnBoardPosition repl-game-id 1 [1 1])])
           session' (fire-rules session)]
       (->> (query session' bomberman/dead-players?)
            (map (comp #(into {} %) :?dead-players))

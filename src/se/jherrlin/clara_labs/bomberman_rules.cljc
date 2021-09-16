@@ -9,7 +9,7 @@
             [clojure.set :as set])
   (:import [se.jherrlin.server.models
             TimestampNow Board BombExploading BombOnBoard PlayerDies FireOnBoard FlyingBomb PlayerMove
-            PlayerPositionOnBoard PlayerWantsToMove PlayerWantsToThrowBomb Stone
+            PlayerOnBoardPosition PlayerWantsToMove PlayerWantsToThrowBomb Stone
             StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
             WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState PlayerWantsToStartGame
@@ -133,7 +133,7 @@
 
 (defrule player-dies
   "Player dies if she gets hit by fire."
-  [?dead-player <- PlayerPositionOnBoard (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
+  [?dead-player <- PlayerOnBoardPosition (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
   [FireOnBoard                           (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
   [:test (= ?fire-current-xy ?player-current-xy)]
   =>
@@ -142,7 +142,7 @@
 
 (defrule game-ends-if-there-is-only-one-player-left
   [GameState (= ?game-id game-id) (= :started game-state)]
-  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (= (count ?players-alive) 1)]
   =>
   (let [end-game-id     (-> ?players-alive first :game-id)
@@ -151,7 +151,7 @@
 
 (defrule game-ends-if-there-is-no-player-left
   [GameState (= ?game-id game-id) (= :started game-state)]
-  [?player-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [?player-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (empty? ?player-alive)]
   =>
   (insert-unconditional! (EndGame. ?game-id nil)))
@@ -237,7 +237,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defrule player-wants-to-start-game
   [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
   [GameState                                             (= ?game-id game-id) (= :created game-state)]
-  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (<= 2 (count ?players-alive))]
   =>
   (retract! ?player-wants-to-start-game)
@@ -246,7 +246,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defrule player-wants-to-start-game-but-not-enough-player-have-joined
   [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
   [GameState                                             (= ?game-id game-id) (= :created game-state)]
-  [?players-alive <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (< (count ?players-alive) 2)]
   =>
   (retract! ?player-wants-to-start-game)
@@ -270,7 +270,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 (defrule player-wants-to-join-game-but-game-is-full
   [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password)]
   [ActiveGame (= ?game-id game-id) (= ?game-name game-name)]
-  [?players-joined <- (acc/all) :from [PlayerPositionOnBoard (= ?game-id game-id)]]
+  [?players-joined <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (= (count ?players-joined) 4)]
   =>
   (retract! ?player-wants-to-join-game)
@@ -442,13 +442,13 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (run-start-game-rules
    [(PlayerWantsToStartGame. repl-game-id)
     (GameState.              repl-game-id :created)
-    (PlayerPositionOnBoard.  repl-game-id player-1-ws-id [1 1])
-    (PlayerPositionOnBoard.  repl-game-id player-2-ws-id [1 1])])
+    (PlayerOnBoardPosition.  repl-game-id player-1-ws-id [1 1])
+    (PlayerOnBoardPosition.  repl-game-id player-2-ws-id [1 1])])
 
   (run-start-game-rules
    [(PlayerWantsToStartGame. repl-game-id)
     (GameState.              repl-game-id :created)
-    (PlayerPositionOnBoard.  repl-game-id player-1-ws-id [1 1])])
+    (PlayerOnBoardPosition.  repl-game-id player-1-ws-id [1 1])])
 
   (run-create-game-rules
    [(WantsToCreateGame. 1 "first-game" "game-password")])
