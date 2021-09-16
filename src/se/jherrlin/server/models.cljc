@@ -49,7 +49,7 @@
 (defrecord PlayerDies [game-id player-id killed-by-player-id]
   CloudEvent
   (toCloudEvent [this]
-    (template "urn:se:jherrlin:bomberman:game" game-id "dead-player" this)))
+    (template "urn:se:jherrlin:bomberman:player" game-id "dies" this)))
 
 (defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp]
   CloudEvent
@@ -191,4 +191,4 @@
                (template "urn:se:jherrlin:bomberman:game" game-id "end" this)))
 
 
-;; (compile 'se.jherrlin.server.models)
+#?(:clj (compile 'se.jherrlin.server.models))

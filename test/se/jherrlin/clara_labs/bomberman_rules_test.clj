@@ -469,8 +469,8 @@
    (=
     (let [session  (insert-all bomberman-session
                                [(models/->TimestampNow                #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->Board               repl-game-id board)
-                                (models/->FireOnBoard         repl-game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+                                (models/->Board                 repl-game-id board)
+                                (models/->FireOnBoard           repl-game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
                                 (models/->PlayerPositionOnBoard repl-game-id 1 [1 1])])
           session' (fire-rules session)]
       (->> (query session' bomberman/dead-players?)

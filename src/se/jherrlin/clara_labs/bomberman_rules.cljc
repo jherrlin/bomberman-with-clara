@@ -137,7 +137,6 @@
   [FireOnBoard                           (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
   [:test (= ?fire-current-xy ?player-current-xy)]
   =>
-  (println "dead-player:" ?dead-player)
   (retract! ?dead-player)
   (insert-unconditional! (PlayerDies. ?game-id ?player-id ?fire-player-id)))
 

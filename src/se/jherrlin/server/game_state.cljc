@@ -60,6 +60,7 @@
   [game-state subject] (get-in game-state [:games subject]))
 
 
+
 (defn game-state->enginge-facts [gs]
   (->> @gs
        :games
@@ -71,10 +72,12 @@
                 (models/->GameState game-id game-state)]
                (->> (players game)
                     (vals)
+                    (filter (comp not #{:dead} :status))
                     (map (fn [{:keys [player-id position] :as player}]
                            (models/->PlayerPositionOnBoard subject player-id position))))
                (->> (players game)
                     (vals)
+                    (filter (comp not #{:dead} :status))
                     (map (fn [{:keys [player-id position fire-length] :as player}]
                            (models/->PlayerOnBoardFireLength subject player-id position fire-length))))
                (->> (stones game)
@@ -155,6 +158,13 @@
         (assoc-in  [:games subject :players player-id :fire-length] new-fire-length)
         (update-in [:games subject :items] #(remove (comp #{item-position-xy} :item-position-xy) %)))))
 
+(defmethod projection :se.jherrlin.bomberman.player/dies
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [player-id killed-by-player-id]} data]
+    (-> game-state
+        (assoc-in [:games subject :players player-id :status] :dead)
+        (assoc-in [:games subject :players player-id :killed-by] killed-by-player-id))))
+
 (defmethod projection :se.jherrlin.bomberman.player/move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id next-position direction]} data]
@@ -215,7 +225,8 @@
     (models/->JoinGame                        repl-game-id player-1-ws-id "John")
     (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
     (models/->StartGame                       repl-game-id)
-    (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
+    (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
+    ;; (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (StoneToRemove.          repl-game-id [3 3])
