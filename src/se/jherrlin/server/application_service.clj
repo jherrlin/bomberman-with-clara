@@ -21,7 +21,9 @@
   (def add-events-fn! add-events-fn!)
   (def create-event-data create-event-data)
   (if-not (s/valid? ::user-commands/create-game create-event-data)
-    (s/explain-data ::user-commands/create-game create-event-data)
+    {:status :error
+     :message
+     (s/explain-data ::user-commands/create-game create-event-data)}
     (let [{:keys [game-name game-password]} create-event-data
           game-id                           (java.util.UUID/randomUUID)
           player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
@@ -31,24 +33,32 @@
                    [player-wants-to-create-game]))]
       (cond
         (seq create-game-errors)
-        (-> create-game-errors first :message)
+        {:status  :error
+         :message (-> create-game-errors first :message)}
         (seq create-games)
-        (add-events-fn! [(some->> create-games first ((fn [x] (.toCloudEvent x))))])
+        (do
+          (add-events-fn! [(some->> create-games first ((fn [x] (.toCloudEvent x))))])
+          {:status :ok
+           :data   (->> create-games first (into {}))})
         :else
-        (timbre/error "No actions from enginge on:" create-event-data)))))
+        (do (timbre/error "No actions from enginge on:" create-event-data)
+            {:status  :error
+             :message "unknown"})))))
 
 (defn start-game! [game-state add-events-fn! start-game-event-data]
   (def game-state game-state)
   (def add-events-fn! add-events-fn!)
   (def start-game-event-data start-game-event-data)
   (if-not (s/valid? ::user-commands/start-game start-game-event-data)
-    (s/explain-data ::user-commands/start-game start-game-event-data)
+    {:status :error
+     :message
+     (s/explain-data ::user-commands/start-game start-game-event-data)}
     (let [{:keys [game-id]}          start-game-event-data
           player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
            (concat (game-state->active-game-facts @game-state)
-                   (game-state/game-state->enginge-facts game-state)
+                   (game-state/game-state->enginge-facts @game-state)
                    [player-wants-to-start-game]))]
       (cond
         (seq start-game-errors)
@@ -71,14 +81,16 @@
   (def add-events-fn! add-events-fn!)
   (def join-game-event-data join-game-event-data)
   (if-not (s/valid? ::user-commands/join-game join-game-event-data)
-    (s/explain-data ::user-commands/join-game join-game-event-data)
+    {:status :error
+     :message
+     (s/explain-data ::user-commands/join-game join-game-event-data)}
     (let [{:keys [game-name game-password player-name]} join-game-event-data
           player-id                                     (java.util.UUID/randomUUID)
           player-wants-to-join-game                     (models/->PlayerWantsToJoinGame player-id player-name game-name game-password)
           {:keys [join-game-errors join-games] :as actions}
           (bomberman-rules/run-join-game-rules
            (concat (game-state->active-game-facts @game-state)
-                   (game-state/game-state->enginge-facts game-state)
+                   (game-state/game-state->enginge-facts @game-state)
                    [player-wants-to-join-game]))]
       actions
       (cond

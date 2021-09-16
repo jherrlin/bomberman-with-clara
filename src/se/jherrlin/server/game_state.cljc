@@ -62,7 +62,7 @@
 
 
 (defn game-state->enginge-facts [gs]
-  (->> @gs
+  (->> gs
        :games
        vals
        (filter (comp #{:started :created} :game-state))
@@ -223,9 +223,9 @@
    {}
    [(models/->CreateGame                      repl-game-id "First game" "my-secret")
     (models/->JoinGame                        repl-game-id player-1-ws-id "John")
-    (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
-    (models/->StartGame                       repl-game-id)
-    (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
+    ;; (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
+    ;; (models/->StartGame                       repl-game-id)
+    ;; (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
     ;; (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)

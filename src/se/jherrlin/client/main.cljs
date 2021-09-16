@@ -2,10 +2,10 @@
   (:require [re-frame.core :as re-frame]
             [reagent.dom :as rd]
             [reitit.core :as r]
+            [se.jherrlin.client.websocket :as websocket]
             [reitit.frontend.easy :as rfe]
             [se.jherrlin.client.router :as client.router]
             [se.jherrlin.client.events :as events]
-            [reitit.frontend.easy :as rfe]
             ["semantic-ui-react" :as semantic-ui]))
 
 
@@ -16,6 +16,14 @@
                            :borderless true}
       [:> semantic-ui/Menu.Item
        {:as "a" :href (rfe/href :route1/home)} "Home"]
+      [:> semantic-ui/Menu.Item
+       {:as "a"
+        :href (rfe/href :se.jherrlin.client.views.create-game/view)} "Create game"]
+
+      [:> semantic-ui/Menu.Item
+       {:as "a"
+        :href (rfe/href :se.jherrlin.client.views.join-game/view)} "Join a game"]
+
       [:> semantic-ui/Menu.Item
        {:as "a" :href (rfe/href :route2/db)} "DB"]
 
@@ -41,7 +49,7 @@
      [:div {:style {:height      "100%"
                     :overflow-y  "auto"
                     :overflow-x  "hidden"
-                    :padding-top "0.5em"}}
+                    :padding-top "1.0em"}}
       (when current-route
         (-> current-route :data :view))]
 
@@ -51,7 +59,7 @@
        [:> semantic-ui/Menu.Item {:name "Något"}]]]]))
 
 (defn ^:dev/after-load mount-root []
-  (re-frame/clear-subscription-cache!)
+  #_(re-frame/clear-subscription-cache!)
   (rd/render [main-component {:router (client.router/handler)}] (.getElementById js/document "app")))
 
 (defn init []

@@ -94,7 +94,7 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state/game-state->enginge-facts game-state)
+          game-state-facts    (game-state/game-state->enginge-facts @game-state)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
@@ -148,8 +148,8 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 #_(Duration/ofMinutes 30)
-                                                 (Duration/ofMillis 200))}}))
+                                                 (Duration/ofMinutes 1)
+                                                 #_(Duration/ofMillis 200))}}))
 
 
 ;; (game-state/the-projection {} (->> @event-store :events reverse (take 20))
@@ -192,7 +192,7 @@
        :events
        count)
 
-  (count (game-state/game-state->enginge-facts game-state'))
+  (count (game-state/game-state->enginge-facts @game-state'))
 
   (->> @event-store
        :events
@@ -220,7 +220,7 @@
   (bomberman-rules/run-rules
    (concat
     (incomming-actions incomming-commands-state game-state')
-    (game-state/game-state->enginge-facts game-state')
+    (game-state/game-state->enginge-facts @game-state')
     [(models/->TimestampNow (java.util.Date.))]))
 
 
@@ -232,9 +232,9 @@
 
 
 
-
-  (game-state/the-projection @game-state' (->> @event-store :events reverse (take 20))
-                             )
+  (bomberman-rules/run-rules
+   (game-state/game-state->enginge-facts
+    (game-state/the-projection {} (->> @event-store :events reverse (take 22)))))
 
   (reset! game-state' (game-state/the-projection @game-state' (->> @event-store :events reverse)))
 
@@ -274,7 +274,7 @@
      (let [game-state          game-state'
            user-action-facts   (incomming-actions incomming-commands-state game-state)
            _                   (def user-action-facts user-action-facts)
-           game-state-facts    (game-state/game-state->enginge-facts game-state)
+           game-state-facts    (game-state/game-state->enginge-facts @game-state)
            _                   (def game-state-facts game-state-facts)
            rule-enginge-facts  (concat
                                 user-action-facts

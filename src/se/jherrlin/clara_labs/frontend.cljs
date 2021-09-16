@@ -177,7 +177,8 @@
   (let [create-game-name     @(re-frame/subscribe [:form-value :create-game :game-name])
         create-game-password @(re-frame/subscribe [:form-value :create-game :game-password])
         form-values          @(re-frame/subscribe [:form-values :create-game])
-        form-valid?          @(re-frame/subscribe [:form-valid? :create-game ::user-commands/create-game])]
+        form-valid?          @(re-frame/subscribe [:form-valid? :create-game ::user-commands/create-game])
+        clicked-create?      @(re-frame/subscribe [:form-meta :create-game :clicked-create?])]
     (re-frame/dispatch [:form-value :create-game :action :create-game])
     [:div
      [:h2 "Create a new game."]
@@ -200,9 +201,19 @@
        [:h4 (str "Is NOT form valid?")])
 
      [inputs/button
-      {:on-click  #(chsk-send! [:game/create form-values])
+      {:on-click  (fn [_]
+                    (if form-valid?
+                      (do
+                        (println "form is valid")
+                        (chsk-send! [:game/create form-values]))
+                      (re-frame/di)
+                      ))
        :body      "Start new game"
-       :disabled? (not form-valid?)}]]))
+       :disabled? (cond
+
+
+
+                    )(not form-valid?)}]]))
 
 
 
@@ -351,7 +362,7 @@
   (let [time-travel-location @(re-frame/subscribe [:input-value ::time-travel-value])
         events               @(re-frame/subscribe [:input-value ::events])
         screen               @(re-frame/subscribe [::screen])]
-    [:div
+    #_[:div
      [:h3 "Time travel"]
      [:input
       {:type      "range"

@@ -1,8 +1,12 @@
 (ns se.jherrlin.client.router
   (:require [re-frame.core :as re-frame]
             [reitit.coercion.spec :as rss]
+            [cljs.pprint :as pprint]
             [reitit.core :as r]
             [reitit.frontend :as rf]
+            [se.jherrlin.client.views.create-game :as views.create-game]
+            [se.jherrlin.client.views.game-lobby :as views.game-lobby]
+            [se.jherrlin.client.views.join-game :as views.join-game]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]))
 
@@ -10,7 +14,7 @@
 (re-frame/reg-event-db
  ::initialize-routes
  (fn [db _]
-   (merge {:current-route nil} db)))
+   (assoc db :current-route nil)))
 
 
 (re-frame/reg-event-fx
@@ -38,6 +42,12 @@
   (when new-match
     (re-frame/dispatch [::navigated new-match])))
 
+(defn db []
+  [:div
+   [:pre
+    (str "App db:\n"
+         (with-out-str (pprint/pprint @re-frame.db/app-db)))]])
+
 (def routes
   [["/"
     {:name      :route1/home
@@ -54,7 +64,7 @@
    ["/db"
     {:name      :route2/db
      :link-text "db"
-     :view      [:div "db"]
+     :view      [#'db]
      :controllers
      [{:start (fn [& params]
                 (js/console.log "Entering db page")
@@ -64,6 +74,9 @@
 (defn handler []
   (rf/router
    [routes
+    (views.create-game/routes)
+    (views.game-lobby/routes)
+    (views.join-game/routes)
     ;; routes
     ]
    {:data {:coercion rss/coercion}}))
@@ -83,7 +96,8 @@
     (println "dev mode")))
 
 (defn init []
-  (re-frame/clear-subscription-cache!)
+  #_(re-frame/clear-subscription-cache!)
+  (println "In here")
   (re-frame/dispatch-sync [::initialize-routes])
   (dev-setup)
   (init-routes!) ;; Reset routes on figwheel reload

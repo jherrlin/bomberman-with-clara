@@ -23,11 +23,17 @@
 
 (defmethod handler :game/create
   [req]
-  (def req nil)
+  (def req req)
+  (def game-state (-> req :game-state))
+  (def add-events-fn! (-> req :event-store :add-events-fn!))
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [add-events-fn!]}                                                                           event-store]
-    (send-fn client-id [:game/create-response
-                        (application-service/create-game! game-state add-events-fn! (assoc ?data :action :create-game))])))
+    (?reply-fn
+     (application-service/create-game! game-state add-events-fn! (assoc ?data :action :create-game))
+     )
+
+    )
+  )
 
 {:action        :create-game
  :game-name     ""
