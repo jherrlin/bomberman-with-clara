@@ -426,7 +426,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       ;; :bombs-on-board       (map :?bomb-on-board         (query session' bomb-on-board?))      ;; Should not be turned into events, they are facts
       ;; :fire-on-board        (map :?fire-on-board         (query session' fire-on-board?))      ;; Should not be turned into events, they are facts
       :stones-to-remove     (map :?stones-to-remove      (query session' stones-to-remove?))
-      ;; :dead-players         (map :?dead-players          (query session' dead-players?))       ;; TEMPORARY
+      :dead-players         (map :?dead-players          (query session' dead-players?))
       :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
       :fire-to-remove       (map :?fire-to-remove        (query session' fire-to-remove?))
       :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))

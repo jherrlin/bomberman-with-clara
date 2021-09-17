@@ -41,6 +41,10 @@
   ([game-state]                   (get-in game-state                [:players]))
   ([game-state subject]           (get-in game-state [:games subject :players])))
 
+(defn player
+  ([game-state player-id]          (get-in game-state                [:players player-id]))
+  ([game-state subject player-id]  (get-in game-state [:games subject :players player-id])))
+
 (defn bombs
   ([game-state]                   (get-in game-state                [:bombs]))
   ([game-state subject]           (get-in game-state [:games subject :bombs])))
@@ -195,10 +199,14 @@
 
 (defmethod projection :se.jherrlin.bomberman.player/dies
   [game-state {:keys [subject data] :as event}]
-  (let [{:keys [player-id killed-by-player-id]} data]
+  (let [{:keys [player-id killed-by-player-id]} data
+        p (player game-state subject player-id)
+        p (assoc p
+                 :player-status :dead
+                 :killed-by killed-by-player-id)]
     (-> game-state
-        (assoc-in [:games subject :players player-id :player-status] :dead)
-        (assoc-in [:games subject :players player-id :killed-by] killed-by-player-id))))
+        (assoc-in  [:games subject :dead-players player-id] p)
+        (update-in [:games subject :players] dissoc player-id))))
 
 (defmethod projection :se.jherrlin.bomberman.player/move
   [game-state {:keys [subject data] :as event}]
@@ -258,9 +266,9 @@
    {}
    [(models/->CreateGame                      repl-game-id "First game" "my-secret")
     (models/->JoinGame                        repl-game-id player-1-ws-id "John")
-    ;; (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
-    ;; (models/->StartGame                       repl-game-id)
-    ;; (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
+    (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
+    (models/->StartGame                       repl-game-id)
+    (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
     ;; (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
