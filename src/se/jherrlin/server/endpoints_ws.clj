@@ -19,6 +19,7 @@
 
 (defmethod handler :command/user-action
   [{:keys [?reply-fn incomming-actions ?data] :as req}]
+  (def req req)
   (user-commands/register-incomming-user-command! incomming-actions ?data))
 
 (defmethod handler :game/create
@@ -57,11 +58,12 @@
 
 (defmethod handler :game/start
   [req]
-  (def req nil)
+  (def req req)
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [add-events-fn!]}                                                                           event-store]
-    (?reply-fn
-     (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game)))))
+    (let [v (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game))]
+      (def v v)
+      (?reply-fn v))))
 
 
 (defmethod handler :game/events
@@ -70,11 +72,14 @@
   (let [{:keys [?data ?reply-fn client-id event-store incomming-actions projection-fn game-state send-fn]} req
         {:keys [game-id]}                                                                                  ?data
         {:keys [add-events-fn!]}                                                                           event-store]
-    (?reply-fn
-     (->> event-store
+    ;; (?reply-fn
+    ;;  )
+    (->> event-store
           :store
           deref
           :events
           (filter (comp #{game-id} :subject))
           (sort-by :time #(compare %2 %1))
-          (reverse)))))
+          (reverse))
+    )
+  )

@@ -1,5 +1,7 @@
 (ns se.jherrlin.client.events
-  (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as re-frame]
+            [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+            [se.jherrlin.server.game-state :as game-state]))
 
 
 (re-frame/reg-event-db
@@ -42,37 +44,46 @@
      (assoc-in screen' [y x :type] :stone))
    screen stones))
 
+(defn game-state->screen [gs]
+  (let [{:keys [players stones board bombs fire game-state items]} gs]
+    (when (#{:started :created} game-state)
+      (some->> board
+               (add-players-to-screen (vals players))
+               (add-bombs-to-screen   bombs)
+               (add-fire-to-screen    fire)
+               (add-items-to-screen   items)
+               (add-stones-to-screen  stones)
+               (mapv (fn [row]
+                       (mapv (fn [cell]
+                               (let [t (:type cell)]
+                                 (case t
+                                   :wall            (assoc cell :str "W")
+                                   :floor           (assoc cell :str " ")
+                                   :fire            (assoc cell :str "F")
+                                   :stone           (assoc cell :str "S")
+                                   :inc-fire-length (assoc cell :str "+")
+                                   :bomb            (assoc cell :str "B")
+                                   cell)))
+                             row)))))))
+
 (def events
   [{:n :listen-to-game-id}
    {:n :player}
    {:n :screen
     :s (fn [{:keys [game-state] :as db}]
-         (let [{:keys [players stones board bombs fire game-state items]} game-state]
-           (when (#{:started :created} game-state)
-             (some->> board
-                      (add-players-to-screen (vals players))
-                      (add-bombs-to-screen   bombs)
-                      (add-fire-to-screen    fire)
-                      (add-items-to-screen   items)
-                      (add-stones-to-screen  stones)
-                      (mapv (fn [row]
-                              (mapv (fn [cell]
-                                      (let [t (:type cell)]
-                                        (case t
-                                          :wall            (assoc cell :str "W")
-                                          :floor           (assoc cell :str " ")
-                                          :fire            (assoc cell :str "F")
-                                          :stone           (assoc cell :str "S")
-                                          :inc-fire-length (assoc cell :str "+")
-                                          :bomb            (assoc cell :str "B")
-                                          cell)))
-                                    row)))))))}
+         (game-state->screen game-state))}
    {:n :game-state
     :e (fn [db [_ game-state]]
          (let [game-id (get db :listen-to-game-id)]
            (if (= game-id (:game-id game-state))
              (assoc db :game-state game-state)
-             db)))}])
+             db)))}
+   {:n :start-game
+    :s (fn [{:keys [game-state] :as db} [_]]
+         (println "Processing :start-game facts")
+         (bomberman-rules/run-start-game-rules
+          (game-state/game-state->enginge-facts-1 game-state)))}
+   ])
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))

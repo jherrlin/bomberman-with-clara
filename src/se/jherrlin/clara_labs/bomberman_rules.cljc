@@ -5,15 +5,25 @@
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.clara-labs.datetime :as datetime]
-            se.jherrlin.server.models
-            [clojure.set :as set])
-  (:import [se.jherrlin.server.models
-            TimestampNow Board BombExploading BombOnBoard PlayerDies FireOnBoard FlyingBomb PlayerMove
-            PlayerOnBoardPosition PlayerWantsToMove PlayerWantsToThrowBomb Stone
-            StoneToRemove FireToRemove BombToRemove BombToAdd FireToAdd
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame CreateGameError
-            WantsToCreateGame PlayerWantsToJoinGame JoinGameError GameState PlayerWantsToStartGame
-            StartGameError PlayerPicksFireIncItemFromBoard ItemOnBoard PlayerOnBoardFireLength]))
+            [clojure.set :as set]
+            #?(:clj se.jherrlin.server.models)
+            #?(:cljs [se.jherrlin.server.models
+                      :refer [ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
+                              EndGame FireOnBoard FireToAdd FireToRemove
+                              FlyingBomb GameState ItemOnBoard JoinGame JoinGameError
+                              PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
+                              PlayerWantsToJoinGame PlayerWantsToMove
+                              PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
+                              Stone StoneToRemove TimestampNow WantsToCreateGame]]))
+  #?(:clj
+     (:import [se.jherrlin.server.models
+               ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
+               EndGame FireOnBoard FireToAdd FireToRemove
+               FlyingBomb GameState ItemOnBoard JoinGame JoinGameError
+               PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
+               PlayerWantsToJoinGame PlayerWantsToMove
+               PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
+               Stone StoneToRemove TimestampNow WantsToCreateGame])))
 
 
 (comment
@@ -290,6 +300,22 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?item-position-xy ?player-position-xy)]
   =>
   (insert! (PlayerPicksFireIncItemFromBoard. ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
+
+(defrule start-game-but-not-enough-player-have-joined
+  "Used by frontend to determine if a game can be started."
+  [GameState                                             (= ?game-id game-id) (= :created game-state)]
+  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
+  [:test (< (count ?players-alive) 2)]
+  =>
+  (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
+
+(defrule game-can-be-started
+  "Used by frontend to determine if a game can be started."
+  [GameState                                                (= ?game-id game-id) (= :created game-state)]
+  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
+  [:test (<= 2 (count ?players-alive))]
+  =>
+  (insert-unconditional! (StartGame. ?game-id)))
 
 ;; TODO
 ;; (defrule player-wants-to-join-game-but-player-name-is-already-three

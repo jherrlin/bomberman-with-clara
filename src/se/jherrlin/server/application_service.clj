@@ -10,11 +10,7 @@
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb]))
 
 
-(defn game-state->active-game-facts [gs]
-  (->> gs
-       (game-state/games)
-       (map (fn [{:keys [game-name game-id password game-state]}]
-              (models/->ActiveGame game-id game-name password game-state)))))
+
 
 (defn create-game! [game-state add-events-fn! create-event-data]
   (def game-state game-state)
@@ -29,7 +25,7 @@
           player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
           {:keys [create-game-errors create-games] :as actions}
           (bomberman-rules/run-create-game-rules
-           (concat (game-state->active-game-facts @game-state)
+           (concat (game-state/game-state->active-game-facts @game-state)
                    [player-wants-to-create-game]))]
       (cond
         (seq create-game-errors)
@@ -57,7 +53,7 @@
           player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
-           (concat (game-state->active-game-facts @game-state)
+           (concat (game-state/game-state->active-game-facts @game-state)
                    (game-state/game-state->enginge-facts @game-state)
                    [player-wants-to-start-game]))]
       (cond
@@ -89,7 +85,7 @@
           player-wants-to-join-game                     (models/->PlayerWantsToJoinGame player-id player-name game-name game-password)
           {:keys [join-game-errors join-games] :as actions}
           (bomberman-rules/run-join-game-rules
-           (concat (game-state->active-game-facts @game-state)
+           (concat (game-state/game-state->active-game-facts @game-state)
                    (game-state/game-state->enginge-facts @game-state)
                    [player-wants-to-join-game]))]
       actions

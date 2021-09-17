@@ -29,12 +29,7 @@
                               (do
                                 (re-frame/dispatch [:listen-to-game-id (:game-id data)])
                                 (re-frame/dispatch [:player data])
-                                (re-frame/dispatch [:push-state ::game-lobby/view {:game-id (:game-id data)}])
-                                )
-
-                              ;;(re-frame/dispatch [::join-lobby])
-                              ))}}))
-
+                                (re-frame/dispatch [:push-state ::game-lobby/view {:game-id (:game-id data)}]))))}}))
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
