@@ -1,0 +1,3439 @@
+{:events
+ ({:id #uuid "a5ec8fb8-4e9b-4854-9da7-6043de9bca0c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "dies",
+   :time #inst "2021-09-17T18:10:31.144-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "ceea28f0-4997-47af-8074-69526fdfc374",
+    :killed-by-player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34"}}
+  {:id #uuid "0d5a002f-344f-4279-a9bd-787220c61d34",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:10:31.144-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :position-xy [1 1],
+    :fire-length 3}}
+  {:id #uuid "63c2ef1f-ba0a-4b4a-9338-2501efe05bee",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:31.144-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 1]}}
+  {:id #uuid "4fe047c3-4483-481f-9c70-7ba4d2c2ddf8",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 1],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "9f7544cc-fa7f-464b-872b-35d8f2f51c49",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [2 1],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "b8aa0fc0-586e-463c-93c7-b2ae3fc11e92",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [3 1],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "93629592-64c1-4cb6-8ccd-1f41a74bcd72",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [4 1],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "73168905-b1af-4051-bc79-8a503e22b5f2",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 2],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "e4a8f7c1-c7e5-46b5-bdd3-2da77bc80014",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "bd06e078-4946-4d5d-be7e-84f52a9a25fa",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 4],
+    :fire-start-timestamp #inst "2021-09-17T18:10:31.136-00:00"}}
+  {:id #uuid "c335a582-8017-45e6-b708-0e393522c735",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [1 4]}}
+  {:id #uuid "34201931-02bd-4072-b8e9-7f57d5d67cc1",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "end",
+   :time #inst "2021-09-17T18:10:31.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :winner #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34"}}
+  {:id #uuid "4f22053b-1c2e-47f0-b0f6-e5da5a818d5f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-throw-bomb",
+   :time #inst "2021-09-17T18:10:29.160-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :players-current-xy [16 1],
+    :player-facing-direction :east}}
+  {:id #uuid "505380ce-e0be-4be6-a10c-32c481a6bd12",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:29.160-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [1 1],
+    :fire-length 3,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:27.937-00:00"}}
+  {:id #uuid "a627e6b7-f9c5-45fa-a18c-a13109c0e96d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:29.160-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [17 1]}}
+  {:id #uuid "89cc7e61-7e51-444f-9093-0d95fde834ca",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:28.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 1],
+    :direction :east}}
+  {:id #uuid "9d88e262-01c3-4e2e-90ab-a27113a3300b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:28.342-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 1],
+    :direction :west}}
+  {:id #uuid "2bfdf85f-d423-408b-9212-c7eb62ade57f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:28.342-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 1],
+    :direction :west}}
+  {:id #uuid "57382d5f-ecbc-41ef-8702-0f816ba2b8d3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:27.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [17 1],
+    :fire-length 3,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:27.937-00:00"}}
+  {:id #uuid "40ab25ef-4c11-40c2-a1b8-de4d457a0fb0",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:10:27.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 1],
+    :fire-length 3,
+    :timestamp #inst "2021-09-17T18:10:27.937-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "26d2c271-231e-4b87-b455-3439262bde20",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:27.339-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 1],
+    :direction :north}}
+  {:id #uuid "2c252e5f-3f4d-4583-9ef2-7fe25b5a7b4a",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:27.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 2],
+    :direction :north}}
+  {:id #uuid "98ca8d97-fd88-4290-9ed5-13b94a6ed102",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:27.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 1],
+    :direction :north}}
+  {:id #uuid "a4b76f03-162e-48fd-b34b-b71cfba8f64c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:26.942-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 2],
+    :direction :north}}
+  {:id #uuid "8c5883f2-2255-4dea-b198-17b863dfdc25",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:26.941-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 3],
+    :direction :north}}
+  {:id #uuid "28a3d24d-9b83-4d13-bcbc-aba9655a8b77",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:26.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 3],
+    :direction :east}}
+  {:id #uuid "a1fabeb2-c4af-4628-bdad-7f5a97583517",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "picks-fire-inc-item",
+   :time #inst "2021-09-17T18:10:26.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :item-position-xy [17 3],
+    :new-fire-length 3}}
+  {:id #uuid "f5e046c6-1250-4977-8bdb-2ed21d3f889c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:26.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 3],
+    :direction :east}}
+  {:id #uuid "e3946dd0-d891-4522-aa3e-6b84cfc25aa0",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:26.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 3],
+    :direction :east}}
+  {:id #uuid "139215ef-f7d3-46f2-a9b6-afe6f41b9372",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:25.742-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 3],
+    :direction :east}}
+  {:id #uuid "f13eeb64-bdf7-4a2d-ac47-938ae7d7f834",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:25.742-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 3],
+    :direction :east}}
+  {:id #uuid "72bf9721-ea01-4a8f-af68-304864dc49c0",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:25.339-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 4],
+    :direction :north}}
+  {:id #uuid "ee9f15c9-d992-45ae-8e43-db90067714e0",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:25.339-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 3],
+    :direction :north}}
+  {:id #uuid "b1c113e7-09ff-4e54-be0f-972d69bf5e6f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:25.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :direction :north}}
+  {:id #uuid "a83df688-ffca-4b6c-9058-13c30366a639",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:25.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 4],
+    :direction :north}}
+  {:id #uuid "979c6273-a5b6-4a3e-afc2-4b83cf43cf5b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:24.942-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :north}}
+  {:id #uuid "34e34835-652d-4554-a956-cf7b05b83cf5",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:24.942-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 5],
+    :direction :north}}
+  {:id #uuid "893e981c-a6bf-4489-b502-fae1be4af751",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:24.743-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 7],
+    :direction :north}}
+  {:id #uuid "87e22778-fe68-4cb2-bb7f-ff58a379b3a3",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:24.743-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :north}}
+  {:id #uuid "3fea4379-7026-45f1-af7e-424087461f2c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:24.543-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 7],
+    :direction :west}}
+  {:id #uuid "57aa6dff-2aca-4e84-a1d0-48c887e98958",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:24.543-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 7],
+    :direction :west}}
+  {:id #uuid "9eb8ec9d-0844-49ce-b76b-5a82a8667b04",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 5]}}
+  {:id #uuid "3819270b-670d-4398-a422-5ea98bb21823",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 7]}}
+  {:id #uuid "41c2b038-42c3-4a0a-bfd8-67730ea674d3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [17 5]}}
+  {:id #uuid "d47cad3d-ce96-4dcd-a1aa-86710e874f62",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [16 5]}}
+  {:id #uuid "a6bd86a3-3b0c-44b5-adaf-d6d0f5020a9d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [13 5]}}
+  {:id #uuid "0ba2f455-612e-441e-a1d5-ae688692ef81",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [14 5]}}
+  {:id #uuid "7faf81b9-2c88-41cd-905f-e080641ad485",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 3]}}
+  {:id #uuid "2ef9d5cf-d482-4d32-9780-7663695e8be0",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 4]}}
+  {:id #uuid "b98aa1d8-30f3-4fa3-a302-2ad40144c298",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 6]}}
+  {:id #uuid "ac22be8e-fdbc-41b7-acb9-58b582c48ded",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 1]}}
+  {:id #uuid "2918c09f-607a-487a-8c0c-435c4271d283",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [14 3]}}
+  {:id #uuid "e7cffc99-6bdc-48c7-98f4-6b5aeaec50f5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [16 3]}}
+  {:id #uuid "46b8db6e-477e-4692-9d86-f31cdbe1c6e9",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [17 3]}}
+  {:id #uuid "b14fc87b-cb9e-4ade-85b4-6403449a8bc3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:23.970-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 2]}}
+  {:id #uuid "32336be8-9305-414a-a298-557af8d212de",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 7],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "d75c937b-99bc-42e9-933d-398dd30f8b6d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 6],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "78f832c6-226b-421f-9071-02ce6c1bab81",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [17 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "935a2d8e-b245-437d-ae59-5d9eecea950c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [16 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "518a0543-304e-42c9-81c2-8923bc9865f0",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [13 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "354c58eb-4347-4d67-8c8c-bc60395cb9f3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [14 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "42e0e654-ee45-4444-8143-de2640f304b0",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "db4a8f5a-467e-4976-a2dd-aaa9271d941f",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 4],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "8c38e638-eb88-4387-8afc-a1fdcafa3e4b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "253afd39-8f90-49c8-b17f-bb81820ba5c5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "8904ea00-c4fb-4ebd-8e04-ebfecb96d403",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 2],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "27c616a0-c7fa-406b-b150-d00126534341",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 1],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "2d2c4589-0db3-4bcb-9d6f-b630483df9b1",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [14 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "33aa71e6-5ffd-41fc-8d16-f45ea5da0e84",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [16 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "f4ec6b06-0208-421f-951a-8931921de5b3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [17 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "ee7f2edc-45c0-4401-9be1-1a8f81ad57a3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 4],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "3d399d8f-b25a-49cc-86ca-fa70520855a0",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:22.337-00:00"}}
+  {:id #uuid "202911a1-c489-45f6-b75b-57c8aac59096",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [14 3]}}
+  {:id #uuid "fa71b74f-a3a1-4209-8f0f-447feb0bcf2c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [17 3]}}
+  {:id #uuid "71ea2770-9615-498f-9711-3170d300af1c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [15 1]}}
+  {:id #uuid "22e5d64d-a7d1-4fec-9308-38090fb74492",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :position-xy [15 5],
+    :fire-length 2}}
+  {:id #uuid "440488a7-decd-43e2-8080-3ca096082847",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :position-xy [15 3],
+    :fire-length 2}}
+  {:id #uuid "d4367757-cb1d-4d89-ab61-29a3e3232fc5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [15 5]}}
+  {:id #uuid "be6c7cd7-3c6f-40f6-bc4b-04ff7a8757d4",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:22.354-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [15 3]}}
+  {:id #uuid "cb723085-7550-4d6c-accd-0162288e27b4",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:20.545-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 7],
+    :direction :east}}
+  {:id #uuid "4817701f-8cb0-49d3-b9db-ab5503125227",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:20.544-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 7],
+    :direction :east}}
+  {:id #uuid "5c35ccbb-6d82-44de-997d-c571135bd9cf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:20.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :south}}
+  {:id #uuid "83232159-46a1-439a-b99f-85c4cca61e26",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:20.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 7],
+    :direction :south}}
+  {:id #uuid "ad2857a2-ded9-449d-97a7-be10cf2f5001",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:20.139-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :direction :south}}
+  {:id #uuid "97432880-8555-4cc6-85dd-2f07790d68e6",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:20.139-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [15 5],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:20.136-00:00"}}
+  {:id #uuid "6ba1d039-96c5-4ae3-9289-9e5c8b57a530",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:10:20.139-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:10:20.136-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "4d7a46b5-74f5-4c9b-b734-024c3d33e241",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:20.139-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :south}}
+  {:id #uuid "35312615-b85c-4145-86d9-e8c5b18ac795",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:19.538-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 4],
+    :direction :south}}
+  {:id #uuid "9aa8aed2-b289-4b1a-9293-323242c54747",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:19.538-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 5],
+    :direction :south}}
+  {:id #uuid "a4e34d4d-b3f4-4e47-acec-fdf0bb75705e",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:19.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 3],
+    :direction :south}}
+  {:id #uuid "caf4e609-f498-4b05-ad5e-77b0327fe5bf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:19.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 4],
+    :direction :south}}
+  {:id #uuid "8929825d-3640-4473-a9f8-a2ed12756ef3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:19.142-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [15 3],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:19.137-00:00"}}
+  {:id #uuid "20556539-b765-4c01-9489-dd6615c79c52",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:10:19.142-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 3],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:10:19.137-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "45cba670-a5b3-470f-bdbf-7a97f1c50c6f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:18.739-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 4],
+    :direction :north}}
+  {:id #uuid "2dbb348c-d69b-40aa-b5a0-f8b78d863237",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:18.739-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 3],
+    :direction :north}}
+  {:id #uuid "152fcedf-f7c5-4de0-abbd-c77c4e1cab38",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:18.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :direction :north}}
+  {:id #uuid "07af66bb-2473-457c-b6bd-92fee1172c12",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:18.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 4],
+    :direction :north}}
+  {:id #uuid "298aa30f-fe10-4b85-9b29-a04f84943679",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:17.942-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :north}}
+  {:id #uuid "c83060a0-62b2-4061-86fd-7212817f1144",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:17.942-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 5],
+    :direction :north}}
+  {:id #uuid "3816753a-6a5e-476c-927b-4e182422570b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:17.742-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 7],
+    :direction :north}}
+  {:id #uuid "cc1c8e0c-d33a-4820-bc42-e2162f8c0b45",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:17.742-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :north}}
+  {:id #uuid "cb3102d3-36d1-41d2-aff7-cc2d390d2019",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:17.338-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 7],
+    :direction :west}}
+  {:id #uuid "f144749a-ad31-4c33-9f3a-21ff6de6c3cc",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:17.338-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 7],
+    :direction :west}}
+  {:id #uuid "def4fd41-2838-4c58-ad21-d0f8ecd1aeaf",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 7]}}
+  {:id #uuid "95febb1e-aefe-4f1c-968e-c8001db33976",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 5]}}
+  {:id #uuid "13dda869-1042-4d44-907b-e9a52df5a7ff",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 4]}}
+  {:id #uuid "b58f0d3c-7bde-4e37-8e61-b5fb6b4ce45f",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 3]}}
+  {:id #uuid "b8dd8eb4-bd78-4cb2-bfbb-6e38bf25ed6d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [14 5]}}
+  {:id #uuid "2bd3ff5c-3f00-43aa-be6f-42f5ac26b038",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [13 5]}}
+  {:id #uuid "84611d7f-8cb3-4d8e-8985-dfea19611a4e",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [16 5]}}
+  {:id #uuid "727c68f9-8d1a-4049-a283-a7d9c6e929da",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [17 5]}}
+  {:id #uuid "2ede5bbc-47b9-4ce1-a435-8896bc181566",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:16.758-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [15 6]}}
+  {:id #uuid "ff8b7621-caf3-4db1-a2d4-6ef3ec9a804c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "b1ce35ed-4bce-4fa3-8120-dff9d9a306cb",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 4],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "db090fb4-897f-40f9-bba5-9dc8d9152a4b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 3],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "c05ab166-747c-4037-a82f-31e89aabf712",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [14 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "6ad0e60c-83cf-4eed-b1cb-76d9805adad0",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [13 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "3d2a891a-bebf-4925-871b-3a3616fbaeb9",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [16 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "a60be933-a3ac-43b0-8be3-04fa7725edb2",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [17 5],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "c65d84d6-fe98-453a-9db0-039e3c546858",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 6],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "1f0c0a66-1546-41ea-a9a4-b1cf9fc7814f",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [15 7],
+    :fire-start-timestamp #inst "2021-09-17T18:10:15.136-00:00"}}
+  {:id #uuid "1f0dff28-b387-4d6a-8333-b7418afcc51e",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [15 3]}}
+  {:id #uuid "414f8a43-d21c-4629-a4ea-4225ecde6320",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [17 5]}}
+  {:id #uuid "aa0c9f2e-36b6-42c7-80eb-06b6b125788e",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [13 5]}}
+  {:id #uuid "9e93c698-becd-4b65-945f-fadaf51ce1cb",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :position-xy [15 5],
+    :fire-length 2}}
+  {:id #uuid "ad4e8329-b91f-4ad6-a542-8566fe5e972c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:15.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [15 5]}}
+  {:id #uuid "b7e9f8c8-3804-4abb-8c0d-dcde1076cc5b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:12.743-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 7],
+    :direction :east}}
+  {:id #uuid "94f480b5-acb6-4b6e-91f8-adec1fd52c2f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:12.743-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 7],
+    :direction :east}}
+  {:id #uuid "73a14d73-0d83-444a-9a38-b125c117586b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:12.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :south}}
+  {:id #uuid "a1a31f94-f2fe-4624-a670-c79104de7ad5",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:12.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 7],
+    :direction :south}}
+  {:id #uuid "ec51faf0-5885-4275-87af-fa0d6bc48ba9",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:12.140-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :direction :south}}
+  {:id #uuid "551a0fc6-78f9-4ee5-a768-caf5ed1c1165",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:12.140-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :south}}
+  {:id #uuid "784046b4-f66d-4448-9341-80d543df71fc",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:11.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [15 5],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:11.936-00:00"}}
+  {:id #uuid "9959c502-7ca9-42a8-9af8-11ffcd5ab1da",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:10:11.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:10:11.936-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "c7bb7982-f9cc-45ef-bf95-57954096c35e",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:11.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :north}}
+  {:id #uuid "6a92d4b1-1384-43a7-8b6a-60071d73cfbf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:11.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 5],
+    :direction :north}}
+  {:id #uuid "cc047d0d-46e2-4843-8bc0-1d209115b67d",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:10.738-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 5],
+    :direction :south}}
+  {:id #uuid "8edc999d-6a96-4477-84b4-79ea6bc3e2c1",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:10.738-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :south}}
+  {:id #uuid "2fe6ac16-9660-4c82-a356-78fdfed532d1",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:09.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 6],
+    :direction :north}}
+  {:id #uuid "0745c6af-0798-4614-a346-cf205f7ec65f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:09.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 5],
+    :direction :north}}
+  {:id #uuid "59f40cb3-27ac-4485-bd76-f060380c1997",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:09.544-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 7],
+    :direction :north}}
+  {:id #uuid "5180b67a-75f0-48ca-b389-2b5cd2f81372",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:09.544-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 6],
+    :direction :north}}
+  {:id #uuid "c45734a0-d35e-455e-98a0-dfa15d5759b3",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:09.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 8],
+    :direction :north}}
+  {:id #uuid "709addb4-f22d-4a41-9b78-b1777fe0a880",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:09.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 7],
+    :direction :north}}
+  {:id #uuid "02c4fbd9-2786-488a-b00b-01cff3e35003",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:09.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [15 9],
+    :direction :north}}
+  {:id #uuid "c2e66c03-b5cd-470d-8aaf-9ecd54720fc9",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:09.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 8],
+    :direction :north}}
+  {:id #uuid "b988aee4-360e-4ae4-adec-eda434aa8d52",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:08.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 9],
+    :direction :west}}
+  {:id #uuid "49b995c5-eeb5-4877-8ea7-9e5f8bc944eb",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:08.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [15 9],
+    :direction :west}}
+  {:id #uuid "6c7fe1a8-0ba2-447d-adcd-e40036bfb47d",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:07.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 9],
+    :direction :west}}
+  {:id #uuid "a844ca01-ae47-4fec-9f5b-40fc8cde32f7",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:07.341-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 9],
+    :direction :west}}
+  {:id #uuid "aa6d3b96-cf55-4b69-9561-8e7802fd29ff",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:06.353-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 9]}}
+  {:id #uuid "ea5a8a51-0390-4539-86db-19134b7d8237",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:06.353-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 9]}}
+  {:id #uuid "6c53d950-61e6-4e2b-9526-3ebc7c35081a",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:06.353-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 8]}}
+  {:id #uuid "97e30d3d-1fcd-4e85-936b-83d557b5e1c3",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:06.353-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 7]}}
+  {:id #uuid "ddb83a0e-525e-4acf-8200-b2948d203821",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:10:06.353-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [2 9]}}
+  {:id #uuid "95d1d3a3-7423-4b05-aa75-f3a95a0864ca",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:10:04.759-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :position-xy [1 9],
+    :fire-length 2}}
+  {:id #uuid "b5f8b25e-6159-45cc-b358-55df1da74021",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:04.759-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 9]}}
+  {:id #uuid "e9426784-ea94-42e2-978e-2b9e9d62f7a5",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "dies",
+   :time #inst "2021-09-17T18:10:04.752-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :killed-by-player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34"}}
+  {:id #uuid "650db87b-56f7-4a2c-a4ad-91e51a2ea298",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:04.751-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 9],
+    :fire-start-timestamp #inst "2021-09-17T18:10:04.737-00:00"}}
+  {:id #uuid "5f32eeea-f22a-4fe2-b161-2bfa03cd90bd",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:04.751-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 8],
+    :fire-start-timestamp #inst "2021-09-17T18:10:04.737-00:00"}}
+  {:id #uuid "a6b8df82-1019-4f2c-868b-f1cb04f593fe",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:04.751-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [1 7],
+    :fire-start-timestamp #inst "2021-09-17T18:10:04.737-00:00"}}
+  {:id #uuid "8ac2c630-0247-4923-bafa-5fffa03f1d79",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:04.751-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [2 9],
+    :fire-start-timestamp #inst "2021-09-17T18:10:04.737-00:00"}}
+  {:id #uuid "920f866f-ed5c-4b5c-a759-1979b4c8d3dd",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:10:04.751-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :fire-position-xy [3 9],
+    :fire-start-timestamp #inst "2021-09-17T18:10:04.737-00:00"}}
+  {:id #uuid "ddbbfc05-2fef-44b3-a1c0-8dcfa7fac4d0",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:03.744-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 9],
+    :direction :east}}
+  {:id #uuid "a9213a4d-c217-4f31-9f40-7e1e1bae15e2",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:03.744-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 9],
+    :direction :east}}
+  {:id #uuid "5a264daf-dfe0-447f-949d-8426b483cea2",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-throw-bomb",
+   :time #inst "2021-09-17T18:10:03.558-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :players-current-xy [16 9],
+    :player-facing-direction :east}}
+  {:id #uuid "83a857bf-691c-4445-8db9-4342dab30a5b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:03.558-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [1 9],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:01.537-00:00"}}
+  {:id #uuid "c23c1977-5b82-4cd4-ae21-eb7673a4e610",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:10:03.558-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [17 9]}}
+  {:id #uuid "2be9b7c6-561c-4e77-b749-9d9b73f2b045",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:03.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 9],
+    :direction :east}}
+  {:id #uuid "01aa6e99-7c80-4365-b708-cac74a863f98",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:02.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [16 9],
+    :direction :east}}
+  {:id #uuid "c2046988-7979-4033-bf5e-5332debfec34",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-throw-bomb",
+   :time #inst "2021-09-17T18:10:02.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :players-current-xy [16 9],
+    :player-facing-direction :west}}
+  {:id #uuid "c84a6755-148b-4ba3-ab66-47ef2ce509d1",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:10:01.944-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 9],
+    :direction :west}}
+  {:id #uuid "45c89e56-158b-4b81-9f96-b754331540e7",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:10:01.944-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [16 9],
+    :direction :west}}
+  {:id #uuid "0a4ccaae-5664-4bb9-8c50-7a1a968ac012",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:10:01.544-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :bomb-position-xy [17 9],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:10:01.537-00:00"}}
+  {:id #uuid "4997e4e3-3a12-4c90-821b-9c56891a8678",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:10:01.544-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 9],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:10:01.537-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "a1b3ae63-cda9-4b70-94b6-e91b9ec252da",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:09:59.538-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 8],
+    :direction :south}}
+  {:id #uuid "06b43904-a41d-489d-b404-70f3e6d571ed",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:09:59.538-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 9],
+    :direction :south}}
+  {:id #uuid "865eb781-6ba6-46a5-a67e-e87adcaec321",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:09:58.741-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 8],
+    :direction :west}}
+  {:id #uuid "63e9b4dc-1996-44e9-980b-0491c38577c5",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:09:58.346-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 9],
+    :direction :north}}
+  {:id #uuid "587d9a3b-bcc0-40da-a015-12b308bb71c7",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:09:58.346-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :next-position [17 8],
+    :direction :north}}
+  {:id #uuid "9d94bf5d-1d54-483c-b188-e67bef3964d9",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:09:57.342-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :current-xy [17 9],
+    :direction :south}}
+  {:id #uuid "e2f870f4-ad16-40a1-bee9-c7513afb8371",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 1]}}
+  {:id #uuid "e3d7d42b-0934-4c2b-8ef8-0fcba0d79c13",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [4 1]}}
+  {:id #uuid "a4e8f68d-9292-4480-8f84-8eb82d5ed8d5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 2]}}
+  {:id #uuid "b0411755-d62c-4474-b6f0-6afe6f60e537",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 3]}}
+  {:id #uuid "448c6bd9-5b09-4f38-a7b0-d9f3ab684789",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.749-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [2 1]}}
+  {:id #uuid "cc2b97d1-2f2f-4d7c-92b0-948250f7d502",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:48.746-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 1]}}
+  {:id #uuid "3aa7bf29-37cf-499b-8be7-861b2b332657",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 1],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "e3a4a6bd-df8b-4ee7-ac46-2fe91aa03200",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [2 1],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "2e7fbcab-e791-4f6c-8bf9-3bfe8a764496",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [3 1],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "fae12254-766c-4c4b-965b-410c48601181",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [4 1],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "ca9ae3b6-1377-423e-89d4-6eea95159481",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 2],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "e4f47478-c847-4f1f-9af4-27ff202c3c95",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 3],
+    :fire-start-timestamp #inst "2021-09-17T18:08:47.136-00:00"}}
+  {:id #uuid "53e0cc2f-a142-452e-85d3-7800f55a519c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [1 3]}}
+  {:id #uuid "986b9c90-4321-4095-9a40-e43a18de4f6e",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :position-xy [1 1],
+    :fire-length 3}}
+  {:id #uuid "9df435f8-8c1a-4f0c-9bbb-7d6b0cfff2a4",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:08:47.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 1]}}
+  {:id #uuid "bb2a5690-d0e7-45d7-be15-66a34236dfae",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:46.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :east}}
+  {:id #uuid "e206d23f-def1-4a82-bc2d-f00c23c7901f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:46.143-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [2 9],
+    :direction :east}}
+  {:id #uuid "9463bbef-0674-4543-8881-3e494a179637",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:45.541-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :south}}
+  {:id #uuid "016f2dfd-69cd-42a9-96ad-e5ad808ab480",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:45.541-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 9],
+    :direction :south}}
+  {:id #uuid "5bf3e201-9b7e-444e-aac7-2731accf49ed",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:08:44.949-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :bomb-position-xy [1 1],
+    :fire-length 3,
+    :bomb-added-timestamp #inst "2021-09-17T18:08:43.936-00:00"}}
+  {:id #uuid "840dafcc-4a75-4e88-be4a-2813b2a82107",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:08:44.949-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 9]}}
+  {:id #uuid "638eb07a-414f-413a-a3f0-6d928d9ff46b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-throw-bomb",
+   :time #inst "2021-09-17T18:08:44.948-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :players-current-xy [1 8],
+    :player-facing-direction :south}}
+  {:id #uuid "29b84d45-f6e0-453f-9475-0fcea34027e2",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:44.738-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :south}}
+  {:id #uuid "df8ab56c-00a9-40f2-a55e-de1719cf5d91",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:44.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :north}}
+  {:id #uuid "5ce0090e-0931-4092-933e-2d2f3c6a325d",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:44.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 8],
+    :direction :north}}
+  {:id #uuid "14ebebf1-9548-41d3-a83f-cad2b0e10bd6",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:08:43.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :bomb-position-xy [1 9],
+    :fire-length 3,
+    :bomb-added-timestamp #inst "2021-09-17T18:08:43.936-00:00"}}
+  {:id #uuid "62ba3f2f-7b62-4450-bc34-4c0ee2eea65f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:08:43.943-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :fire-length 3,
+    :timestamp #inst "2021-09-17T18:08:43.936-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "2c8933be-354c-4c64-85d5-8d66e016dbbf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:43.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :south}}
+  {:id #uuid "9f1ec362-becd-44ac-9039-52e4230a1535",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:43.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 9],
+    :direction :south}}
+  {:id #uuid "7714e5a8-aba7-4e5d-84ff-e400e6c41f41",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:41.744-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 7],
+    :direction :south}}
+  {:id #uuid "e47e8b1c-3afd-4775-b2ed-04e21433c471",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:41.744-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 8],
+    :direction :south}}
+  {:id #uuid "d96eb69e-4dab-4810-9088-fd0a587c2b57",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:41.348-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 7],
+    :direction :west}}
+  {:id #uuid "9649849e-b739-4cc7-ad9e-e4013fcc75f1",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:41.347-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [2 7],
+    :direction :west}}
+  {:id #uuid "5bfac37c-6a35-410b-ad01-0180f0d6fc70",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "picks-fire-inc-item",
+   :time #inst "2021-09-17T18:08:40.947-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :item-position-xy [2 7],
+    :new-fire-length 3}}
+  {:id #uuid "47b3997a-b10b-4a84-b60f-3d8676586b9c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:40.741-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [3 7],
+    :direction :west}}
+  {:id #uuid "30a6f73c-227e-47a5-8af9-1c863a7f5bf3",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:40.741-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [2 7],
+    :direction :west}}
+  {:id #uuid "ac965f30-c3b5-40d2-afb9-766ff4564ee1",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:40.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [3 7],
+    :direction :north}}
+  {:id #uuid "2953fe16-3e32-4b43-bf43-ccba1cbf19a8",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:40.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [3 8],
+    :direction :north}}
+  {:id #uuid "e6ccc83b-b4fe-4d4d-b10a-093891a0c48b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [2 7]}}
+  {:id #uuid "d42034dc-c473-45a8-b094-72c9b6fe2df7",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 9]}}
+  {:id #uuid "49af62d7-2f2b-4151-bcc5-e8ad562ac888",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 8]}}
+  {:id #uuid "e050244e-38d0-4b71-a9d4-354e63498442",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [2 9]}}
+  {:id #uuid "cbcadf96-457c-4dee-8e5d-eba1c95a3fea",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 7]}}
+  {:id #uuid "4a08a1f4-ea87-4fef-9de5-32b30e72c5f2",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 9]}}
+  {:id #uuid "00386cf2-f94c-408d-a5b0-4008c72c0651",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:39.953-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 6]}}
+  {:id #uuid "37fca242-cdb4-4b65-bdda-1f8e032d45d9",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "61084453-80f6-4914-bffa-401078813a2f",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [1 6]}}
+  {:id #uuid "2c4d5cc5-b847-4eec-95bf-72327bd73847",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [2 7]}}
+  {:id #uuid "bc6eccf9-29c2-4740-8715-7dbab9984519",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :position-xy [1 9],
+    :fire-length 2}}
+  {:id #uuid "f002f9e5-7478-40b5-9a52-5ece6e7f6e5b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :position-xy [1 7],
+    :fire-length 2}}
+  {:id #uuid "7c43dc63-36ad-485d-86d6-493f33e04d30",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 9]}}
+  {:id #uuid "4d89aecb-a9d4-44b1-8c67-c55f4e34764f",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:08:38.358-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [1 7]}}
+  {:id #uuid "ca69292e-b0cf-4823-b9a5-9a3947ea1ab7",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.357-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 8],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "7ed7a704-de89-4392-9338-7f297bc7fadb",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [3 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "c6aad505-6392-49fa-b7b6-a674ef904041",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [2 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "b00c7871-0f44-4123-9071-72515ebb3744",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 7],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "ef9c5373-402f-47c1-8405-01c6f29d262d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 8],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "73096931-89b6-4bd7-899e-5de832200e85",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "69cf012a-0658-4519-992a-d16ea802a8ae",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 7],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "cba5b090-afdb-4936-8542-d0c18c870e14",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 6],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "8d168ffa-36cf-4baf-a9e2-c4eb645a5a75",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:38.356-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [2 7],
+    :fire-start-timestamp #inst "2021-09-17T18:08:38.337-00:00"}}
+  {:id #uuid "017983c8-5dc3-43ce-9444-18c7bd06439f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:37.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [3 9],
+    :direction :north}}
+  {:id #uuid "3874f082-5b3e-4251-ab39-14a3df0092a9",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:37.138-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [3 8],
+    :direction :north}}
+  {:id #uuid "e5127fa8-015a-4d48-a6e1-d72cef63055d",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:36.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [2 9],
+    :direction :east}}
+  {:id #uuid "875f11f8-bf51-49a3-a14c-89ddd236693f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:36.750-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [3 9],
+    :direction :east}}
+  {:id #uuid "68c05c19-b05c-4413-9109-1ff34d18d230",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:36.545-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :east}}
+  {:id #uuid "a94009ba-a38e-45b9-a07c-0ff13d91e8f3",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:36.545-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [2 9],
+    :direction :east}}
+  {:id #uuid "4680b805-20e9-409d-b92e-656200b048a5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:08:36.145-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :bomb-position-xy [1 9],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:08:36.136-00:00"}}
+  {:id #uuid "0b10ec5c-fd88-442b-a402-25ca47ef7c4a",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:08:36.145-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:08:36.136-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "3c8f554f-5273-4cd4-9596-cd24bbbd817c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:35.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :south}}
+  {:id #uuid "2d5ba903-ba82-4783-9190-aa80e875df81",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:35.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 9],
+    :direction :south}}
+  {:id #uuid "2ea0da38-1719-4f30-83ca-875bb134bd08",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:35.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 7],
+    :direction :south}}
+  {:id #uuid "34b64099-50e3-461c-a4ac-e5c9dba940cf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:35.344-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 8],
+    :direction :south}}
+  {:id #uuid "a6edbe6b-86e1-487e-9eed-5c39eb8ce850",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:08:35.149-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :bomb-position-xy [1 7],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:08:35.137-00:00"}}
+  {:id #uuid "d588d7c4-7faa-4e10-b75c-f8f0e0309998",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:08:35.149-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 7],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:08:35.137-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "61ddda3f-7357-469d-a708-f7e4e2bd35ff",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 8]}}
+  {:id #uuid "df2d30dc-ea3e-4df5-9831-fcee94c87137",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 7]}}
+  {:id #uuid "c66da39d-99d1-4a89-8527-843ba210e88c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [2 9]}}
+  {:id #uuid "00f25ad1-7401-416d-8ccc-9545785199c5",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [1 9]}}
+  {:id #uuid "0db387d6-1cd6-40e2-9276-cae5104f06fd",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [4 9]}}
+  {:id #uuid "aeb4e8bb-61ad-4314-b0d5-9bcbe709e14e",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [5 9]}}
+  {:id #uuid "7bf07f3f-7421-4efc-8e61-93f3a24c99ea",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-remove",
+   :time #inst "2021-09-17T18:08:34.561-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire-position-xy [3 9]}}
+  {:id #uuid "9aa30d1c-f8f1-4ed8-8352-e35b3929cc41",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-remove",
+   :time #inst "2021-09-17T18:08:32.974-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :bomb-position-xy [3 9]}}
+  {:id #uuid "25c7c20d-5012-4c40-b34b-e0e7f156d2e8",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:08:32.972-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [5 9]}}
+  {:id #uuid "73e8f793-8588-4bce-a818-ba0e5080cf0c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-exploading",
+   :time #inst "2021-09-17T18:08:32.972-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :position-xy [3 9],
+    :fire-length 2}}
+  {:id #uuid "1c3de9c1-0547-4d1c-b8fc-6749813077ee",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [3 8],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "1f890c30-cbe6-4e97-85f7-0c0274587ea9",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [3 7],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "f2bccbd5-5546-447c-8ba5-9770f70d122d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [2 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "20df0aa0-3efc-40b4-b810-faa0b558721b",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [1 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "e504abb0-bde0-4991-ba14-2fd4d90a538c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [4 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "355d2a5b-aacd-41a6-960e-de12bedecaff",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [5 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "a2143cb3-de6c-48af-82c7-2f2cdab7e117",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "stone-to-remove",
+   :time #inst "2021-09-17T18:08:32.969-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :position-xy [3 7]}}
+  {:id #uuid "5252cac1-092a-4906-aaf4-2dbdb2dda45c",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "fire-to-add",
+   :time #inst "2021-09-17T18:08:32.966-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :fire-position-xy [3 9],
+    :fire-start-timestamp #inst "2021-09-17T18:08:32.937-00:00"}}
+  {:id #uuid "5021e433-daa1-4b50-9fa0-83a528f115ac",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:30.541-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :north}}
+  {:id #uuid "415fbaff-6485-4b3c-9d2e-d48fa48344e6",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:30.541-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 7],
+    :direction :north}}
+  {:id #uuid "5582596f-b901-4b5f-a566-2cb56c0454ea",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:30.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :north}}
+  {:id #uuid "246b3725-6471-4c09-bbcb-7fdfa8754d5a",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:30.343-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 8],
+    :direction :north}}
+  {:id #uuid "750d9c73-63b9-457c-a29f-4403d418cc8e",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:30.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [2 9],
+    :direction :west}}
+  {:id #uuid "48f24a2f-6916-4820-aa34-f1501301b8e7",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:30.141-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 9],
+    :direction :west}}
+  {:id #uuid "4912da87-f53a-487e-942c-6d2cb9175f1b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:29.940-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [3 9],
+    :direction :west}}
+  {:id #uuid "bdc6ffc0-88f0-41db-b9f4-7debfecaa32b",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:29.940-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [2 9],
+    :direction :west}}
+  {:id #uuid "d0423acd-1ac8-40d1-ac77-8e22bd3ab2fd",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-place-bomb",
+   :time #inst "2021-09-17T18:08:29.749-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [3 9],
+    :fire-length 2,
+    :timestamp #inst "2021-09-17T18:08:29.737-00:00",
+    :max-nr-of-bombs-for-player 3}}
+  {:id #uuid "7742fbb6-d2c9-47cc-94e9-de1d79344e17",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "bomb-to-add",
+   :time #inst "2021-09-17T18:08:29.746-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :bomb-position-xy [3 9],
+    :fire-length 2,
+    :bomb-added-timestamp #inst "2021-09-17T18:08:29.737-00:00"}}
+  {:id #uuid "e1adbcb6-9aff-4d53-bb22-7aa4490e9b3a",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:29.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [2 9],
+    :direction :east}}
+  {:id #uuid "5601e8f6-4abd-4b03-9e67-b716cf64a3d3",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:29.146-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [3 9],
+    :direction :east}}
+  {:id #uuid "67570a83-b602-4501-af70-25675799c4bf",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:28.945-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :east}}
+  {:id #uuid "972c6132-2e70-4522-87d7-abaa335f456f",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:28.945-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [2 9],
+    :direction :east}}
+  {:id #uuid "0d474cc0-0b6c-49df-b53d-c21bb339b529",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:28.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 8],
+    :direction :south}}
+  {:id #uuid "4a28bc85-a570-43a4-b7f3-da966ad42f53",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:28.542-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 9],
+    :direction :south}}
+  {:id #uuid "b2179b5e-ccbd-4324-96a3-52146f27e17c",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "move",
+   :time #inst "2021-09-17T18:08:27.567-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :next-position [1 8],
+    :direction :north}}
+  {:id #uuid "46458695-74c3-42e6-8260-06cb6dea8630",
+   :source "urn:se:jherrlin:bomberman:player",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "wants-to-move",
+   :time #inst "2021-09-17T18:08:27.562-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :current-xy [1 9],
+    :direction :north}}
+  {:id #uuid "fd4c8932-6f91-4167-abae-2a8d973cdc6d",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "start",
+   :time #inst "2021-09-17T18:08:26.433-00:00",
+   :content-type "application/edn"}
+  {:id #uuid "5bc6b155-3166-4dd9-9257-1232375f4543",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "join-game",
+   :time #inst "2021-09-17T18:08:24.467-00:00",
+   :content-type "application/edn",
+   :data
+   {:user-facing-direction :south,
+    :max-nr-of-bombs-for-user 3,
+    :position [1 1],
+    :fire-length 2,
+    :game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "c36b7b98-f19e-4d18-ad36-940c250b6f96",
+    :player-name "Charlie"}}
+  {:id #uuid "a6795e90-1f1c-47ca-ac77-98b003329eb8",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "join-game",
+   :time #inst "2021-09-17T18:08:08.382-00:00",
+   :content-type "application/edn",
+   :data
+   {:user-facing-direction :south,
+    :max-nr-of-bombs-for-user 3,
+    :position [1 1],
+    :fire-length 2,
+    :game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "d7e54110-bb30-4a3c-abfb-9f719ccb9b34",
+    :player-name "Hannah"}}
+  {:id #uuid "0bf19210-deb3-4540-9d22-0821a6c8c537",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "join-game",
+   :time #inst "2021-09-17T18:07:58.136-00:00",
+   :content-type "application/edn",
+   :data
+   {:user-facing-direction :south,
+    :max-nr-of-bombs-for-user 3,
+    :position [1 1],
+    :fire-length 2,
+    :game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :player-id #uuid "ceea28f0-4997-47af-8074-69526fdfc374",
+    :player-name "John"}}
+  {:id #uuid "57446502-6c60-4f4f-b25b-e999131af861",
+   :source "urn:se:jherrlin:bomberman:game",
+   :subject #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+   :type "create-game",
+   :time #inst "2021-09-17T18:07:58.109-00:00",
+   :content-type "application/edn",
+   :data
+   {:game-id #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5",
+    :fire (),
+    :stones
+    ([5 1]
+     [6 1]
+     [8 1]
+     [11 1]
+     [12 1]
+     [14 1]
+     [15 1]
+     [5 2]
+     [9 2]
+     [11 2]
+     [1 3]
+     [2 3]
+     [3 3]
+     [4 3]
+     [6 3]
+     [7 3]
+     [10 3]
+     [13 3]
+     [14 3]
+     [15 3]
+     [17 3]
+     [1 4]
+     [3 4]
+     [9 4]
+     [11 4]
+     [13 4]
+     [17 4]
+     [2 5]
+     [3 5]
+     [10 5]
+     [11 5]
+     [12 5]
+     [13 5]
+     [17 5]
+     [1 6]
+     [3 6]
+     [5 6]
+     [9 6]
+     [11 6]
+     [13 6]
+     [17 6]
+     [2 7]
+     [3 7]
+     [5 7]
+     [7 7]
+     [8 7]
+     [10 7]
+     [5 8]
+     [9 8]
+     [5 9]
+     [6 9]
+     [7 9]
+     [8 9]
+     [9 9]
+     [10 9]
+     [11 9]
+     [13 9]),
+    :password "pwd",
+    :game-name "FirstGame",
+    :game-state :created,
+    :flying-bombs (),
+    :game-password "pwd",
+    :items
+    ({:item-position-xy [14 1], :item-power :inc-fire-length}
+     {:item-position-xy [1 3], :item-power :inc-fire-length}
+     {:item-position-xy [2 3], :item-power :inc-fire-length}
+     {:item-position-xy [4 3], :item-power :inc-fire-length}
+     {:item-position-xy [17 3], :item-power :inc-fire-length}
+     {:item-position-xy [17 6], :item-power :inc-fire-length}
+     {:item-position-xy [2 7], :item-power :inc-fire-length}
+     {:item-position-xy [5 7], :item-power :inc-fire-length}
+     {:item-position-xy [8 7], :item-power :inc-fire-length}
+     {:item-position-xy [10 7], :item-power :inc-fire-length}
+     {:item-position-xy [8 9], :item-power :inc-fire-length}
+     {:item-position-xy [13 9], :item-power :inc-fire-length}),
+    :bombs (),
+    :board
+    [[{:type :wall, :x 0, :y 0}
+      {:type :wall, :x 1, :y 0}
+      {:type :wall, :x 2, :y 0}
+      {:type :wall, :x 3, :y 0}
+      {:type :wall, :x 4, :y 0}
+      {:type :wall, :x 5, :y 0}
+      {:type :wall, :x 6, :y 0}
+      {:type :wall, :x 7, :y 0}
+      {:type :wall, :x 8, :y 0}
+      {:type :wall, :x 9, :y 0}
+      {:type :wall, :x 10, :y 0}
+      {:type :wall, :x 11, :y 0}
+      {:type :wall, :x 12, :y 0}
+      {:type :wall, :x 13, :y 0}
+      {:type :wall, :x 14, :y 0}
+      {:type :wall, :x 15, :y 0}
+      {:type :wall, :x 16, :y 0}
+      {:type :wall, :x 17, :y 0}
+      {:type :wall, :x 18, :y 0}]
+     [{:type :wall, :x 0, :y 1}
+      {:type :floor, :x 1, :y 1}
+      {:type :floor, :x 2, :y 1}
+      {:type :floor, :x 3, :y 1}
+      {:type :floor, :x 4, :y 1}
+      {:type :floor, :x 5, :y 1}
+      {:type :floor, :x 6, :y 1}
+      {:type :floor, :x 7, :y 1}
+      {:type :floor, :x 8, :y 1}
+      {:type :floor, :x 9, :y 1}
+      {:type :floor, :x 10, :y 1}
+      {:type :floor, :x 11, :y 1}
+      {:type :floor, :x 12, :y 1}
+      {:type :floor, :x 13, :y 1}
+      {:type :floor, :x 14, :y 1}
+      {:type :floor, :x 15, :y 1}
+      {:type :floor, :x 16, :y 1}
+      {:type :floor, :x 17, :y 1}
+      {:type :wall, :x 18, :y 1}]
+     [{:type :wall, :x 0, :y 2}
+      {:type :floor, :x 1, :y 2}
+      {:type :wall, :x 2, :y 2}
+      {:type :floor, :x 3, :y 2}
+      {:type :wall, :x 4, :y 2}
+      {:type :floor, :x 5, :y 2}
+      {:type :wall, :x 6, :y 2}
+      {:type :floor, :x 7, :y 2}
+      {:type :wall, :x 8, :y 2}
+      {:type :floor, :x 9, :y 2}
+      {:type :wall, :x 10, :y 2}
+      {:type :floor, :x 11, :y 2}
+      {:type :wall, :x 12, :y 2}
+      {:type :floor, :x 13, :y 2}
+      {:type :wall, :x 14, :y 2}
+      {:type :floor, :x 15, :y 2}
+      {:type :wall, :x 16, :y 2}
+      {:type :floor, :x 17, :y 2}
+      {:type :wall, :x 18, :y 2}]
+     [{:type :wall, :x 0, :y 3}
+      {:type :floor, :x 1, :y 3}
+      {:type :floor, :x 2, :y 3}
+      {:type :floor, :x 3, :y 3}
+      {:type :floor, :x 4, :y 3}
+      {:type :floor, :x 5, :y 3}
+      {:type :floor, :x 6, :y 3}
+      {:type :floor, :x 7, :y 3}
+      {:type :floor, :x 8, :y 3}
+      {:type :floor, :x 9, :y 3}
+      {:type :floor, :x 10, :y 3}
+      {:type :floor, :x 11, :y 3}
+      {:type :floor, :x 12, :y 3}
+      {:type :floor, :x 13, :y 3}
+      {:type :floor, :x 14, :y 3}
+      {:type :floor, :x 15, :y 3}
+      {:type :floor, :x 16, :y 3}
+      {:type :floor, :x 17, :y 3}
+      {:type :wall, :x 18, :y 3}]
+     [{:type :wall, :x 0, :y 4}
+      {:type :floor, :x 1, :y 4}
+      {:type :wall, :x 2, :y 4}
+      {:type :floor, :x 3, :y 4}
+      {:type :wall, :x 4, :y 4}
+      {:type :floor, :x 5, :y 4}
+      {:type :wall, :x 6, :y 4}
+      {:type :floor, :x 7, :y 4}
+      {:type :wall, :x 8, :y 4}
+      {:type :floor, :x 9, :y 4}
+      {:type :wall, :x 10, :y 4}
+      {:type :floor, :x 11, :y 4}
+      {:type :wall, :x 12, :y 4}
+      {:type :floor, :x 13, :y 4}
+      {:type :wall, :x 14, :y 4}
+      {:type :floor, :x 15, :y 4}
+      {:type :wall, :x 16, :y 4}
+      {:type :floor, :x 17, :y 4}
+      {:type :wall, :x 18, :y 4}]
+     [{:type :wall, :x 0, :y 5}
+      {:type :floor, :x 1, :y 5}
+      {:type :floor, :x 2, :y 5}
+      {:type :floor, :x 3, :y 5}
+      {:type :floor, :x 4, :y 5}
+      {:type :floor, :x 5, :y 5}
+      {:type :floor, :x 6, :y 5}
+      {:type :floor, :x 7, :y 5}
+      {:type :floor, :x 8, :y 5}
+      {:type :floor, :x 9, :y 5}
+      {:type :floor, :x 10, :y 5}
+      {:type :floor, :x 11, :y 5}
+      {:type :floor, :x 12, :y 5}
+      {:type :floor, :x 13, :y 5}
+      {:type :floor, :x 14, :y 5}
+      {:type :floor, :x 15, :y 5}
+      {:type :floor, :x 16, :y 5}
+      {:type :floor, :x 17, :y 5}
+      {:type :wall, :x 18, :y 5}]
+     [{:type :wall, :x 0, :y 6}
+      {:type :floor, :x 1, :y 6}
+      {:type :wall, :x 2, :y 6}
+      {:type :floor, :x 3, :y 6}
+      {:type :wall, :x 4, :y 6}
+      {:type :floor, :x 5, :y 6}
+      {:type :wall, :x 6, :y 6}
+      {:type :floor, :x 7, :y 6}
+      {:type :wall, :x 8, :y 6}
+      {:type :floor, :x 9, :y 6}
+      {:type :wall, :x 10, :y 6}
+      {:type :floor, :x 11, :y 6}
+      {:type :wall, :x 12, :y 6}
+      {:type :floor, :x 13, :y 6}
+      {:type :wall, :x 14, :y 6}
+      {:type :floor, :x 15, :y 6}
+      {:type :wall, :x 16, :y 6}
+      {:type :floor, :x 17, :y 6}
+      {:type :wall, :x 18, :y 6}]
+     [{:type :wall, :x 0, :y 7}
+      {:type :floor, :x 1, :y 7}
+      {:type :floor, :x 2, :y 7}
+      {:type :floor, :x 3, :y 7}
+      {:type :floor, :x 4, :y 7}
+      {:type :floor, :x 5, :y 7}
+      {:type :floor, :x 6, :y 7}
+      {:type :floor, :x 7, :y 7}
+      {:type :floor, :x 8, :y 7}
+      {:type :floor, :x 9, :y 7}
+      {:type :floor, :x 10, :y 7}
+      {:type :floor, :x 11, :y 7}
+      {:type :floor, :x 12, :y 7}
+      {:type :floor, :x 13, :y 7}
+      {:type :floor, :x 14, :y 7}
+      {:type :floor, :x 15, :y 7}
+      {:type :floor, :x 16, :y 7}
+      {:type :floor, :x 17, :y 7}
+      {:type :wall, :x 18, :y 7}]
+     [{:type :wall, :x 0, :y 8}
+      {:type :floor, :x 1, :y 8}
+      {:type :wall, :x 2, :y 8}
+      {:type :floor, :x 3, :y 8}
+      {:type :wall, :x 4, :y 8}
+      {:type :floor, :x 5, :y 8}
+      {:type :wall, :x 6, :y 8}
+      {:type :floor, :x 7, :y 8}
+      {:type :wall, :x 8, :y 8}
+      {:type :floor, :x 9, :y 8}
+      {:type :wall, :x 10, :y 8}
+      {:type :floor, :x 11, :y 8}
+      {:type :wall, :x 12, :y 8}
+      {:type :floor, :x 13, :y 8}
+      {:type :wall, :x 14, :y 8}
+      {:type :floor, :x 15, :y 8}
+      {:type :wall, :x 16, :y 8}
+      {:type :floor, :x 17, :y 8}
+      {:type :wall, :x 18, :y 8}]
+     [{:type :wall, :x 0, :y 9}
+      {:type :floor, :x 1, :y 9}
+      {:type :floor, :x 2, :y 9}
+      {:type :floor, :x 3, :y 9}
+      {:type :floor, :x 4, :y 9}
+      {:type :floor, :x 5, :y 9}
+      {:type :floor, :x 6, :y 9}
+      {:type :floor, :x 7, :y 9}
+      {:type :floor, :x 8, :y 9}
+      {:type :floor, :x 9, :y 9}
+      {:type :floor, :x 10, :y 9}
+      {:type :floor, :x 11, :y 9}
+      {:type :floor, :x 12, :y 9}
+      {:type :floor, :x 13, :y 9}
+      {:type :floor, :x 14, :y 9}
+      {:type :floor, :x 15, :y 9}
+      {:type :floor, :x 16, :y 9}
+      {:type :floor, :x 17, :y 9}
+      {:type :wall, :x 18, :y 9}]
+     [{:type :wall, :x 0, :y 10}
+      {:type :wall, :x 1, :y 10}
+      {:type :wall, :x 2, :y 10}
+      {:type :wall, :x 3, :y 10}
+      {:type :wall, :x 4, :y 10}
+      {:type :wall, :x 5, :y 10}
+      {:type :wall, :x 6, :y 10}
+      {:type :wall, :x 7, :y 10}
+      {:type :wall, :x 8, :y 10}
+      {:type :wall, :x 9, :y 10}
+      {:type :wall, :x 10, :y 10}
+      {:type :wall, :x 11, :y 10}
+      {:type :wall, :x 12, :y 10}
+      {:type :wall, :x 13, :y 10}
+      {:type :wall, :x 14, :y 10}
+      {:type :wall, :x 15, :y 10}
+      {:type :wall, :x 16, :y 10}
+      {:type :wall, :x 17, :y 10}
+      {:type :wall, :x 18, :y 10}]]}})}
