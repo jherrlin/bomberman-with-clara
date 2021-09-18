@@ -30,9 +30,7 @@
   (let [{:keys [chsk ch-recv send-fn state]}
         (sente/make-channel-socket! "/websocket/chsk"
                                     nil
-                                    {
-                                     :port           3000
-                                     :type           :auto
+                                    {:type           :auto
                                      :wrap-recv-evs? false})]
     (def chsk       chsk)
     (def ch-chsk    ch-recv)     ; ChannelSocket's receive channel
