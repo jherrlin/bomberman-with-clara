@@ -1,0 +1,61 @@
+---
+# Letsencrypt
+
+- name: Install certbot
+  apt: name="certbot" state=latest
+
+- name: Install python3-certbot-nginx
+  apt: name="python3-certbot-nginx" state=latest
+
+- name: Run certbot test command
+  command: certbot --test-cert --nginx --noninteractive --agree-tos --email {{ domain_email }} -d {{ domains | join(',') }}
+  when: certbot_test
+
+- name: Run certbot prod command
+  command: certbot --nginx --noninteractive --agree-tos --email {{ domain_email }} -d {{ domains | join(',') }}
+  when: not certbot_test
+
+- name: Copy production certbot-renew.service systemd service
+  copy:
+      src: certbot-renew.service.production
+      dest: /etc/systemd/system/certbot-renew.service
+      owner: "root"
+      group: "root"
+  register: result
+  when: not certbot_test
+
+- name: Copy test certbot-renew.service systemd service
+  copy:
+      src: certbot-renew.service.test
+      dest: /etc/systemd/system/certbot-renew.service
+      owner: "root"
+      group: "root"
+  register: result
+  when: certbot_test
+
+- name: Copy certbot-renew.timer systemd service
+  copy:
+      src: certbot-renew.timer
+      dest: "/etc/systemd/system/"
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start certbot-renew service and ensure start on boot
+  systemd:
+    name: certbot-renew.service
+    state: started
+    enabled: yes
+
+- name: Start certbot-renew timer and ensure start on boot
+  systemd:
+    name: certbot-renew.timer
+    state: started
+    enabled: yes
+
+- name: Lets reboot the machine
+  reboot:

@@ -1,0 +1,30 @@
+---
+#
+# Firewall
+#
+
+- name: Install ufw
+  apt: name="ufw" state=latest
+
+- name: Allow everything and enable UFW
+  community.general.ufw:
+    state: enabled
+    policy: reject
+
+- name: Set logging
+  community.general.ufw:
+    logging: 'on'
+
+- community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow all access to tcp port 80
+  community.general.ufw:
+    rule: allow
+    port: '80'
+
+- name: Allow all access to tcp port 443
+  community.general.ufw:
+    rule: allow
+    port: '443'
