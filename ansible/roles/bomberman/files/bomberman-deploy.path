@@ -1,0 +1,8 @@
+[Unit]
+Description=Bomberman Deploy Watcher
+
+[Path]
+PathChanged=/webapps/bomberman
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+---
+#
+# SELinux
+#
+
+- name: Upgrade all packages
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Install policycoreutils
+  apt:
+    name="policycoreutils"
+    state=latest
+
+- name: Install setools
+  apt:
+    name="setools"
+    state=latest

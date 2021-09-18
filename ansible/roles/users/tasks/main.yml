@@ -1,0 +1,59 @@
+---
+#
+# Add users and groups
+#
+
+- name: Copy root Emacs config
+  copy:
+      src: emacs.el
+      dest: "/root/.emacs"
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Create webapps group
+  group:
+      name: webapps
+      system: no
+      state: present
+
+- name: Create bomberman-app user
+  user:
+      name: bomberman-app
+      group: "webapps"
+      create_home: no
+      system: no
+      shell: /sbin/nologin
+      state: present
+
+- name: Create bomberman-admin user
+  user:
+      name: bomberman-admin
+      group: "users"
+      shell: /bin/bash
+      state: present
+
+- name: Set up multiple authorized keys
+  ansible.posix.authorized_key:
+    user: bomberman-admin
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - public_keys/pub-john
+    - public_keys/pub-deploy
+
+- name: Set up deploy authorized key
+  ansible.posix.authorized_key:
+    user: root
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - public_keys/pub-deploy
+
+- name: Copy bomberman-admin Emacs
+  copy:
+      src: emacs.el
+      dest: "/home/bomberman-admin/.emacs"
+      owner: "bomberman-admin"
+      group: "users"
+  register: result

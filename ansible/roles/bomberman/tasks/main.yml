@@ -1,0 +1,65 @@
+---
+#
+# Bomberman
+#
+
+##### Production
+- name: Create production dir
+  file:
+    state: directory
+    path: /webapps/bomberman
+    owner: "bomberman-app"
+    group: "webapps"
+    recurse: yes
+
+- name: Copy bomberman production systemd service
+  copy:
+      src: bomberman.service
+      dest: "/etc/systemd/system/"
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start bomberman-sydost-production service and ensure start on boot
+  systemd:
+    name: bomberman
+    state: started
+    enabled: yes
+
+
+##### Production deploy
+- name: Copy deploy path
+  copy:
+      src: bomberman-deploy.path
+      dest: "/etc/systemd/system/"
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Copy  deploy service
+  copy:
+      src: bomberman-deploy.service
+      dest: "/etc/systemd/system/"
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start bomberman production deploy service and ensure start on boot
+  systemd:
+    name: bomberman-deploy.service
+    state: started
+    enabled: yes
+
+- name: Start bomberman production deploy path and ensure start on boot
+  systemd:
+    name: bomberman-deploy.path
+    state: started
+    enabled: yes

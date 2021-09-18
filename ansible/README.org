@@ -1,0 +1,7 @@
+#+TITLE: Ansible
+
+
+   #+BEGIN_SRC shell :results output code
+     ansible-galaxy install -r requirements.yml
+     ansible-playbook bomberman-playbook.yml
+   #+END_SRC

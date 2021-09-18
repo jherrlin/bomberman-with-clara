@@ -1,0 +1,10 @@
+[Unit]
+Description=Bomberman Deploy Service
+
+[Service]
+User=root
+WorkingDirectory=/webapps/bomberman
+ExecStart=/bin/bash -c 'chown -R bomberman-app:webapps . && systemctl restart bomberman.service'
+
+[Install]
+WantedBy=multi-user.target

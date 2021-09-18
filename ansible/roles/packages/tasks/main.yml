@@ -1,0 +1,42 @@
+---
+#
+# System packages
+#
+
+- name: Upgrade all packages
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Install git
+  apt: name="git" state=latest
+
+- name: Install tree
+  apt: name="tree" state=latest
+
+- name: Install emacs-nox
+  apt: name="emacs-nox" state=latest
+
+- name: Install bash-completion
+  apt: name="bash-completion" state=latest
+
+- name: Install htop
+  apt: name="htop" state=latest
+
+- name: Install tmux
+  apt: name="tmux" state=latest
+
+- name: Copy tmux.conf
+  copy:
+      src: tmux.conf
+      dest: /etc/
+      owner: "root"
+      group: "root"
+  register: result
+
+- name: Install unzip
+  apt: name="unzip" state=latest
+
+- name: Install Clojure
+  apt: name="clojure" state=latest
