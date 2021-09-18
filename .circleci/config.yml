@@ -3,7 +3,7 @@ version: 2
 jobs:
   build-and-test:
     docker:
-      - image: circleci/clojure:openjdk-11-tools-deps-1.10.1.727-node-browsers
+      - image: circleci/clojure:openjdk-17-tools-deps-1.10.3.967-buster-node-browsers
 
     environment:
       JVM_OPTS: -Xmx3200m
