@@ -26,9 +26,9 @@
 
       [:> semantic-ui/Menu.Item
        {:as "a"
-        :href (rfe/href :se.jherrlin.client.views.join-game/view)} "Join a game"]
+        :href (rfe/href :se.jherrlin.client.views.join-game/view)} "Join game"]
 
-      [:> semantic-ui/Menu.Item
+      #_[:> semantic-ui/Menu.Item
        {:as "a" :href (rfe/href :route2/db)} "DB"]
 
       [:> semantic-ui/Menu.Item
