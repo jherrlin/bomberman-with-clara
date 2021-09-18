@@ -174,8 +174,7 @@
      [:div
       [:pre {:style {:font-size   "0.7em"
                      :line-height "1.2em"}}
-       (str "App db:\n"
-            (with-out-str (print-events-table demo-events)))]]]))
+       (with-out-str (print-events-table demo-events))]]]))
 
 (defn routes []
   [["/"
