@@ -122,6 +122,7 @@
   (timbre/info "Creating system.")
   (component/system-map
    :incomming-actions incomming-commands-state
+   :nrepl             (components.nrepl/create)
    :event-store       (components.event-store/create)
    :game-state        (component/using
                        (components.game-state/create (:projection-fn game-state))
