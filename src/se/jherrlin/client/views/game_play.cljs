@@ -5,6 +5,7 @@
             [se.jherrlin.client.websocket :as websocket]
             [se.jherrlin.client.views.spectate-game :as spectate-game]
             [goog.events :as gev]
+            ["semantic-ui-react" :as semantic-ui]
             [goog.events.KeyCodes :as keycodes])
   (:import [goog.events EventType KeyHandler]))
 
@@ -42,7 +43,7 @@
 
 (defn view []
   (let [listen-to-game-id                       @(re-frame/subscribe [:listen-to-game-id])
-        game-state                              @(re-frame/subscribe [:game-state])
+        {:keys [game-name] :as game-state}      @(re-frame/subscribe [:game-state])
         player                                  @(re-frame/subscribe [:player])
         screen                                  @(re-frame/subscribe [:screen])
         {:keys [start-game-errors start-games]} @(re-frame/subscribe [:start-game])]
@@ -52,24 +53,33 @@
       (re-frame/dispatch [:push-state ::spectate-game/view {:game-id listen-to-game-id}]))
     (when start-game-errors
       [:<>
-       [:div (str "Game play:" listen-to-game-id)]
+       [:div {:style {:text-align "center"}}
+        [:> semantic-ui/Container {:text true}
+         [:> semantic-ui/Header {:as "h3"}
+          (if (seq start-game-errors)
+            (-> start-game-errors first :message)
+            "GAME ON!")]
+         (for [{:keys [player-name player-nr player-id]} (->> game-state
+                                                              :players
+                                                              (vals))]
+           ^{:key (str player-name "/" player-id)}
+           [:p (str player-nr " | " player-name)])]]
 
-       [:div "Players:"]
-       (for [{:keys [player-name player-nr player-id]} (->> game-state
-                                                            :players
-                                                            (vals))]
-         ^{:key (str player-name "/" player-id)}
-         [:div (str player-nr " | " player-name)])
-       (for [[i row]  (map-indexed list screen)
-             [j cell] (map-indexed list row)]
-         ^{:key (str cell)}
-         [:<>
-          [:div {:style {:width   "20px"
-                         :height  "20px"
-                         :display "inline-block"}}
-           (:str cell)]
-          (when (= (-> screen first count dec) j)
-            [:div {:style {:display "block"}}])])])))
+       [:br]
+       [:div {:style {:text-align "center"}}
+        (for [[i row]  (map-indexed list screen)
+              [j cell] (map-indexed list row)]
+          ^{:key (str i j cell)}
+          (let [t (:type cell)]
+            [:<>
+             [:div {:style {:width       "30px"
+                            :height      "30px"
+                            :display     "inline-block"
+                            :font-size   "1.7em"
+                            :line-height "1.7em"}}
+              (:str cell)]
+             (when (= (-> screen first count dec) j)
+               [:div {:style {:display "block"}}])]))]])))
 
 (defn routes []
   [["/game/play/:game-id"
