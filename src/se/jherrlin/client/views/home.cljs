@@ -13,7 +13,7 @@
 (def events-
   [{:n ::demo-events}
    {:n ::demo-position-in-time
-    :s (fn [db [k]] (get db k 0))}])
+    :s (fn [db [k]] (get db k 1))}])
 
 (comment
   (::demo-events @re-frame.db/app-db)

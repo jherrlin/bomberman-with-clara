@@ -20,7 +20,7 @@
 (def events
   [{:n ::events}
    {:n ::time-travel-location
-    :s (fn [db [k]] (get db k 0))}])
+    :s (fn [db [k]] (get db k 1))}])
 
 (re-frame/reg-sub
  ::screen
