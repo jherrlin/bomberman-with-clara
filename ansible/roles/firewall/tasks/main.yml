@@ -6,10 +6,15 @@
 - name: Install ufw
   apt: name="ufw" state=latest
 
-- name: Allow everything and enable UFW
+- name: Reject everything and enable UFW
   community.general.ufw:
     state: enabled
     policy: reject
+
+# - name: Allow everything and enable UFW
+#   community.general.ufw:
+#     state: enabled
+#     policy: allow
 
 - name: Set logging
   community.general.ufw:

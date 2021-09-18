@@ -1,4 +1,4 @@
-debian-s-1vcpu-1gb-amd-fra1-01-bomberman ansible_ssh_host=167.71.39.179 ansible_ssh_user=root ansible_ssh_private_key_file=~/.ssh/2021-digital-ocean-bomberman
+debian-s-1vcpu-1gb-amd-fra1-01-bomberman ansible_ssh_host=167.71.51.4 ansible_ssh_user=root ansible_ssh_private_key_file=~/.ssh/2021-digital-ocean-bomberman
 
 [servers]
 debian-s-1vcpu-1gb-amd-fra1-01-bomberman

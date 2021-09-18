@@ -11,27 +11,6 @@
       - "bomberman-admin"
     ntp_timezone: Europe/Stockholm
 
-    nginx_remove_default_vhost: true
-    nginx_vhosts:
-      - listen: "80"
-        server_name: "bomberman.lambda-group.se"
-        server_name_redirect: "www.bomberman.lambda-group.se"
-        state: "present"
-        filename: "bomberman.conf"
-        extra_parameters: |
-          location / {
-              proxy_set_header    Host $host;
-              proxy_set_header    X-Real-IP $remote_addr;
-              proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header    X-Forwarded-Proto $scheme;
-              proxy_pass          http://localhost:3000;
-              proxy_read_timeout  90;
-              proxy_redirect      http://localhost:3000 https://bomberman.lambda-group.se;
-              proxy_http_version  1.1;
-              proxy_set_header    Upgrade $http_upgrade;
-              proxy_set_header    Connection "upgrade";
-          }
-
     certbot_test: false
 
     domain_email: "jherrlin@gmail.com"
@@ -40,21 +19,11 @@
       - www.bomberman.lambda-group.se
 
   roles:
-    # - roles/selinux
     - roles/users
-    # - roles/packages
-    # - geerlingguy.ntp
-    # - geerlingguy.nginx
+    - roles/packages
+    - geerlingguy.ntp
+    - geerlingguy.security
     - roles/bomberman
-
-    # - geerlingguy.repo-epel
-
-    # - roles/firewall
-    # - geerlingguy.security
-    # - roles/letsencrypt
-    # - name: geerlingguy.java
-    #   java_packages:
-    #     - java-1.8.0-openjdk
-    #   when: "ansible_os_family == 'RedHat'"
-    # - roles/datomic-free
-    # - roles/system-reports
+    - roles/firewall
+    - geerlingguy.nginx
+    - roles/letsencrypt
