@@ -9,6 +9,7 @@
    [reitit.coercion.malli]
    reitit.coercion.spec
    [reitit.dev.pretty :as pretty]
+   [se.jherrlin.server.resources :as resources]
    [reitit.ring :as ring]
    [reitit.ring.coercion :as ring.coercion]
    [reitit.ring.malli]
@@ -24,6 +25,11 @@
   (def websocket websocket)
   [""
    ["/websocket/chsk" (get websocket :reitit-routes)]])
+
+(def events-demo
+  (->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
+       (:events)
+       (reverse)))
 
 ;; (swap! game-state assoc :player 1)
 
@@ -42,6 +48,12 @@
                              (def incomming-actions incomming-actions)
                              {:status 200
                               :body @game-state})}]
+
+      ["/events-demo"
+       {:get (fn [req]
+               (def req req)
+               {:status 200
+                :body events-demo})}]
 
       ["/swagger.json"
        {:get {:no-doc  true

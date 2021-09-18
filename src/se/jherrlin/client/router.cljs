@@ -8,6 +8,7 @@
             [se.jherrlin.client.views.game-lobby :as views.game-lobby]
             [se.jherrlin.client.views.join-game :as views.join-game]
             [se.jherrlin.client.views.game-play :as views.game-play]
+            [se.jherrlin.client.views.home :as views.home]
             [se.jherrlin.client.views.spectate-game :as views.spectate-game]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]))
@@ -51,7 +52,7 @@
          (with-out-str (pprint/pprint @re-frame.db/app-db)))]])
 
 (def routes
-  [["/"
+  [#_["/"
     {:name      :route1/home
      :link-text "Home"
      :view      [:div "Home"]
@@ -76,6 +77,7 @@
 (defn handler []
   (rf/router
    [routes
+    (views.home/routes)
     (views.create-game/routes)
     (views.game-lobby/routes)
     (views.join-game/routes)

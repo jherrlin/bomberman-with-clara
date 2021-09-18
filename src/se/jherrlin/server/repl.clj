@@ -2,6 +2,7 @@
   (:require
    [se.jherrlin.server.game-state :as game-state]
    [se.jherrlin.server.models :as models]
+   [se.jherrlin.server.resources :as resources]
    [se.jherrlin.clara-labs.board :as board]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
    [clojure.pprint :as pprint]
@@ -18,15 +19,7 @@
             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard PlayerDies BombOnBoard FlyingBomb
             CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame]))
 
-(defn read-edn-file
-  "Read file from filesystem and parse it to edn."
-  [resource-path]
-  (try
-    (edn/read-string (slurp (io/resource resource-path)))
-    (catch java.io.IOException e
-      (printf "Couldn't open '%s': %s\n" resource-path (.getMessage e)))
-    (catch Exception e
-      (printf "Error parsing edn file '%s': %s\n" resource-path (.getMessage e)))))
+
 
 
 (def add-event-fn! (-> system/production :event-store :add-event-fn!))
@@ -70,14 +63,14 @@
        (apply concat)
        (map #(.toCloudEvent %))))
 
-(->> (read-edn-file "events/2021-09-17_3-players.edn")
+(->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
      :events
      print-events-table)
 
 
 (let [game-id        #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5"
       john-player-id #uuid "ceea28f0-4997-47af-8074-69526fdfc374"
-      previous-state (->> (read-edn-file "events/2021-09-17_3-players.edn")
+      previous-state (->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
                           :events
                           (reverse)
                           (take 31)
@@ -92,7 +85,7 @@
        (rule-actions-to-cloud-events)
        (game-state/the-projection previous-state)))
 
-(->> (read-edn-file "events/2021-09-17_3-players.edn")
+(->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
      :events
      (reverse)
      (take 31)
