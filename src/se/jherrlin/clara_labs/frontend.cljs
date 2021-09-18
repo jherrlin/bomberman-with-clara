@@ -6,7 +6,6 @@
             [re-frame.core :as re-frame]
             [taoensso.sente :as sente :refer [cb-success?]]
             [goog.events.KeyCodes :as keycodes]
-            [se.jherrlin.server.saved-event-store :as saved-event-store]
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.client.input.events :as events]
             [se.jherrlin.client.input.inputs :as inputs]
@@ -358,40 +357,10 @@
 ;;      (first)
 ;;      )
 
-(defn time-travel []
-  (let [time-travel-location @(re-frame/subscribe [:input-value ::time-travel-value])
-        events               @(re-frame/subscribe [:input-value ::events])
-        screen               @(re-frame/subscribe [::screen])]
-    #_[:div
-     [:h3 "Time travel"]
-     [:input
-      {:type      "range"
-       :min       1
-       :max       (dec (count saved-event-store/events2))
-       :step      1
-       :value     time-travel-location
-       :on-change #(do
-                     (let [nr (js/parseInt (.. % -target -value))]
-                       (re-frame/dispatch [:input-value ::time-travel-value nr])
-                       (re-frame/dispatch [::game-state-force (game-state/the-projection {} (take nr (reverse saved-event-store/events2)))])))}]
-     [:div
-        (for [[i row]  (map-indexed list screen)
-              [j cell] (map-indexed list row)]
-          (let [t (:type cell)]
-            [:<>
-             [:div {:style {:width   "20px"
-                            :height  "20px"
-                            :display "inline-block"}}
-              (:str cell)]
-             (when (= (-> screen first count dec) j)
-               [:div {:style {:display "block"}}])]))]
-     ])
-  )
 
 (defn root-component []
   (let [view @(re-frame/subscribe [::view])]
     [:<>
-     [time-travel]
      [:div
       [inputs/button
        {:on-click  #(re-frame/dispatch [::change-view :welcome])

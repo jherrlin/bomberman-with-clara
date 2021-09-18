@@ -3,7 +3,7 @@ version: 2
 jobs:
   build-and-test:
     docker:
-      - image: circleci/clojure:openjdk-17-tools-deps-1.10.3.967-buster-node-browsers
+      - image: circleci/clojure:openjdk-11-tools-deps-1.10.1.727-node-browsers
 
     environment:
       JVM_OPTS: -Xmx3200m
@@ -13,9 +13,37 @@ jobs:
       - checkout
       - run: clojure -R:default-deps
       - run: clojure -A:test
+      - run: sudo npm install -g shadow-cljs
+      - run: npm install
+      - run: mkdir classes
+      - run: clojure -X:uberjar :aot true :main-class se.jherrlin.server.system :jar target/bomberman.jar :compile-ns '[se.jherrlin.server.system]'
+      - run: shadow-cljs release frontend
+      - persist_to_workspace:
+          root: target
+          paths:
+            - bomberman.jar
+
+  deploy-bomberman-to-production-server:
+    environment:
+      TZ: "Europe/Stockholm"
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: target
+      - run:
+          name: Deploy artifact to production server
+          command: |
+            scp ~/project/target/bomberman.jar root@167.71.39.179:/webapps/bomberman/bomberman-${CIRCLE_BRANCH}-$(date +%Y-%m-%d-%H-%M)-${CIRCLE_SHA1:0:7}.jar
 
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build-and-test
+      - deploy-bomberman-to-production-server:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: master

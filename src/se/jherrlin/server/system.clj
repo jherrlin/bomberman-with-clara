@@ -26,7 +26,8 @@
   (:import [java.time Instant Duration]
            [se.jherrlin.server.models
             PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard PlayerDies BombOnBoard FlyingBomb
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame]))
+            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame])
+  (:gen-class))
 
 (comment
   (remove-ns 'se.jherrlin.server.system)
@@ -148,8 +149,8 @@
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)
-                                                 (Duration/ofMinutes 1)
-                                                 #_(Duration/ofMillis 200))}}))
+                                                 #_(Duration/ofMinutes 1)
+                                                 (Duration/ofMillis 200))}}))
 
 
 ;; (game-state/the-projection {} (->> @event-store :events reverse (take 20))
@@ -159,10 +160,15 @@
 ;;      (filter (comp #{#uuid "c1b5bc52-a5e0-4f48-ac4d-da76bbe1d747"} :subject))
 ;;      (sort-by :time #(compare %2 %1))
 ;;      )
+(defn -main
+  "Main entry to start the server."
+  [& args]
+  (alter-var-root #'production component/start))
 
 (defn trunc
   [s n]
   (subs s 0 (min (count s) n)))
+
 
 
 (comment
@@ -182,10 +188,6 @@
   (reset! game-state' se.jherrlin.server.components.game-state/initial-game-state)
   (reset! event-store se.jherrlin.server.components.event-store/store-init)
   (reset! incomming-commands-state {})
-
-  (require '[se.jherrlin.server.saved-event-store])
-
-
 
 
   (->> @event-store
