@@ -45,16 +45,18 @@
 (defn view []
   (let [the-list @(re-frame/subscribe [::available-games])]
     [:div
-     (for [{:keys [game-name subject]} the-list]
-       ^{:key (str subject)}
-       [:<>
-        [:br]
-        [:br]
-        [:div game-name
-         [:button
-          {:on-click  #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id subject}])
-           :body      "Join game"}
-          "join"]]])]))
+     (if-not (seq the-list)
+       [:p "No games to join."]
+       (for [{:keys [game-name subject]} the-list]
+         ^{:key (str subject)}
+         [:<>
+          [:br]
+          [:br]
+          [:div game-name
+           [:button
+            {:on-click  #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id subject}])
+             :body      "Join game"}
+            "join"]]]))]))
 
 (defn login []
   (let [form-values     @(re-frame/subscribe [:form-values ::join-game])
