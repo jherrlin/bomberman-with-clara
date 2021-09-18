@@ -60,33 +60,40 @@
   (let [form-values     @(re-frame/subscribe [:form-values ::join-game])
         form-valid?     @(re-frame/subscribe [:form-valid? ::join-game ::user-commands/join-game])
         clicked-create? @(re-frame/subscribe [:form-meta :join-game :clicked-create?])]
-    [:div
-     [form.managed/input {:form        ::join-game
-                          :spec        ::user-commands/game-password
-                          :validate?   clicked-create?
-                          :label       "Game password"
-                          :placeholder "Game password"
-                          :attr        :game-password
-                          :style       {:width "300px"}}]
-     [form.managed/input {:form        ::join-game
-                          :spec        ::user-commands/player-name
-                          :validate?   clicked-create?
-                          :label       "Player name"
-                          :placeholder "Player name"
-                          :attr        :player-name
-                          :style       {:width "300px"}}]
+    [:<>
+     [:> semantic-ui/Container {:text true}
+      [:> semantic-ui/Header {:as "h3"}
+       "Join game"]
+      [:p "Enter game password and your player name to join the game. If the
+      password is correct and your player name is unique to the game you will be
+      taken to the game lobby."]]
      [:br]
-     [:> semantic-ui/Form.Button
-      {:onClick (fn [_]
-                  (if form-valid?
-                    (re-frame/dispatch [::join-game form-values])
-                    (re-frame/dispatch [:form-meta :join-game :clicked-create? true])))}
-      "Join game"]
-     [:div
-      [:div (str "form valid?" form-valid?)]]
-     [:pre
-      (str "Join game form values:\n"
-           (with-out-str (pprint/pprint form-values)))]]))
+     [:div {:style {:display         "flex"
+                    :align-items     "center"
+                    :justify-content "center"}}
+      [:> semantic-ui/Form
+       [form.managed/input {:form        ::join-game
+                            :spec        ::user-commands/game-password
+                            :validate?   clicked-create?
+                            :label       "Game password"
+                            :placeholder "Game password"
+                            :attr        :game-password
+                            :style       {:width "300px"}}]
+       [form.managed/input {:form        ::join-game
+                            :spec        ::user-commands/player-name
+                            :validate?   clicked-create?
+                            :label       "Player name"
+                            :placeholder "Player name"
+                            :attr        :player-name
+                            :style       {:width "300px"}}]
+       [:br]
+       [:> semantic-ui/Form.Button
+        {:fluid   true
+         :onClick (fn [_]
+                    (if form-valid?
+                      (re-frame/dispatch [::join-game form-values])
+                      (re-frame/dispatch [:form-meta :join-game :clicked-create? true])))}
+        "Join game"]]]]))
 
 (defn routes []
   [["/game/join"
