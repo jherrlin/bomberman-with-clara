@@ -1,9 +1,6 @@
 {:deps     true
- :dev-http {8083 "public"}
  :builds   {:frontend {:target     :browser
+                       :asset-path "/js"
                        :output-dir "resources/public/js"
                        :devtools   {:preloads [devtools.preload]}
-                       :modules    {:main {:init-fn
-                                           ;; se.jherrlin.clara-labs.frontend/init
-                                           se.jherrlin.client.main/init
-                                           }}}}}
+                       :modules    {:main {:init-fn se.jherrlin.client.main/init}}}}}

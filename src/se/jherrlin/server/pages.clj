@@ -26,7 +26,7 @@
     (include-css "//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css")]
    [:body {:style "height: 100%" }
     [:div#app {:style           "height: 100%"
-               :data-csrf-token (:anti-forgery-token req)} "loading..."]
+               :data-csrf-token (:anti-forgery-token req)} "loading...!"]
     (->> "public/js/manifest.edn"
          (read-resource-edn-file)
          (map :output-name)
