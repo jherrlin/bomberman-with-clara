@@ -1,6 +1,7 @@
-{:deps     true
- :builds   {:frontend {:target     :browser
-                       :asset-path "/js"
-                       :output-dir "resources/public/js"
-                       :devtools   {:preloads [devtools.preload]}
-                       :modules    {:main {:init-fn se.jherrlin.client.main/init}}}}}
+{:deps   true
+ :builds {:frontend {:target            :browser
+                     :asset-path        "/js"
+                     :output-dir        "resources/public/js"
+                     :devtools          {:preloads [devtools.preload]}
+                     :module-hash-names true
+                     :modules           {:main {:init-fn se.jherrlin.client.main/init}}}}}
