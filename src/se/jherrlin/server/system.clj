@@ -146,7 +146,7 @@
   (system
    {:game-state   {:projection-fn game-state/the-projection}
     :http-handler #'server.endpoints/handler
-    :webserver    {:port 3005}
+    :webserver    {:port 3000}
     :ws-handler   #'server.endpoints-ws/handler
     :scheduler    {:f        #'game-loop
                    :schedule (chime/periodic-seq (Instant/now)

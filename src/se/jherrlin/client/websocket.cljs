@@ -31,7 +31,7 @@
         (sente/make-channel-socket! "/websocket/chsk"
                                     nil
                                     {
-                                     :port           3005
+                                     :port           3000
                                      :type           :auto
                                      :wrap-recv-evs? false})]
     (def chsk       chsk)
