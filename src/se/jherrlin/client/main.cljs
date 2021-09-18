@@ -19,7 +19,7 @@
      [:> semantic-ui/Menu {:size       "large"
                            :borderless true}
       [:> semantic-ui/Menu.Item
-       {:as "a" :href (rfe/href :route1/home)} "Home"]
+       {:as "a" :href (rfe/href :se.jherrlin.client.views.home/view)} "Home"]
       [:> semantic-ui/Menu.Item
        {:as "a"
         :href (rfe/href :se.jherrlin.client.views.create-game/view)} "Create game"]

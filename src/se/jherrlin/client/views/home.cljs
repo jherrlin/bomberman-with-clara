@@ -189,5 +189,4 @@
                       (re-frame/dispatch [::demo-position-in-time 1]))
                     :stop
                     (fn [_]
-                      (println "leave new home")
-                      )}]}]])
+                      (println "leave new home"))}]}]])

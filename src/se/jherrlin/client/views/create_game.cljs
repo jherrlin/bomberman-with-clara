@@ -16,53 +16,53 @@
                             (if (= status :error)
                               (js/alert message)
                               (re-frame/dispatch [::join-game/join-game (assoc create-game-value :action :join-game)])))}}))
-{:status :ok,
- :data
- {:game-id   #uuid "5ef147ca-8caa-4ecf-b3c1-5cef2a2a5dee",
-  :game-name "kalle",
-  :password  "kalle"}}
-
-
-#_(re-frame/dispatch [:push-state :se.jherrlin.client.views.game-lobby/view {:game-id #uuid "5ef147ca-8caa-4ecf-b3c1-5cef2a2a5dee"}])
 
 (defn view []
   (let [form-values     @(re-frame/subscribe [:form-values ::create-game])
         form-valid?     @(re-frame/subscribe [:form-valid? ::create-game ::user-commands/create-game])
         clicked-create? @(re-frame/subscribe [:form-meta :create-game :clicked-create?])]
+
     [:div
-     [form.managed/input {:form        ::create-game
-                          :spec        ::user-commands/game-name
-                          :validate?   clicked-create?
-                          :label       "Game name"
-                          :placeholder "Game name"
-                          :attr        :game-name
-                          :style       {:width "300px"}}]
-     [form.managed/input {:form        ::create-game
-                          :spec        ::user-commands/game-password
-                          :validate?   clicked-create?
-                          :label       "Game password"
-                          :placeholder "Game password"
-                          :attr        :game-password
-                          :style       {:width "300px"}}]
-     [form.managed/input {:form        ::create-game
-                          :spec        ::user-commands/player-name
-                          :validate?   clicked-create?
-                          :label       "Player name"
-                          :placeholder "Player name"
-                          :attr        :player-name
-                          :style       {:width "300px"}}]
+     [:> semantic-ui/Container {:text true}
+      [:> semantic-ui/Header {:as "h3"}
+       "Create new game"]
+      [:p "Select a game name, a password for the game and your player name. The
+       password is used so that your friends can join your game. When you have
+       created a new game you will go to the lobby where you wait for your
+       friends to join."]]
      [:br]
-     [:> semantic-ui/Form.Button
-      {:onClick (fn [_]
-                  (if form-valid?
-                    (re-frame/dispatch [::create-game form-values])
-                    (re-frame/dispatch [:form-meta :create-game :clicked-create? true])))}
-      "Create game"]
-     [:div
-      [:div (str "form valid?" form-valid?)]]
-     [:pre
-      (str "Create game form values:\n"
-           (with-out-str (pprint/pprint form-values)))]]))
+     [:div {:style {:display         "flex"
+                    :align-items     "center"
+                    :justify-content "center"}}
+      [:> semantic-ui/Form
+       [form.managed/input {:form        ::create-game
+                            :spec        ::user-commands/game-name
+                            :validate?   clicked-create?
+                            :label       "Game name"
+                            :placeholder "Game name"
+                            :attr        :game-name
+                            :style       {:width "300px"}}]
+       [form.managed/input {:form        ::create-game
+                            :spec        ::user-commands/game-password
+                            :validate?   clicked-create?
+                            :label       "Game password"
+                            :placeholder "Game password"
+                            :attr        :game-password
+                            :style       {:width "300px"}}]
+       [form.managed/input {:form        ::create-game
+                            :spec        ::user-commands/player-name
+                            :validate?   clicked-create?
+                            :label       "Player name"
+                            :placeholder "Player name"
+                            :attr        :player-name
+                            :style       {:width "300px"}}]
+       [:> semantic-ui/Form.Button
+        {:fluid   true
+         :onClick (fn [_]
+                    (if form-valid?
+                      (re-frame/dispatch [::create-game form-values])
+                      (re-frame/dispatch [:form-meta :create-game :clicked-create? true])))}
+        "Create game"]]]]))
 
 (defn routes []
   [["/game/create"

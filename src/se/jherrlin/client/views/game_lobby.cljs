@@ -19,41 +19,53 @@
                                 (re-frame/dispatch [:push-state ::game-play/view {:game-id (:game-id data)}]))))}}))
 
 (defn view []
-  (let [listen-to-game-id                       @(re-frame/subscribe [:listen-to-game-id])
-        game-state                              @(re-frame/subscribe [:game-state])
-        player                                  @(re-frame/subscribe [:player])
-        screen                                  @(re-frame/subscribe [:screen])
-        {:keys [start-game-errors start-games]} @(re-frame/subscribe [:start-game])]
+  (let [listen-to-game-id                           @(re-frame/subscribe [:listen-to-game-id])
+        {:keys [game-name password] :as game-state} @(re-frame/subscribe [:game-state])
+        player                                      @(re-frame/subscribe [:player])
+        screen                                      @(re-frame/subscribe [:screen])
+        {:keys [start-game-errors start-games]}     @(re-frame/subscribe [:start-game])]
     (when (and listen-to-game-id
                (-> game-state :game-state (= :started))
                player)
       (re-frame/dispatch [:push-state ::game-play/view {:game-id listen-to-game-id}]))
-    (when start-game-errors
-      [:<>
-       [:div (str "lobby for:" listen-to-game-id)]
-       (if (seq start-game-errors)
-         [:div (-> start-game-errors first :message)]
-         [:div
-          [:div "Enough players have joined. Game can be started!"]
-          [:> semantic-ui/Form.Button
-           {:onClick #(re-frame/dispatch [::start-game listen-to-game-id])}
-           "Start game!"]])
-       [:div "Players:"]
-       (for [{:keys [player-name player-nr player-id]} (->> game-state
-                                                            :players
-                                                            (vals))]
-         ^{:key (str player-name "/" player-id)}
-         [:div (str player-nr " | " player-name)])
-       (for [[i row]  (map-indexed list screen)
-             [j cell] (map-indexed list row)]
-         ^{:key (str cell)}
-         [:<>
-          [:div {:style {:width   "20px"
-                         :height  "20px"
-                         :display "inline-block"}}
-           (:str cell)]
-          (when (= (-> screen first count dec) j)
-            [:div {:style {:display "block"}}])])])))
+    [:div
+     [:> semantic-ui/Container {:text true}
+      [:> semantic-ui/Header {:as "h3"}
+       "Lobby for " game-name ", game password is: " password]
+      [:p "Wait here until enough player have joined the game. There needs to be
+      at least 2 players (maximum 4) before you can start the game. When enough
+      players have joined, a \"Start game!\" button will show up."]
+      (if (seq start-game-errors)
+        [:p (-> start-game-errors first :message)]
+        [:div {:style {:display         "flex"
+                       :align-items     "center"
+                       :justify-content "center"}}
+         [:> semantic-ui/Form.Button
+          {:onClick #(re-frame/dispatch [::start-game listen-to-game-id])
+           :color "green"}
+          "Start game!"]])
+
+      [:p "Players:"]
+      (for [{:keys [player-name player-nr player-id]} (->> game-state
+                                                           :players
+                                                           (vals))]
+        ^{:key (str player-name "/" player-id)}
+        [:p (str player-nr " | " player-name)])
+
+      [:div {:style {:display         "flex"
+                     :align-items     "center"
+                     :justify-content "center"}}
+       [:div
+        (for [[i row]  (map-indexed list screen)
+              [j cell] (map-indexed list row)]
+          ^{:key (str cell)}
+          [:<>
+           [:div {:style {:width   "20px"
+                          :height  "20px"
+                          :display "inline-block"}}
+            (:str cell)]
+           (when (= (-> screen first count dec) j)
+             [:div {:style {:display "block"}}])])]]]]))
 
 (defn routes []
   [["/game/lobby/:game-id"
