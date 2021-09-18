@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Deploy artifact to production server
           command: |
-            scp ~/project/target/bomberman.jar root@167.71.39.179:/webapps/bomberman/bomberman-${CIRCLE_BRANCH}-$(date +%Y-%m-%d-%H-%M)-${CIRCLE_SHA1:0:7}.jar
+            scp ~/project/target/bomberman.jar root@bomberman.lambda-group.se:/webapps/bomberman/bomberman-${CIRCLE_BRANCH}-$(date +%Y-%m-%d-%H-%M)-${CIRCLE_SHA1:0:7}.jar
 
 workflows:
   version: 2
