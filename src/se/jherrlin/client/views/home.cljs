@@ -99,7 +99,10 @@
           [:> semantic-ui/Table.HeaderCell "Description"]]]
         [:> semantic-ui/Table.Body
          [:> semantic-ui/Table.Row
-          [:> semantic-ui/Table.Cell "W"]
+          [:> semantic-ui/Table.Cell "1, 2, 3, 4"]
+          [:> semantic-ui/Table.Cell "Players"]]
+         [:> semantic-ui/Table.Row
+          [:> semantic-ui/Table.Cell "#"]
           [:> semantic-ui/Table.Cell "Wall, indestructible"]]
          [:> semantic-ui/Table.Row
           [:> semantic-ui/Table.Cell "S"]

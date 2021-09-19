@@ -57,7 +57,7 @@
                        (mapv (fn [cell]
                                (let [t (:type cell)]
                                  (case t
-                                   :wall            (assoc cell :str "W" :color "#000000")
+                                   :wall            (assoc cell :str "#" :color "#000000")
                                    :floor           (assoc cell :str " " :color "#FFFFFF")
                                    :fire            (assoc cell :str "F" :color "#FFA701")
                                    :stone           (assoc cell :str "S" :color "#808080")
