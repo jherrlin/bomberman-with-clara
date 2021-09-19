@@ -6,7 +6,6 @@
   (remove-ns 'se.jherrlin.server.game-state)
   )
 
-
 ;; Access data in game state
 (defn player-current-xy
   ([game-state player-id]         (get-in game-state                [:players player-id :position]))
@@ -69,9 +68,7 @@
               (models/->ActiveGame game-id game-name password game-state)))))
 
 (defn game-state->enginge-facts-1 [gs]
-  (->>
-
-       [gs]
+  (->> [gs]
        (filter (comp #{:started :created} :game-state))
        (map (fn [{:keys [subject game-id game-state] :as game}]
               (concat
@@ -97,7 +94,6 @@
                (->> (fires game)
                     (map models/map->FireOnBoard)))))
        (apply concat)))
-
 
 (defn game-state->enginge-facts [gs]
   (->> gs
@@ -241,11 +237,7 @@
 
 (defmethod projection :default [game-state event]
   (println "Error! Could not find projection for event:" event)
-  ;; (println game-state)
-  ;; (clojure.pprint/pprint event)
-
   game-state)
-
 
 (defn the-projection [state events]
   (reduce
@@ -253,7 +245,6 @@
 
 
 (comment
-  (java.util.UUID/randomUUID)
   (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
@@ -274,10 +265,4 @@
     ])
 
   (.toCloudEvent (EndGame. repl-game-id nil))
-
-  ;; (reduce
-  ;;  (fn [gs m] (projection gs m))
-  ;;  {}
-  ;;  (->> @components.event-store/store :events reverse))
-
   )
