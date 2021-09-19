@@ -2,42 +2,12 @@
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
             [se.jherrlin.datetime :as datetime]
+            [se.jherrlin.client.common :as common]
             [cljs.pprint :as pprint]
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.client.events :as client.events]
             ["semantic-ui-react" :as semantic-ui]))
 
-
-(defn events->screen
-  ([events]
-   (events->screen events 1))
-  ([events nr]
-   (->> (take nr events)
-        (game-state/the-projection {})
-        :games
-        (vals)
-        (first)
-        (client.events/game-state->screen))))
-
-(defn trunc
-  [s n]
-  (subs s 0 (min (count s) n)))
-
-(defn print-events-table
-  "Print event table with newest events on top."
-  [events]
-  (->> events
-       (sort-by :time #(compare %2 %1))
-       (reverse)
-       (map-indexed vector)
-       (reverse)
-       (map (fn [[idx {:keys [data time] :as event}]]
-              (-> event
-                  (assoc :nr idx)
-                  (assoc :time (datetime/datetime-format time "yyyy-MM-dd HH:mm:ss"))
-                  (dissoc :id :content-type :subject)
-                  (assoc :data (trunc (str (dissoc data :game-id :bomb-added-timestamp :timestamp)) 100)))))
-       (pprint/print-table)))
 
 (def events
   [{:n ::events}
@@ -49,7 +19,7 @@
  :<- [::events]
  :<- [::time-travel-location]
  (fn [[events position-in-time] _]
-   (events->screen events position-in-time)))
+   (common/events->screen events position-in-time)))
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
@@ -98,7 +68,7 @@
        [:div
         [:pre {:style {:font-size   "0.7em"
                        :line-height "1.2em"}}
-         (with-out-str (print-events-table events))]]])))
+         (with-out-str (common/print-events-table events))]]])))
 
 (re-frame/reg-event-fx
  ::get-game-events

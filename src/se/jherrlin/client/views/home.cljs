@@ -4,6 +4,7 @@
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.client.events :as client.events]
+            [se.jherrlin.client.common :as common]
             ["semantic-ui-react" :as semantic-ui]))
 
 
@@ -17,47 +18,17 @@
   (::demo-position-in-time @re-frame.db/app-db)
   )
 
-(defn events->screen
-  ([events]
-   (events->screen events 1))
-  ([events nr]
-   (->> (take nr events)
-        (game-state/the-projection {})
-        :games
-        (vals)
-        (first)
-        (client.events/game-state->screen))))
 
 (re-frame/reg-sub
  ::demo-screen
  :<- [::demo-events]
  :<- [::demo-position-in-time]
  (fn [[demo-events demo-position-in-time] _]
-   (events->screen demo-events demo-position-in-time)))
+   (common/events->screen demo-events demo-position-in-time)))
 
 (doseq [{:keys [n s e]} events-]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
   (re-frame/reg-event-db n (or e (fn [db [_ e]] (assoc db n e)))))
-
-(defn trunc
-  [s n]
-  (subs s 0 (min (count s) n)))
-
-(defn print-events-table
-  "Print event table with newest events on top."
-  [events]
-  (->> events
-       (sort-by :time #(compare %2 %1))
-       (reverse)
-       (map-indexed vector)
-       (reverse)
-       (map (fn [[idx {:keys [data time] :as event}]]
-              (-> event
-                  (assoc :nr idx)
-                  (assoc :time (datetime/datetime-format time "yyyy-MM-dd HH:mm:ss"))
-                  (dissoc :id :content-type :subject)
-                  (assoc :data (trunc (str (dissoc data :game-id :bomb-added-timestamp :timestamp)) 100)))))
-       (pprint/print-table)))
 
 (defn view []
   (let [demo-events           @(re-frame/subscribe [::demo-events])
@@ -171,7 +142,7 @@
      [:div
       [:pre {:style {:font-size   "0.7em"
                      :line-height "1.2em"}}
-       (with-out-str (print-events-table demo-events))]]]))
+       (with-out-str (common/print-events-table demo-events))]]]))
 
 (defn routes []
   [["/"
