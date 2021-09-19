@@ -57,6 +57,7 @@
 
 (defrule flying-bomb-lands-on-empty-floor
   ""
+  [TimestampNow (= ?now now)]
   [Board
    (= ?game-id game-id)
    (= ?board board)]
@@ -73,6 +74,7 @@
   =>
   (retract! ?flying-bomb)
   (insert-unconditional! (BombToAdd.
+                          ?now
                           ?game-id
                           ?player-id
                           (board/next-xy-position ?flying-bomb-current-xy ?flying-bomb-direction)
@@ -124,6 +126,7 @@
 
 (defrule place-bomb
   "Player place bomb in her current location."
+  [TimestampNow (= ?now now)]
   [PlayerWantsToPlaceBomb
    (= ?game-id game-id)
    (= ?place-bomb-player-id player-id)
@@ -138,7 +141,7 @@
   [?bombs-placed-by-player <- (acc/count) from [BombOnBoard (= ?game-id game-id) (= player-id ?place-bomb-player-id)]]
   [:test (< ?bombs-placed-by-player ?max-nr-of-bombs-for-player)]
   =>
-  (insert-unconditional! (BombToAdd.   ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp))
+  (insert-unconditional! (BombToAdd.   ?now ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp))
   (insert-unconditional! (BombOnBoard. ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
 
 (defrule player-dies

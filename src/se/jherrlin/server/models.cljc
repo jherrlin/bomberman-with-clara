@@ -37,10 +37,10 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading" this)))
 
-(defrecord BombToAdd [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
+(defrecord BombToAdd [timestamp game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
   CloudEvent
   (toCloudEvent [this]
-    (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-add" this)))
+    (template timestamp "urn:se:jherrlin:bomberman:game" game-id "bomb-to-add" this)))
 
 (defrecord PlayerDies [game-id player-id killed-by-player-id]
   CloudEvent
