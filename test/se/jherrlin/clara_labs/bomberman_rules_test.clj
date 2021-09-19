@@ -665,8 +665,8 @@
   (t/is
    (=
     (let [session  (insert-all bomberman-session
-                               [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->PlayerWantsToThrowBomb repl-game-id 1 [1 1] :east)
+                               [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                (models/->PlayerWantsToThrowBomb #inst "2021-08-28T15:03:02.000-00:00" repl-game-id 1 [1 1] :east)
                                 (models/->BombOnBoard            repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00")
                                 (models/->BombOnBoard            repl-game-id 1 [1 2] 3 #inst "2021-09-07T19:50:17.258-00:00")])
           session' (fire-rules session)]

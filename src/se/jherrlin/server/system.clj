@@ -48,11 +48,11 @@
         max-number-of-bombs (game-state/player-max-number-of-bombs game-state' game-id user-id)]
     (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs)))
 
-(defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id] :as command}]
+(defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id timestamp] :as command}]
   (let [game-state'      @gs
         user-current-xy  (game-state/player-current-xy       game-state' game-id user-id)
         facing-direction (game-state/player-facing-direction game-state' game-id user-id)]
-    (models/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
+    (models/->PlayerWantsToThrowBomb timestamp game-id user-id user-current-xy facing-direction)))
 
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
