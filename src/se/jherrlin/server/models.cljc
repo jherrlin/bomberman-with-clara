@@ -170,8 +170,8 @@
                  (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
 
 (defrecord GameState [game-id game-state])
-(defrecord PlayerWantsToJoinGame [player-id player-name game-name password])
-(defrecord JoinGameError [game-id game-name message])
+(defrecord PlayerWantsToJoinGame [player-id player-name game-id password])
+(defrecord JoinGameError [game-id message])
 (defrecord JoinGame [game-id player-id player-name]
   CloudEvent (toCloudEvent [this]
                (let [default {:user-facing-direction    :south

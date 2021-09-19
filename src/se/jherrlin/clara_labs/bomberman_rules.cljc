@@ -263,36 +263,36 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
 (defrule player-wants-to-join-game
-  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
-  [ActiveGame (= ?game-id game-id) (= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame (= ?game-id game-id) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
+  [ActiveGame                  (= :created game-state) (= ?game-id game-id) (= ?game-password password)]
   [:test (= ?player-password ?game-password)]
   =>
   (insert! (JoinGame. ?game-id ?player-id ?player-name)))
 
 (defrule player-wants-to-join-game-but-password-is-wrong
-  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password)]
-  [ActiveGame (= ?game-id game-id) (= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-id game-id) (= ?player-password password)]
+  [ActiveGame                      (= :created game-state) (= ?game-id game-id) (= ?game-password password)]
   [:test (not= ?player-password ?game-password)]
   =>
   (retract! ?player-wants-to-join-game)
-  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password to game is wrong!")))
+  (insert-unconditional! (JoinGameError. ?game-id "Password to game is wrong!")))
 
 (defrule player-wants-to-join-game-but-game-is-full
-  [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-name game-name) (= ?player-password password)]
-  [ActiveGame (= ?game-id game-id) (= ?game-name game-name)]
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame (= ?game-id game-id) (= ?player-password password)]
+  [ActiveGame                                          (= ?game-id game-id)]
   [?players-joined <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (= (count ?players-joined) 4)]
   =>
   (retract! ?player-wants-to-join-game)
-  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Game is full!")))
+  (insert-unconditional! (JoinGameError. ?game-id "Game is full!")))
 
 (defrule player-wants-to-join-game-but-game-state-is-wrong
-  [?player-wants-to-join-game <- PlayerWantsToJoinGame        (= ?game-name game-name) (= ?player-password password)]
-  [ActiveGame (= ?game-id game-id) (not= :created game-state) (= ?game-name game-name) (= ?game-password password)]
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame  (= ?game-id game-id) (= ?player-password password)]
+  [ActiveGame  (not= :created game-state)               (= ?game-id game-id) (= ?game-password password)]
   [:test (not= ?player-password ?game-password)]
   =>
   (retract! ?player-wants-to-join-game)
-  (insert-unconditional! (JoinGameError. ?game-id ?game-name "Password is correct but game is noy lobby any more.")))
+  (insert-unconditional! (JoinGameError. ?game-id "Password is correct but game is noy lobby any more.")))
 
 (defrule player-picks-up-fire-length-inc-item-from-board
   [ItemOnBoard             (= ?game-id game-id) (= ?item-position-xy item-position-xy) (= item-power :inc-fire-length)]

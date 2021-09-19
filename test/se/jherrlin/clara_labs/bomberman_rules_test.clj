@@ -110,8 +110,8 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->ActiveGame            2 "first-game" "pwd" :created)
-                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "pwd")
-                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+                                  (models/->PlayerWantsToJoinGame 1 "John"  2 "pwd")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" 2 "pwd")])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/join-game-error?)
@@ -134,7 +134,7 @@
                                   (models/->PlayerOnBoardPosition 1 2  [2 1])
                                   (models/->PlayerOnBoardPosition 1 3  [3 1])
                                   (models/->PlayerOnBoardPosition 1 4  [4 1])
-                                  (models/->PlayerWantsToJoinGame 5 "Preben" "first-game" "pwd")])
+                                  (models/->PlayerWantsToJoinGame 5 "Preben" 1 "pwd")])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/join-game-error?)
@@ -143,7 +143,7 @@
          :joins  (->> (query session' bomberman/join-game?)
                       (map (comp #(into {} %) :?join-game))
                       (set))})
-      {:errors #{{:game-id 1, :game-name "first-game", :message "Game is full!"}},
+      {:errors #{{:game-id 1, :message "Game is full!"}},
        :joins #{}})))
 
   (t/testing "User cant join game if password is wrong"
@@ -151,8 +151,8 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->ActiveGame            2 "first-game" "pwd" :created)
-                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "WRONG")
-                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+                                  (models/->PlayerWantsToJoinGame 1 "John"  2 "WRONG")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" 2 "pwd")])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/join-game-error?)
@@ -163,7 +163,6 @@
                       (set))})
       {:errors
        #{{:game-id 2,
-          :game-name "first-game",
           :message "Password to game is wrong!"}},
        :joins #{{:game-id 2, :player-id 3, :player-name "Kalle"}}}))
     )
@@ -173,8 +172,8 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->ActiveGame            2 "first-game" "pwd" :started)
-                                  (models/->PlayerWantsToJoinGame 1 "John" "first-game" "WRONG")
-                                  (models/->PlayerWantsToJoinGame 3 "Kalle" "first-game" "pwd")])
+                                  (models/->PlayerWantsToJoinGame 1 "John"  2 "WRONG")
+                                  (models/->PlayerWantsToJoinGame 3 "Kalle" 2 "pwd")])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/join-game-error?)
@@ -185,7 +184,6 @@
                       (set))})
       {:errors
        #{{:game-id 2,
-          :game-name "first-game",
           :message "Password is correct but game is noy lobby any more."}},
        :joins #{}}))))
 
