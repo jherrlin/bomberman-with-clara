@@ -4,7 +4,7 @@
             [clara.tools.inspect :as inspect]
             [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
-            [se.jherrlin.clara-labs.datetime :as datetime]
+            [se.jherrlin.datetime :as datetime]
             [clojure.set :as set]
             #?(:clj se.jherrlin.server.models)
             #?(:cljs [se.jherrlin.server.models

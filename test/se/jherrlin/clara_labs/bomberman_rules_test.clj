@@ -3,7 +3,7 @@
    [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
    [clara.rules.accumulators :as acc]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman]
-   [se.jherrlin.clara-labs.datetime :as datetime]
+   [se.jherrlin.datetime :as datetime]
    [se.jherrlin.server.models :as models]
    [clara.tools.inspect :as inspect]
    [clojure.test :as t]))
@@ -310,12 +310,12 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->TimestampNow    (datetime/now!))
+                                 [(models/->TimestampNow    (datetime/now))
                                   (models/->GameState       repl-game-id :started)
                                   (models/->Board           repl-game-id board)
                                   (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
                                   (models/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
-                                  (models/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now!))])
+                                  (models/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now))])
             session' (fire-rules session)]
         (->> (query session' bomberman/player-move?)
              (map (comp #(into {} %) :?player-move))
