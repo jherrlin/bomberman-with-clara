@@ -9,13 +9,19 @@
 
 (re-frame/reg-event-fx
  ::create-game
- (fn [_ [_ create-game-value]]
+ (fn [_ [_ {:keys [player-name] :as create-game-value}]]
    (def create-game-value create-game-value)
    {:ws-send {:data       [:game/create (select-keys create-game-value [:action :game-name :game-password])]
               :on-success (fn [{:keys [status data message] :as m}]
+                            (def data data)
                             (if (= status :error)
                               (js/alert message)
-                              (re-frame/dispatch [::join-game/join-game (assoc create-game-value :action :join-game)])))}}))
+                              (let [{:keys [game-id game-name password]} data]
+                                (re-frame/dispatch [::join-game/join-game
+                                                    {:action :join-game
+                                                     :game-id game-id
+                                                     :game-password password
+                                                     :player-name player-name}]))))}}))
 
 (defn view []
   (let [form-values     @(re-frame/subscribe [:form-values ::create-game])

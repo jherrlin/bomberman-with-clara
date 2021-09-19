@@ -1,14 +1,17 @@
 (ns se.jherrlin.server.components.game-state
   (:require [com.stuartsierra.component :as component]
+            [se.jherrlin.server.resources :as resources]
             [taoensso.timbre :as timbre]))
 
 
-(def initial-game-state {})
+;; (def initial-game-state {})
+(def initial-game-state (resources/read-edn-file "game-states/some-games.edn"))
 (defonce game-state (atom initial-game-state))
 
 (comment
   @game-state
   (reset! game-state initial-game-state)
+
   )
 
 

@@ -12,11 +12,11 @@
 (s/def ::game-name  ::non-blank-string)
 (s/def ::game-password ::non-blank-string)
 (s/def ::player-name ::non-blank-string)
-(s/def ::start-game (s/keys :req-un  [::action ::game-id]))
+(s/def ::start-game  (s/keys :req-un [::action ::game-id]))
 (s/def ::create-game (s/keys :req-un [::action ::game-name ::game-password]))
-(s/def ::join-game  (s/keys :req-un  [::action ::game-name ::game-password ::player-name]))
-(s/def ::move       (s/keys :req-un  [::action ::game-id ::user-id ::direction]))
-(s/def ::place-bomb (s/keys :req-un  [::action ::game-id ::user-id]))
+(s/def ::join-game   (s/keys :req-un [::action ::game-id ::game-password ::player-name]))
+(s/def ::move        (s/keys :req-un [::action ::game-id ::user-id ::direction]))
+(s/def ::place-bomb  (s/keys :req-un [::action ::game-id ::user-id]))
 (s/def ::commands
   (s/or :move       ::move
         :place-bomb ::place-bomb

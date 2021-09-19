@@ -114,8 +114,9 @@
      :controllers [{:parameters {:path [:game-id :game-name]}
                     :start
                     (fn [{{:keys [game-id game-name]} :path :as a}]
-                      (re-frame/dispatch [:form-value ::join-game :action :join-game])
-                      (re-frame/dispatch [:form-value ::join-game :game-name game-name])
+                      (let [game-id (uuid game-id)]
+                        (re-frame/dispatch [:form-value ::join-game :action :join-game])
+                        (re-frame/dispatch [:form-value ::join-game :game-id game-id]))
                       (println "enter login"))
                     :stop
                     (fn [_]

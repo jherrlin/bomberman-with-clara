@@ -61,11 +61,38 @@
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
 
+(defn game-to-active-game-facts [{:keys [game-name game-id password game-state] :as game}]
+  (models/->ActiveGame game-id game-name password game-state))
+
 (defn game-state->active-game-facts [gs]
   (->> gs
        (games)
        (map (fn [{:keys [game-name game-id password game-state]}]
               (models/->ActiveGame game-id game-name password game-state)))))
+
+(defn game-to-facts [{:keys [stones board players game-id game-state bombs items fire] :as game}]
+  (concat
+   [(models/->Board game-id board)
+    (models/->GameState game-id game-state)]
+   (->> players
+        (vals)
+        (filter (comp not #{:dead} :player-status))
+        (map (fn [{:keys [player-id position] :as player}]
+               (models/->PlayerOnBoardPosition game-id player-id position))))
+   (->> players
+        (vals)
+        (filter (comp not #{:dead} :player-status))
+        (map (fn [{:keys [player-id position fire-length] :as player}]
+               (models/->PlayerOnBoardFireLength game-id player-id position fire-length))))
+   (->> stones
+        (map (partial models/->Stone game-id)))
+   (->> bombs
+        (map models/map->BombOnBoard))
+   (->> items
+        (map (fn [{:keys [item-position-xy item-power]}]
+               (models/->ItemOnBoard game-id item-position-xy item-power))))
+   (->> fire
+        (map models/map->FireOnBoard))))
 
 (defn game-state->enginge-facts-1 [gs]
   (->> [gs]

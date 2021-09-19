@@ -14,8 +14,7 @@
      (s/explain-data ::user-commands/create-game create-event-data)}
     (let [{:keys [game-name game-password]} create-event-data
           game-id                           (java.util.UUID/randomUUID)
-          player-wants-to-create-game
-          (models/->WantsToCreateGame game-id game-name game-password)
+          player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
           {:keys [create-game-errors create-games] :as actions}
           (bomberman-rules/run-create-game-rules
            (concat (game-state/game-state->active-game-facts @game-state)
@@ -41,10 +40,11 @@
      (s/explain-data ::user-commands/start-game start-game-event-data)}
     (let [{:keys [game-id]}          start-game-event-data
           player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
+          game                       (game-state/game @game-state game-id)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
-           (concat (game-state/game-state->active-game-facts @game-state)
-                   (game-state/game-state->enginge-facts @game-state)
+           (concat (game-state/game-to-facts game)
+                   [(game-state/game-to-active-game-facts game)]
                    [player-wants-to-start-game]))]
       (cond
         (seq start-game-errors)
@@ -65,16 +65,15 @@
     {:status :error
      :message
      (s/explain-data ::user-commands/join-game join-game-event-data)}
-    (let [{:keys [game-name game-password player-name]} join-game-event-data
-          player-id                                     (java.util.UUID/randomUUID)
-          player-wants-to-join-game
-          (models/->PlayerWantsToJoinGame player-id player-name game-name game-password)
-          {:keys [join-game-errors join-games] :as actions}
-          (bomberman-rules/run-join-game-rules
-           (concat (game-state/game-state->active-game-facts @game-state)
-                   (game-state/game-state->enginge-facts @game-state)
-                   [player-wants-to-join-game]))]
-      actions
+    (let [{:keys [game-password game-id player-name]}       join-game-event-data
+          player-id                                         (java.util.UUID/randomUUID)
+          game                                              (game-state/game @game-state game-id)
+          player-wants-to-join-game                         (models/->PlayerWantsToJoinGame player-id player-name game-id game-password)
+          {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules
+                                                             (concat
+                                                              (game-state/game-to-facts game)
+                                                              [(game-state/game-to-active-game-facts game)]
+                                                              [player-wants-to-join-game]))]
       (cond
         (seq join-game-errors)
         {:status  :error
