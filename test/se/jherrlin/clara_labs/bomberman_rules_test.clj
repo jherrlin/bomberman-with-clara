@@ -653,9 +653,10 @@
   (t/is
    (=
     (let [session  (insert-all bomberman-session
-                               [(models/->PlayerWantsToThrowBomb repl-game-id 1 [1 1] :east)
-                                (models/->BombOnBoard          repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00")
-                                (models/->BombOnBoard          repl-game-id 1 [1 2] 3 #inst "2021-09-07T19:50:17.258-00:00")])
+                               [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
+                                (models/->PlayerWantsToThrowBomb repl-game-id 1 [1 1] :east)
+                                (models/->BombOnBoard            repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00")
+                                (models/->BombOnBoard            repl-game-id 1 [1 2] 3 #inst "2021-09-07T19:50:17.258-00:00")])
           session' (fire-rules session)]
       {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
                             (map (comp #(into {} %) :?bomb-on-board))
@@ -670,7 +671,8 @@
         :fire-length          3,
         :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
      :flying-bombs
-     #{{:game-id                repl-game-id
+     #{{:timestamp              #inst "2021-08-28T15:03:02.000-00:00"
+        :game-id                repl-game-id
         :player-id              1,
         :flying-bomb-current-xy [2 1],
         :fire-length            3,
@@ -679,11 +681,12 @@
 
   (t/is
    (=
-    (let [session  (insert-all bomberman-session
-                               [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->Board      repl-game-id board)
-                                (models/->FlyingBomb repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)])
-          session' (fire-rules session)]
+    (let [timestamp #inst "2021-09-19T21:02:56.110-00:00"
+          session   (insert-all bomberman-session
+                                [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
+                                 (models/->Board                repl-game-id board)
+                                 (models/->FlyingBomb timestamp repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)])
+          session'  (fire-rules session)]
       {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
                             (map (comp #(into {} %) :?bomb-on-board))
                             (set))
@@ -700,12 +703,13 @@
 
   (t/is
    (=
-    (let [session  (insert-all bomberman-session
-                               [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->Board      repl-game-id board)
-                                (models/->FlyingBomb repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
-                                (models/->Stone      repl-game-id   [3 1])])
-          session' (fire-rules session)]
+    (let [timestamp #inst "2021-09-19T21:02:56.110-00:00"
+          session   (insert-all bomberman-session
+                                [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
+                                 (models/->Board                repl-game-id board)
+                                 (models/->FlyingBomb timestamp repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
+                                 (models/->Stone                repl-game-id   [3 1])])
+          session'  (fire-rules session)]
       {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
                             (map (comp #(into {} %) :?bomb-on-board))
                             (set))
@@ -723,12 +727,13 @@
 (t/deftest flying-to-the-other-side
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
-                                 [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->Board      repl-game-id board)
-                                  (models/->FlyingBomb repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :west)
-                                  (models/->Stone      repl-game-id   [1 1])])
-            session' (fire-rules session)]
+      (let [timestamp #inst "2021-09-19T21:02:56.110-00:00"
+            session   (insert-all bomberman-session
+                                  [(models/->TimestampNow                      #inst "2021-08-28T15:03:02.000-00:00")
+                                   (models/->Board                repl-game-id board)
+                                   (models/->FlyingBomb timestamp repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :west)
+                                   (models/->Stone                repl-game-id   [1 1])])
+            session'  (fire-rules session)]
         {:bombs-on-board (->> (query session' bomberman/bomb-on-board?)
                               (map (comp #(into {} %) :?bomb-on-board))
                               (set))
@@ -737,7 +742,7 @@
                               (set))})
       {:bombs-on-board
        #{{:game-id              repl-game-id
-          :player-id              1,
+          :player-id            1,
           :bomb-position-xy     [4 1],
           :fire-length          3,
           :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},

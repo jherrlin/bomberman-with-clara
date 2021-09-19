@@ -33,6 +33,7 @@
 
 (defrule player-throws-bomb
   "A player can throw a bomb if facing direction points to it."
+  [TimestampNow (= ?now now)]
   [?player-wants-to-throw-bomb <- PlayerWantsToThrowBomb
    (= ?game-id game-id)
    (= ?player-id player-id)
@@ -48,6 +49,7 @@
   (retract! ?bomb-on-board)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
   (insert-unconditional! (FlyingBomb.
+                          ?now
                           ?game-id
                           ?player-id
                           (board/next-xy-position ?players-current-xy ?player-facing-direction)
@@ -89,6 +91,7 @@
 
 (defrule flying-bomb-keeps-on-flying
   ""
+  [TimestampNow (= ?now now)]
   [Board
    (= ?game-id game-id)
    (= ?board board)]
@@ -106,6 +109,7 @@
   =>
   (retract! ?flying-bomb)
   (insert-unconditional! (FlyingBomb.
+                          ?now
                           ?game-id
                           ?player-id
                           (board/next-xy-board-position ?board ?flying-bomb-current-xy ?flying-bomb-direction)
