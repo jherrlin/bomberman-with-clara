@@ -22,7 +22,6 @@
 
 
 (defn websocket-endpoints [websocket]
-  (def websocket websocket)
   [""
    ["/websocket/chsk" (get websocket :reitit-routes)]])
 
@@ -30,8 +29,6 @@
   (->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
        (:events)
        (reverse)))
-
-;; (swap! game-state assoc :player 1)
 
 (defn handler [{:keys [websocket game-state incomming-actions middleware] :as deps} req]
   ((ring/ring-handler
@@ -41,13 +38,6 @@
                    {:status 200 :body (pages/index-html req)})}]
 
       (websocket-endpoints websocket)
-
-      ["/game-state" {:get (fn [req]
-                             (def req req)
-                             (def game-state game-state)
-                             (def incomming-actions incomming-actions)
-                             {:status 200
-                              :body @game-state})}]
 
       ["/events-demo"
        {:get (fn [req]
@@ -65,14 +55,9 @@
 
       ["/health" {:get (fn [req]
                          {:status 200 :body "ok"})}]]
-     {
-      ;; :compile   reitit.coercion/compile-request-coercers
-      :exception pretty/exception
-      :data      {
-                  ;; :coercion   reitit.coercion.spec/coercion
-                  :muuntaja   m/instance
-                  :middleware [#_log-middleware
-                               swagger/swagger-feature
+     {:exception pretty/exception
+      :data      {:muuntaja   m/instance
+                  :middleware [swagger/swagger-feature
                                parameters/parameters-middleware
                                muuntaja/format-negotiate-middleware
                                muuntaja/format-response-middleware
@@ -83,9 +68,7 @@
 
                                ;; used by Sente
                                ring.middleware.params/wrap-params
-                               ring.middleware.keyword-params/wrap-keyword-params
-
-                               ]}})
+                               ring.middleware.keyword-params/wrap-keyword-params]}})
 
     (ring/routes
      (swagger-ui/create-swagger-ui-handler
