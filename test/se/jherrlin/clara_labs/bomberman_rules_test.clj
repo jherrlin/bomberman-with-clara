@@ -75,10 +75,12 @@
               (map (comp #(into {} %) :?end-game))
               (set))})
       {:dead-players
-       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
           :player-id 1,
           :killed-by-player-id 1}
-         {:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
           :player-id 2,
           :killed-by-player-id 1}},
        :end-games
@@ -535,7 +537,8 @@
       (->> (query session' bomberman/dead-players?)
            (map (comp #(into {} %) :?dead-players))
            (set)))
-    #{{:game-id repl-game-id :player-id 1, :killed-by-player-id 2}})))
+    #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+       :game-id repl-game-id :player-id 1, :killed-by-player-id 2}})))
 
 (t/deftest two-bombs-cant-be-place-in-the-same-xy
   (t/is

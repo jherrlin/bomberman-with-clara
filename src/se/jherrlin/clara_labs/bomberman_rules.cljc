@@ -146,12 +146,13 @@
 
 (defrule player-dies
   "Player dies if she gets hit by fire."
+  [TimestampNow (= ?now now)]
   [?dead-player <- PlayerOnBoardPosition (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
   [FireOnBoard                           (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
   [:test (= ?fire-current-xy ?player-current-xy)]
   =>
   (retract! ?dead-player)
-  (insert-unconditional! (PlayerDies. ?game-id ?player-id ?fire-player-id)))
+  (insert-unconditional! (PlayerDies. ?now ?game-id ?player-id ?fire-player-id)))
 
 (defrule game-ends-if-there-is-only-one-player-left
   [TimestampNow (= ?now now)]
@@ -185,7 +186,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (let [fire-on-board (->> (fire-spread/fire-after-it-hit-objects ?bomb-position-xy ?fire-length ?board ?stones)
                            (mapv (fn [[x y]]
                                    [(FireOnBoard. ?game-id ?player-id [x y] ?now)
-                                    (FireToAdd.   ?game-id ?player-id [x y] ?now)]))
+                                    (FireToAdd.   ?now ?game-id ?player-id [x y] ?now)]))
                            (apply concat))]
     (apply insert! fire-on-board)))
 
