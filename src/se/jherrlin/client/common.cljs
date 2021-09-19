@@ -6,6 +6,23 @@
             [se.jherrlin.client.events :as client.events]))
 
 
+(defn screen [screen']
+  [:<>
+   (for [[i row]  (map-indexed list screen')
+         [j cell] (map-indexed list row)]
+     ^{:key (str i j cell)}
+     (let [t (:type cell)]
+       [:<>
+        [:div {:style {:width       "30px"
+                       :color       (:color cell)
+                       :height      "30px"
+                       :display     "inline-block"
+                       :font-size   "1.7em"
+                       :line-height "1.7em"}}
+         (:str cell)]
+        (when (= (-> screen' first count dec) j)
+          [:div {:style {:display "block"}}])]))])
+
 (defn events->screen
   ([events]
    (events->screen events 1))

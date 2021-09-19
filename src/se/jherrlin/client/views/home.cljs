@@ -4,7 +4,7 @@
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.client.events :as client.events]
-            [se.jherrlin.client.common :as common]
+            [se.jherrlin.client.common :as client.common]
             ["semantic-ui-react" :as semantic-ui]))
 
 
@@ -24,7 +24,7 @@
  :<- [::demo-events]
  :<- [::demo-position-in-time]
  (fn [[demo-events demo-position-in-time] _]
-   (common/events->screen demo-events demo-position-in-time)))
+   (client.common/events->screen demo-events demo-position-in-time)))
 
 (doseq [{:keys [n s e]} events-]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
@@ -113,19 +113,7 @@
 
       [:hr]
       [:div {:style {:text-align "center"}}
-       (for [[i row]  (map-indexed list demo-screen)
-             [j cell] (map-indexed list row)]
-         ^{:key (str i j cell)}
-         (let [t (:type cell)]
-           [:<>
-            [:div {:style {:width       "30px"
-                           :height      "30px"
-                           :display     "inline-block"
-                           :font-size   "1.7em"
-                           :line-height "1.7em"}}
-             (:str cell)]
-            (when (= (-> demo-screen first count dec) j)
-              [:div {:style {:display "block"}}])]))]]
+       [client.common/screen demo-screen]]]
      [:div "Timeline -->"]
      [:input
       {:style     {:width "100%"}
@@ -142,7 +130,7 @@
      [:div
       [:pre {:style {:font-size   "0.7em"
                      :line-height "1.2em"}}
-       (with-out-str (common/print-events-table demo-events))]]]))
+       (with-out-str (client.common/print-events-table demo-events))]]]))
 
 (defn routes []
   [["/"

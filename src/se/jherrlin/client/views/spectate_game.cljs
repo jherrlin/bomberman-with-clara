@@ -2,7 +2,7 @@
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
             [se.jherrlin.datetime :as datetime]
-            [se.jherrlin.client.common :as common]
+            [se.jherrlin.client.common :as client.common]
             [cljs.pprint :as pprint]
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.client.events :as client.events]
@@ -19,7 +19,7 @@
  :<- [::events]
  :<- [::time-travel-location]
  (fn [[events position-in-time] _]
-   (common/events->screen events position-in-time)))
+   (client.common/events->screen events position-in-time)))
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
@@ -36,19 +36,7 @@
         [:h2 "Look back at the game"]]
 
        [:div {:style {:text-align "center"}}
-        (for [[i row]  (map-indexed list screen)
-              [j cell] (map-indexed list row)]
-          ^{:key (str i j cell)}
-          (let [t (:type cell)]
-            [:<>
-             [:div {:style {:width       "30px"
-                            :height      "30px"
-                            :display     "inline-block"
-                            :font-size   "1.7em"
-                            :line-height "1.7em"}}
-              (:str cell)]
-             (when (= (-> screen first count dec) j)
-               [:div {:style {:display "block"}}])]))]
+        [client.common/screen screen]]
        [:br]
        [:div {:style {:display         "flex"
                       :align-items     "center"
@@ -68,7 +56,7 @@
        [:div
         [:pre {:style {:font-size   "0.7em"
                        :line-height "1.2em"}}
-         (with-out-str (common/print-events-table events))]]])))
+         (with-out-str (client.common/print-events-table events))]]])))
 
 (re-frame/reg-event-fx
  ::get-game-events

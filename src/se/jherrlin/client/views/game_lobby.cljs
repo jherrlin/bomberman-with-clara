@@ -1,6 +1,7 @@
 (ns se.jherrlin.client.views.game-lobby
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
+            [se.jherrlin.client.common :as client.common]
             [se.jherrlin.client.views.game-play :as game-play]
             ["semantic-ui-react" :as semantic-ui]
             [schema.core :as s]))
@@ -56,16 +57,7 @@
                      :align-items     "center"
                      :justify-content "center"}}
        [:div
-        (for [[i row]  (map-indexed list screen)
-              [j cell] (map-indexed list row)]
-          ^{:key (str cell)}
-          [:<>
-           [:div {:style {:width   "20px"
-                          :height  "20px"
-                          :display "inline-block"}}
-            (:str cell)]
-           (when (= (-> screen first count dec) j)
-             [:div {:style {:display "block"}}])])]]]]))
+        [client.common/screen screen]]]]]))
 
 (defn routes []
   [["/game/lobby/:game-id"

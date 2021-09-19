@@ -57,12 +57,12 @@
                        (mapv (fn [cell]
                                (let [t (:type cell)]
                                  (case t
-                                   :wall            (assoc cell :str "W")
-                                   :floor           (assoc cell :str " ")
-                                   :fire            (assoc cell :str "F")
-                                   :stone           (assoc cell :str "S")
-                                   :inc-fire-length (assoc cell :str "+")
-                                   :bomb            (assoc cell :str "B")
+                                   :wall            (assoc cell :str "W" :color "#000000")
+                                   :floor           (assoc cell :str " " :color "#FFFFFF")
+                                   :fire            (assoc cell :str "F" :color "#FFA701")
+                                   :stone           (assoc cell :str "S" :color "#808080")
+                                   :inc-fire-length (assoc cell :str "+" :color "#008080")
+                                   :bomb            (assoc cell :str "B" :color "#FF0000")
                                    cell)))
                              row)))))))
 

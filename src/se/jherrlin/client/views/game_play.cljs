@@ -3,6 +3,7 @@
             [re-frame.core :as re-frame]
             [schema.core :as s]
             [se.jherrlin.client.websocket :as websocket]
+            [se.jherrlin.client.common :as client.common]
             [se.jherrlin.client.views.spectate-game :as spectate-game]
             [goog.events :as gev]
             ["semantic-ui-react" :as semantic-ui]
@@ -67,19 +68,7 @@
 
        [:br]
        [:div {:style {:text-align "center"}}
-        (for [[i row]  (map-indexed list screen)
-              [j cell] (map-indexed list row)]
-          ^{:key (str i j cell)}
-          (let [t (:type cell)]
-            [:<>
-             [:div {:style {:width       "30px"
-                            :height      "30px"
-                            :display     "inline-block"
-                            :font-size   "1.7em"
-                            :line-height "1.7em"}}
-              (:str cell)]
-             (when (= (-> screen first count dec) j)
-               [:div {:style {:display "block"}}])]))]])))
+        [client.common/screen screen]]])))
 
 (defn routes []
   [["/game/play/:game-id"
