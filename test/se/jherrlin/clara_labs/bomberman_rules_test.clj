@@ -517,8 +517,10 @@
         :position-xy [1 1],
         :fire-length 10}},
      :stones-to-remove
-     #{{:game-id repl-game-id, :position-xy [1 2]}
-       {:game-id repl-game-id, :position-xy [2 1]}}})))
+     #{{:timestamp #inst "2021-08-28T15:03:50.100-00:00",
+        :game-id repl-game-id, :position-xy [1 2]}
+       {:timestamp #inst "2021-08-28T15:03:50.100-00:00",
+        :game-id repl-game-id, :position-xy [2 1]}}})))
 
 (t/deftest fire-burns-out
   (t/testing "When fire burns out it's removed from the board."

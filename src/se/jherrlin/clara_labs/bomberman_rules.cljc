@@ -218,11 +218,12 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 (defrule remove-stones-hit-by-fire
   "If a stone is hit by fire, remove it."
+  [TimestampNow (= ?now now)]
   [FireOnBoard (= ?game-id game-id) (= ?fire-position-xy fire-position-xy)]
   [?stone <- Stone       (= ?game-id game-id) (= ?stone-position-xy stone-position-xy)]
   [:test (= ?fire-position-xy ?stone-position-xy)]
   =>
-  (insert-unconditional! (StoneToRemove. ?game-id ?stone-position-xy)))
+  (insert-unconditional! (StoneToRemove. ?now ?game-id ?stone-position-xy)))
 
 (defrule fire-burns-out
   "Fire on board burns out after some time."

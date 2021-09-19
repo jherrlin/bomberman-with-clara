@@ -296,7 +296,7 @@
       (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
       (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
       (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
-      (models/->StoneToRemove                   repl-game-id [3 3])
+      (models/->StoneToRemove  timestamp        repl-game-id [3 3])
       (models/->GameWinner                      repl-game-id "John")
       (models/->EndGame                         repl-game-id nil)]))
 
