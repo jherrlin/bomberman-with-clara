@@ -109,9 +109,11 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "fire-to-remove" this)))
 
-(defrecord BombToRemove [game-id bomb-position-xy]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "bomb-to-remove" this)))
+(defrecord BombToRemove [timestamp game-id bomb-position-xy]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "bomb-to-remove" this)))
 
 (def reserved-floors
   #{[1 1]

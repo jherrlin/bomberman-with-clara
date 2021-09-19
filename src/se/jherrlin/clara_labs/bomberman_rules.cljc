@@ -47,7 +47,7 @@
   [:test (= ?bomb-position-xy (board/next-xy-position ?players-current-xy ?player-facing-direction))]
   =>
   (retract! ?bomb-on-board)
-  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (BombToRemove. ?now ?game-id ?bomb-position-xy))
   (insert-unconditional! (FlyingBomb.
                           ?now
                           ?game-id
@@ -202,7 +202,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (< 3000 (datetime/milliseconds-between ?bomb-added-timestamp ?now))]
   =>
   (retract! ?bomb)
-  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (BombToRemove.   ?now ?game-id ?bomb-position-xy))
   (insert-unconditional! (BombExploading. ?now ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule bomb-exploading-when-hit-by-fire
@@ -213,7 +213,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
-  (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
+  (insert-unconditional! (BombToRemove.   ?now ?game-id ?bomb-position-xy))
   (insert-unconditional! (BombExploading. ?now ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule remove-stones-hit-by-fire
