@@ -1,19 +1,10 @@
 (ns se.jherrlin.server.pages
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [se.jherrlin.server.resources :as resources]
             [hiccup.page :refer [html5 include-js include-css]]
             [taoensso.timbre :as timbre]))
 
-
-(defn- read-resource-edn-file
-  "Read file from filesystem and parse it to edn."
-  [resource-filesystem-path]
-  (try
-    (edn/read-string (slurp (io/resource resource-filesystem-path)))
-    (catch java.io.IOException e
-      (printf "Couldn't open '%s': %s\n" resource-filesystem-path (.getMessage e)))
-    (catch Exception e
-      (printf "Error parsing edn file '%s': %s\n" resource-filesystem-path (.getMessage e)))))
 
 (defn index-html
   "Create an index page with a CSRF token attached to it."
@@ -28,7 +19,7 @@
     [:div#app {:style           "height: 100%"
                :data-csrf-token (:anti-forgery-token req)} "loading..."]
     (->> "public/js/manifest.edn"
-         (read-resource-edn-file)
+         (resources/read-edn-file)
          (map :output-name)
          (mapv #(str "js/" %))
          (apply include-js))]))
