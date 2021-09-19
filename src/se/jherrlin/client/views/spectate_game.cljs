@@ -1,6 +1,8 @@
 (ns se.jherrlin.client.views.spectate-game
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
+            [se.jherrlin.datetime :as datetime]
+            [cljs.pprint :as pprint]
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.client.events :as client.events]
             ["semantic-ui-react" :as semantic-ui]))
@@ -16,6 +18,26 @@
         (vals)
         (first)
         (client.events/game-state->screen))))
+
+(defn trunc
+  [s n]
+  (subs s 0 (min (count s) n)))
+
+(defn print-events-table
+  "Print event table with newest events on top."
+  [events]
+  (->> events
+       (sort-by :time #(compare %2 %1))
+       (reverse)
+       (map-indexed vector)
+       (reverse)
+       (map (fn [[idx {:keys [data time] :as event}]]
+              (-> event
+                  (assoc :nr idx)
+                  (assoc :time (datetime/datetime-format time "yyyy-MM-dd HH:mm:ss"))
+                  (dissoc :id :content-type :subject)
+                  (assoc :data (trunc (str (dissoc data :game-id :bomb-added-timestamp :timestamp)) 100)))))
+       (pprint/print-table)))
 
 (def events
   [{:n ::events}
@@ -70,7 +92,13 @@
           :value     time-travel-location
           :on-change #(do
                         (let [nr (js/parseInt (.. % -target -value))]
-                          (re-frame/dispatch [::time-travel-location nr])))}]]])))
+                          (re-frame/dispatch [::time-travel-location nr])))}]]
+       [:hr]
+       [:p "Here is a table of the events (some data have been removed to make it easier to read)."]
+       [:div
+        [:pre {:style {:font-size   "0.7em"
+                       :line-height "1.2em"}}
+         (with-out-str (print-events-table events))]]])))
 
 (re-frame/reg-event-fx
  ::get-game-events

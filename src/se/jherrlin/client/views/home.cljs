@@ -1,10 +1,7 @@
 (ns se.jherrlin.client.views.home
-  (:require [se.jherrlin.client.form.managed :as form.managed]
-            [re-frame.core :as re-frame]
+  (:require [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
             [se.jherrlin.server.game-state :as game-state]
-            [se.jherrlin.client.views.join-game :as join-game]
-            [se.jherrlin.server.user-commands :as user-commands]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.client.events :as client.events]
             ["semantic-ui-react" :as semantic-ui]))
