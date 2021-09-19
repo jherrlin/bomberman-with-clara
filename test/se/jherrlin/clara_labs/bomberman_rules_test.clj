@@ -45,8 +45,7 @@
                                  [(models/->PlayerOnBoardFireLength 1 2 [1 1] 2)
                                   (models/->ItemOnBoard             1   [1 2] :inc-fire-length)
                                   (models/->ItemOnBoard             1   [1 3] :inc-fire-length)
-                                  (models/->ItemOnBoard             0   [1 3] :inc-fire-length)
-                                  ])
+                                  (models/->ItemOnBoard             0   [1 3] :inc-fire-length)])
             session' (fire-rules session)]
         {:picks-fire-inc-item-from-board
          (->> (query session' bomberman/picks-fire-inc-item-from-board?)
@@ -265,6 +264,45 @@
        #{{:game-id 2, :game-name "second-game", :password "my-second-game"}
          {:game-id 1, :game-name "first-game", :password "game-password"}}}))))
 
+(t/deftest start-new-game
+  (t/testing "A game can be started"
+    (t/is
+     (=
+      (let [game-id  1
+            session  (insert-all bomberman-session
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->PlayerWantsToStartGame game-id)
+                                  (models/->GameState              game-id :created)
+                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1])
+                                  (models/->PlayerOnBoardPosition  game-id 2 [1 2])])
+            session' (fire-rules session)]
+        {:errors      (->> (query session' bomberman/start-game-error?)
+                           (map (comp #(into {} %) :?start-game-error))
+                           (set))
+         :start-games (->> (query session' bomberman/start-game?)
+                           (map (comp #(into {} %) :?start-game))
+                           (set))})
+      {:errors      #{},
+       :start-games #{{:game-id 1, :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}})))
+
+  (t/testing "To start a game a minimum of 2 players"
+    (t/is
+     (=
+      (let [game-id  1
+            session  (insert-all bomberman-session
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->PlayerWantsToStartGame game-id)
+                                  (models/->GameState              game-id :created)
+                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1])])
+            session' (fire-rules session)]
+        {:errors      (->> (query session' bomberman/start-game-error?)
+                           (map (comp #(into {} %) :?start-game-error))
+                           (set))
+         :start-games (->> (query session' bomberman/start-game?)
+                           (map (comp #(into {} %) :?start-game))
+                           (set))})
+      {:errors      #{{:game-id 1, :message "Not enough players! Minimum is 2."}},
+       :start-games #{}}))))
 
 (t/deftest player-wants-to-move
   (t/is

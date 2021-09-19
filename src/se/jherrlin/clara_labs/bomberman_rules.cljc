@@ -245,13 +245,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert! (CreateGame. ?game-id ?game-name ?password)))
 
 (defrule player-wants-to-start-game
+  [TimestampNow (= ?now now)]
   [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
   [GameState                                             (= ?game-id game-id) (= :created game-state)]
   [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (<= 2 (count ?players-alive))]
   =>
   (retract! ?player-wants-to-start-game)
-  (insert-unconditional! (StartGame. ?game-id)))
+  (insert-unconditional! (StartGame. ?game-id ?now)))
 
 (defrule player-wants-to-start-game-but-not-enough-player-have-joined
   [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]
@@ -301,6 +302,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (PlayerPicksFireIncItemFromBoard. ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
 
+;; For the frontend
 (defrule start-game-but-not-enough-player-have-joined
   "Used by frontend to determine if a game can be started."
   [GameState                                             (= ?game-id game-id) (= :created game-state)]
@@ -309,13 +311,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
-(defrule game-can-be-started
-  "Used by frontend to determine if a game can be started."
-  [GameState                                                (= ?game-id game-id) (= :created game-state)]
-  [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
-  [:test (<= 2 (count ?players-alive))]
-  =>
-  (insert-unconditional! (StartGame. ?game-id)))
+;; (defrule game-can-be-started
+;;   "Used by frontend to determine if a game can be started."
+;;   [GameState                                                (= ?game-id game-id) (= :created game-state)]
+;;   [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
+;;   [:test (<= 2 (count ?players-alive))]
+;;   =>
+;;   (insert-unconditional! (StartGame. ?game-id #inst "2021-09-19T15:54:31.631-00:00" ;; Time is not used here.
+;;                                      )))
 
 ;; TODO
 ;; (defrule player-wants-to-join-game-but-player-name-is-already-three
@@ -492,7 +495,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
    [(CreateGame.             repl-game-id "First game" "my-secret")
     (JoinGame.               repl-game-id player-1-ws-id "John")
     (JoinGame.               repl-game-id player-2-ws-id "Hannah")
-    (StartGame.              repl-game-id)
+    (StartGame.              repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
     (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
     (PlayerWantsToPlaceBomb. repl-game-id player-1-ws-id [2 1] 3 (java.util.Date.) 3)])
 

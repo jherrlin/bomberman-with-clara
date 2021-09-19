@@ -13,13 +13,7 @@
     :as a
     :refer [>! <! >!! <!! go chan buffer close! thread go-loop put!
             alts! alts!! timeout]]
-   [taoensso.timbre :as timbre])
-  (:import [java.time Instant Duration]
-           [se.jherrlin.server.models
-            PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard PlayerDies BombOnBoard FlyingBomb
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame]))
-
-
+   [taoensso.timbre :as timbre]))
 
 
 (def add-event-fn! (-> system/production :event-store :add-event-fn!))

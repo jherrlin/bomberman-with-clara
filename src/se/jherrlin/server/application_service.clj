@@ -4,7 +4,8 @@
             [se.jherrlin.server.user-commands :as user-commands]
             [se.jherrlin.server.models :as models]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [se.jherrlin.datetime :as datetime]))
 
 
 (defn create-game! [game-state add-events-fn! create-event-data]
@@ -34,18 +35,28 @@
              :message "unknown"})))))
 
 (defn start-game! [game-state add-events-fn! start-game-event-data]
+  (def game-state game-state)
+  (def add-events-fn! add-events-fn!)
+  (def start-game-event-data start-game-event-data)
   (if-not (s/valid? ::user-commands/start-game start-game-event-data)
     {:status :error
      :message
      (s/explain-data ::user-commands/start-game start-game-event-data)}
     (let [{:keys [game-id]}          start-game-event-data
+          _                          (def game-id game-id)
           player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
+          _                          (def player-wants-to-start-game player-wants-to-start-game)
           game                       (game-state/game @game-state game-id)
+          _                          (def game game)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
            (concat (game-state/game-to-facts game)
                    [(game-state/game-to-active-game-facts game)]
-                   [player-wants-to-start-game]))]
+                   [(models/->TimestampNow (datetime/now))]
+                   [player-wants-to-start-game]))
+          _                          (def actions actions)
+          _                          (def start-game-errors start-game-errors)
+          _                          (def start-games start-games)]
       (cond
         (seq start-game-errors)
         {:status  :error

@@ -36,10 +36,7 @@
     (template
      "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading" this)))
 
-(defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
-  CloudEvent
-  (toCloudEvent [this]
-    (template "urn:se:jherrlin:bomberman:game" game-id "bomb-on-board" this)))
+(defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
 
 (defrecord BombToAdd [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
   CloudEvent
@@ -51,11 +48,7 @@
   (toCloudEvent [this]
     (template "urn:se:jherrlin:bomberman:player" game-id "dies" this)))
 
-(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp]
-  CloudEvent
-  (toCloudEvent [this]
-    (template
-     "urn:se:jherrlin:bomberman:game" game-id "fire-on-board" this)))
+(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp])
 
 (defrecord FireToAdd [game-id player-id fire-position-xy fire-start-timestamp]
   CloudEvent
@@ -73,9 +66,7 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:player" game-id "move" this)))
 
-(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:player" game-id "position-on-board" this)))
+(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy])
 
 (defrecord PlayerWantsToMove [game-id player-id current-xy direction]
   CloudEvent (toCloudEvent [this]
@@ -182,9 +173,9 @@
 
 (defrecord PlayerWantsToStartGame [game-id])
 (defrecord StartGameError [game-id message])
-(defrecord StartGame [game-id]
+(defrecord StartGame [game-id timestamp]
   CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "start")))
+               (template "urn:se:jherrlin:bomberman:game" game-id "start" this)))
 
 (defrecord EndGame [game-id winner]
   CloudEvent (toCloudEvent [this]
