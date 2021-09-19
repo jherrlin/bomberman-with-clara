@@ -171,11 +171,12 @@
   (def repl-subject "JOHN-HANNAS-game")
   (def player-1-id "johns-id")
   (def player-2-id "hannahs-id")
+  (def timestamp #inst "2021-09-19T21:57:59.144-00:00")
 
-  (add-events-fn! [(.toCloudEvent (CreateGame. repl-subject "First game" "my-secret"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-1-id "John"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject player-2-id "Hannah"))])
-  (add-events-fn! [(.toCloudEvent (StartGame.  repl-subject))])
+  (add-events-fn! [(.toCloudEvent (CreateGame.           repl-subject "First game" "my-secret"))])
+  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject player-1-id "John"))])
+  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject player-2-id "Hannah"))])
+  (add-events-fn! [(.toCloudEvent (StartGame.            repl-subject))])
   (add-events-fn! [(.toCloudEvent (command->engine-fact
                                    game-state'
                                    {:game-id   repl-subject
@@ -274,11 +275,12 @@
   (def simon-id "SIMONS-id")
   (def jakob-id "JAKOBS-id")
   (def repl-subject-2 "SIMON-JAKOBS-game")
+  (def timestamp #inst "2021-09-19T21:57:59.144-00:00")
 
-  (add-events-fn! [(.toCloudEvent (CreateGame. repl-subject-2 "Simon och Jakob spel" "my-secret"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject-2 simon-id "Simon"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   repl-subject-2 jakob-id "Jakob"))])
-  (add-events-fn! [(.toCloudEvent (StartGame.  repl-subject-2))])
+  (add-events-fn! [(.toCloudEvent (CreateGame.           repl-subject-2 "Simon och Jakob spel" "my-secret"))])
+  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject-2 simon-id "Simon"))])
+  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject-2 jakob-id "Jakob"))])
+  (add-events-fn! [(.toCloudEvent (StartGame.            repl-subject-2))])
 
 
   (user-commands/register-incomming-user-command!

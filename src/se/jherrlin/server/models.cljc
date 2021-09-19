@@ -176,27 +176,34 @@
 (defrecord GameState [game-id game-state])
 (defrecord PlayerWantsToJoinGame [player-id player-name game-id password])
 (defrecord JoinGameError [game-id message])
-(defrecord JoinGame [game-id player-id player-name]
-  CloudEvent (toCloudEvent [this]
-               (let [default {:user-facing-direction    :south
-                              :max-nr-of-bombs-for-user 3
-                              :position                 [1 1]
-                              :fire-length              2}]
-                 (template "urn:se:jherrlin:bomberman:game" game-id "join-game" (merge default this)))))
+(defrecord JoinGame [timestamp game-id player-id player-name]
+  CloudEvent
+  (toCloudEvent [this]
+    (let [default {:user-facing-direction    :south
+                   :max-nr-of-bombs-for-user 3
+                   :position                 [1 1]
+                   :fire-length              2}]
+      (template
+       timestamp "urn:se:jherrlin:bomberman:game" game-id "join-game" (merge default this)))))
 
 (defrecord PlayerWantsToStartGame [game-id])
 (defrecord StartGameError [game-id message])
 (defrecord StartGame [game-id timestamp]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "start" this)))
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp"urn:se:jherrlin:bomberman:game" game-id "start" this)))
 
 (defrecord EndGame [game-id timestamp]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "end" this)))
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "end" this)))
 
 (defrecord GameWinner [game-id winner]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
+  CloudEvent
+  (toCloudEvent [this]
+    (template "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
 
 
 #?(:clj (compile 'se.jherrlin.server.models))

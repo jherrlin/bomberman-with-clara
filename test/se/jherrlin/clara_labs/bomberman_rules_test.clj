@@ -113,7 +113,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->ActiveGame            2 "first-game" "pwd" :created)
+                                 [(models/->TimestampNow          #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->ActiveGame            2 "first-game" "pwd" :created)
                                   (models/->PlayerWantsToJoinGame 1 "John"  2 "pwd")
                                   (models/->PlayerWantsToJoinGame 3 "Kalle" 2 "pwd")])
             session' (fire-rules session)]
@@ -126,8 +127,10 @@
                       (set))})
       {:errors #{},
        :joins
-       #{{:game-id 2, :player-id 3, :player-name "Kalle"}
-         {:game-id 2, :player-id 1, :player-name "John"}}})))
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id 2, :player-id 3, :player-name "Kalle"}
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id 2, :player-id 1, :player-name "John"}}})))
 
   (t/testing "Player cant join game cause it's full."
     (t/is
@@ -154,7 +157,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->ActiveGame            2 "first-game" "pwd" :created)
+                                 [(models/->TimestampNow          #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->ActiveGame            2 "first-game" "pwd" :created)
                                   (models/->PlayerWantsToJoinGame 1 "John"  2 "WRONG")
                                   (models/->PlayerWantsToJoinGame 3 "Kalle" 2 "pwd")])
             session' (fire-rules session)]
@@ -168,7 +172,8 @@
       {:errors
        #{{:game-id 2,
           :message "Password to game is wrong!"}},
-       :joins #{{:game-id 2, :player-id 3, :player-name "Kalle"}}}))
+       :joins #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+                 :game-id 2, :player-id 3, :player-name "Kalle"}}}))
     )
 
   (t/testing "Users cant join game if state is wrong"

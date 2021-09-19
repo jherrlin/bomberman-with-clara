@@ -289,8 +289,8 @@
      (fn [gs m] (projection gs (.toCloudEvent m)))
      {}
      [(models/->CreateGame                      repl-game-id "First game" "my-secret")
-      (models/->JoinGame                        repl-game-id player-1-ws-id "John")
-      (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
+      (models/->JoinGame       timestamp        repl-game-id player-1-ws-id "John")
+      (models/->JoinGame       timestamp        repl-game-id player-2-ws-id "Hannah")
       (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
       (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
       (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
@@ -301,20 +301,21 @@
       (models/->EndGame                         repl-game-id nil)]))
 
 
-  (reduce
-   (fn [gs m] (projection gs (.toCloudEvent m)))
-   {}
-   [(models/->CreateGame                      repl-game-id "First game" "my-secret")
-    (models/->JoinGame                        repl-game-id player-1-ws-id "John")
-    (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
-    (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
+  (let [timestamp #inst "2021-09-19T21:10:59.559-00:00"]
+    (reduce
+     (fn [gs m] (projection gs (.toCloudEvent m)))
+     {}
+     [(models/->CreateGame                      repl-game-id "First game" "my-secret")
+      (models/->JoinGame      timestamp         repl-game-id player-1-ws-id "John")
+      (models/->JoinGame      timestamp         repl-game-id player-2-ws-id "Hannah")
+      (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
 
-    ;; (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
-    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    ;; (StoneToRemove.          repl-game-id [3 3])
-    ;; (EndGame.                repl-game-id nil)
-    ])
+      ;; (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
+      ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+      ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
+      ;; (StoneToRemove.          repl-game-id [3 3])
+      ;; (EndGame.                repl-game-id nil)
+      ]))
 
   (.toCloudEvent (EndGame. repl-game-id nil))
   )

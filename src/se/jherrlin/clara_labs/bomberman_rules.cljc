@@ -279,11 +279,12 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
 (defrule player-wants-to-join-game
+  [TimestampNow (= ?now now)]
   [?player-wants-to-join-game <- PlayerWantsToJoinGame (= ?game-id game-id) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
   [ActiveGame                  (= :created game-state) (= ?game-id game-id) (= ?game-password password)]
   [:test (= ?player-password ?game-password)]
   =>
-  (insert! (JoinGame. ?game-id ?player-id ?player-name)))
+  (insert! (JoinGame. ?now ?game-id ?player-id ?player-name)))
 
 (defrule player-wants-to-join-game-but-password-is-wrong
   [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-id game-id) (= ?player-password password)]
