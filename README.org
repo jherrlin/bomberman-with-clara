@@ -1,155 +1,20 @@
-* Deploy
-** Digital ocean Ubuntu 20.04
+#+TITLE: Claraman
 
-   | Subdomän      | Typ |  TTL |        Data |
-   |---------------+-----+------+-------------|
-   | bomberman     | A   | 1000 | 167.71.51.4 |
-   | www.bomberman | A   | 1000 | 167.71.51.4 |
+Claraman is a game project around two concepts. A rule engine named Clara and
+event sourcing.
 
+The running game can be found at https://bomberman.lambda-group.se/
 
-* Events and facts
+* Clara
 
-  Event is a single point in time
-  Fact can range over a longer period of time
+  [[http://www.clara-rules.org/][Clara]] is a rule engine written in Clojure/Script.
 
-** Throw bomb
+  Resources:
+  - http://www.clara-rules.org/
+  - https://www.youtube.com/watch?v=Z6oVuYmRgkk
+  - https://thesearch.space/episodes/1-the-poet-of-logic-programming
 
-   | Event           | Fact           | Event       | Fact          |
-   |-----------------+----------------+-------------+---------------|
-   | WantToThrowBomb | + FlyingBomb   | BombLands   | + BombOnBoard |
-   |                 | + BombToRemove |             | + BombToAdd   |
-   |                 | - BombOnBoard  |             | - FlyingBomb  |
-   |-----------------+----------------+-------------+---------------|
-   | Event store     | Game state     | Event store | Game state    |
+* Event sourcing
 
-** Placing bomb
-
-   | Event            | Event       | Fact        | Event          | Event        | Fact        | Event        | Fact               |
-   |------------------+-------------+-------------+----------------+--------------+-------------+--------------+--------------------|
-   | WantsToPlaceBomb | PlaceBomb   | BombOnBoard | BombExploading | FireStarts   | FireOnBoard | FireBurnsOut | RemoveFireFromBord |
-   |------------------+-------------+-------------+----------------+--------------+-------------+--------------+--------------------|
-   | Events store     | Event store | Game state  | Event store    | Events store | Game state  | Event store  | Game state         |
-
-** Move
-
-   | Event       | Event       |
-   |-------------+-------------|
-   | WantsToMove | Move        |
-   |-------------+-------------|
-   | Event store | Event store |
-
-** Create new game
-
-   | Event             | Fact       |
-   |-------------------+------------|
-   | WantsToCreateGame | ActiveGame |
-   |-------------------+------------|
-   | Event store       | Game state |
-
-* Introduction
-
-  This bomberman clone is mainly to explore technologies.
-
-* Design
-** Clara
-
-   [[http://www.clara-rules.org/][Clara]] is a rule engine written in Clojure/Script.
-
-   Resources:
-   - http://www.clara-rules.org/
-   - https://thesearch.space/episodes/1-the-poet-of-logic-programming
-   - https://www.youtube.com/watch?v=Z6oVuYmRgkk
-
-** Event sourcing
-
-   Events in the system tries to follow the [[https://cloudevents.io/][CloudEvent]] specification. Much of
-   the text below is take directly from Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]].
-
-*** CloudEvents
-**** Id
-
-     | Cloud Event Attribute Name  | id       |
-     | Event Sourcing Nomenclature | event id |
-
-     Used to store the id of a unique event in a particular =source=. Dont need to
-     be globally unique. But the combination of =source= + =id= needs to. This is
-     often a UUID.
-
-**** Source
-
-     | Cloud Event Attribute Name  | source   |
-     | Event Sourcing Nomenclature | category |
-
-     "Stream type" or "category" for certain streams.
-
-     “urn:mycompany:mygame:game” and “urn:mycompany:mygame:player”
-
-     This allows for subscriptions to subscribe to all events related to any
-     player.
-
-**** Subject
-
-     | Cloud Event Attribute Name  | subject                 |
-     | Event Sourcing Nomenclature | “subject” (~identifier) |
-     | Occurent naming             | streamid                |
-
-     A subject describes the event in the context of the source, typically an
-     entity (aggregate) id that all events in the stream are related to.
-
-     You can then use the “game id” as subject.
-
-**** Type
-
-     | Cloud Event Attribute Name  | type       |
-     | Event Sourcing Nomenclature | event type |
-
-     The type of the event. Use urn or something like "GameStarted". Avoid using
-     fully-qualified class names, in case you rearrange your classes!
-
-**** Time
-
-     | Cloud Event Attribute Name  | time       |
-     | Event Sourcing Nomenclature | event time |
-
-     Time when event enters the application, not processing time.
-
-**** Datacontenttype
-
-     | Cloud Event Attribute Name  | datacontenttype |
-     | Event Sourcing Nomenclature | content-type    |
-
-     As the application is written in Clojure the content-type is "application/edn".
-     In many other cases I guess it's "application/json".
-
-**** Data
-
-     | Cloud Event Attribute Name  | data       |
-     | Event Sourcing Nomenclature | event data |
-
-     The actual event data
-
-* Draw
-draw.io
-https://app.diagrams.net/#G1prgTlidQ55lUef_qq29aiKfFFkKFL3OQ
-
-#+BEGIN_SRC shell :results output code
-  curl http://localhost:3003/health
-#+END_SRC
-
-
-
-* Resources
-
-  clara
-  http://www.metasimple.org/2017/12/23/clara-updating-facts.html
-  http://www.clara-rules.org/docs/expressions/
-
-  canvas
-  https://github.com/videumcodeup/bomberman-client/blob/570c6515573ce02497e446fd9c4d2f29ced587a0/src/js/bomberman.js#L126
-  https://gist.github.com/ChillyBwoy/38741e0005826fc84e9e
-  https://gitlab.com/skratlo/nines/blob/master/src/app/nines/app.cljs
-  https://github.com/day8/re-frame/blob/master/docs/Effects.md
-
-  https://www.reddit.com/r/Clojure/comments/9b30s5/what_is_the_preferred_method_of_creating_graphics/
-  https://stackoverflow.com/questions/26074344/how-to-set-size-of-canvas-to-its-background-image/26074683
-  https://stackoverflow.com/questions/9322294/how-to-create-new-image-in-clojurescritp
+  Events in the system tries to follow the [[https://cloudevents.io/][CloudEvent]] specification. Much of
+  the text below is take directly from Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]].
