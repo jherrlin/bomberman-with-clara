@@ -28,7 +28,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->ItemOnBoard             1   [1 1] :inc-fire-length)
+                                 [(models/->TimestampNow                               #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->ItemOnBoard             1   [1 1] :inc-fire-length)
                                   (models/->PlayerOnBoardFireLength 1 2 [1 1] 2)])
             session' (fire-rules session)]
         {:picks-fire-inc-item-from-board
@@ -36,7 +37,8 @@
               (map (comp #(into {} %) :?picks-fire-inc-item-from-board))
               (set))})
       {:picks-fire-inc-item-from-board
-       #{{:game-id 1, :player-id 2, :item-position-xy [1 1], :new-fire-length 3}}})))
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id 1, :player-id 2, :item-position-xy [1 1], :new-fire-length 3}}})))
 
   (t/testing "If xy positions doesnt match, dont pick item"
     (t/is

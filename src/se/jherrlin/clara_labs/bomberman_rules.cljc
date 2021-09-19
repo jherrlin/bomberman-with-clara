@@ -310,11 +310,12 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert-unconditional! (JoinGameError. ?game-id "Password is correct but game is noy lobby any more.")))
 
 (defrule player-picks-up-fire-length-inc-item-from-board
+  [TimestampNow            (= ?now now)]
   [ItemOnBoard             (= ?game-id game-id) (= ?item-position-xy item-position-xy) (= item-power :inc-fire-length)]
   [PlayerOnBoardFireLength (= ?game-id game-id) (= ?player-id player-id) (= ?player-position-xy player-position-xy) (= ?fire-length fire-length)]
   [:test (= ?item-position-xy ?player-position-xy)]
   =>
-  (insert! (PlayerPicksFireIncItemFromBoard. ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
+  (insert! (PlayerPicksFireIncItemFromBoard. ?now ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
 
 ;; For the frontend
 (defrule start-game-but-not-enough-player-have-joined

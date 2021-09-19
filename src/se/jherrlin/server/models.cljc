@@ -91,9 +91,11 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "stone" this)))
 
-(defrecord PlayerPicksFireIncItemFromBoard [game-id player-id item-position-xy new-fire-length]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:player" game-id "picks-fire-inc-item" this)))
+(defrecord PlayerPicksFireIncItemFromBoard [timestamp game-id player-id item-position-xy new-fire-length]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:player" game-id "picks-fire-inc-item" this)))
 
 (defrecord StoneToRemove [game-id position-xy]
   CloudEvent (toCloudEvent [this]
