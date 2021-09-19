@@ -297,7 +297,7 @@
       (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
       (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
       (models/->StoneToRemove  timestamp        repl-game-id [3 3])
-      (models/->GameWinner                      repl-game-id "John")
+      (models/->GameWinner     timestamp        repl-game-id "John")
       (models/->EndGame                         repl-game-id nil)]))
 
 

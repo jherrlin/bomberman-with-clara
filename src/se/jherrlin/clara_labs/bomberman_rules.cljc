@@ -167,7 +167,7 @@
   =>
   (let [end-game-id     (-> ?players-alive first :game-id)
         alive-player-id (-> ?players-alive first :player-id)]
-    (insert-unconditional! (GameWinner. ?game-id alive-player-id))
+    (insert-unconditional! (GameWinner. ?now ?game-id alive-player-id))
     (insert-unconditional! (EndGame. end-game-id ?now))))
 
 (defrule game-ends-if-there-is-no-player-left
@@ -176,7 +176,7 @@
   [?player-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (empty? ?player-alive)]
   =>
-  (insert-unconditional! (GameWinner. ?game-id nil))
+  (insert-unconditional! (GameWinner. ?now ?game-id nil))
   (insert-unconditional! (EndGame. ?game-id ?now)))
 
 (defrule exploading-bomb-throws-fire-flames

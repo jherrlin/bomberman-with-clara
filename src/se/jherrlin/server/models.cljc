@@ -200,10 +200,11 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "end" this)))
 
-(defrecord GameWinner [game-id winner]
+(defrecord GameWinner [timestamp game-id winner]
   CloudEvent
   (toCloudEvent [this]
-    (template "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
 
 
 #?(:clj (compile 'se.jherrlin.server.models))
