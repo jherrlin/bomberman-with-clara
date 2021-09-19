@@ -41,13 +41,12 @@
         user-current-xy (game-state/player-current-xy game-state' game-id user-id)]
     (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction)))
 
-(defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id] :as command}]
+(defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id timestamp] :as command}]
   (let [game-state'         @gs
         user-current-xy     (game-state/player-current-xy          game-state' game-id user-id)
         user-fire-length    (game-state/player-fire-length         game-state' game-id user-id)
-        max-number-of-bombs (game-state/player-max-number-of-bombs game-state' game-id user-id)
-        now                 (java.util.Date.)]
-    (models/->PlayerWantsToPlaceBomb game-id user-id user-current-xy user-fire-length now max-number-of-bombs)))
+        max-number-of-bombs (game-state/player-max-number-of-bombs game-state' game-id user-id)]
+    (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs)))
 
 (defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id] :as command}]
   (let [game-state'      @gs
