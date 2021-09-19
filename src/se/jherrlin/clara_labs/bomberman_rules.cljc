@@ -119,6 +119,7 @@
 
 (defrule player-move
   "Player move"
+  [TimestampNow (= ?now now)]
   [Board (= ?game-id game-id) (= ?board board)]
   [GameState (= ?game-id game-id) (= :started game-state)]
   [?player-wants-to-move <- PlayerWantsToMove (= ?game-id game-id) (= ?player-id player-id) (= ?current-xy current-xy) (= ?direction direction)
@@ -126,7 +127,7 @@
   [:not [Stone       (= ?game-id game-id) (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
   [:not [BombOnBoard (= ?game-id game-id) (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
   =>
-  (insert-unconditional! (PlayerMove. ?game-id ?player-id (board/next-xy-position ?current-xy ?direction) ?direction)))
+  (insert-unconditional! (PlayerMove. ?now ?game-id ?player-id (board/next-xy-position ?current-xy ?direction) ?direction)))
 
 (defrule place-bomb
   "Player place bomb in her current location."
@@ -508,14 +509,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
    [(WantsToCreateGame. 1 "first-game" "game-password")
     (ActiveGame.        2 "first-game" "pwd" :created)])
 
-
-  (run-rules
-   [(CreateGame.             repl-game-id "First game" "my-secret")
-    (JoinGame.               repl-game-id player-1-ws-id "John")
-    (JoinGame.               repl-game-id player-2-ws-id "Hannah")
-    (StartGame.              repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
-    (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    (PlayerWantsToPlaceBomb. repl-game-id player-1-ws-id [2 1] 3 (java.util.Date.) 3)])
 
   (run-rules
    [(->Board      repl-game-id board/board2)

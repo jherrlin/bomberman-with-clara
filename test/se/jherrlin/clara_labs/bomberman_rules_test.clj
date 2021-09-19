@@ -310,56 +310,68 @@
 (t/deftest player-wants-to-move
   (t/is
    (=
-    (let [session  (insert-all bomberman-session
-                               [(models/->Board           repl-game-id board)
-                                (models/->GameState       repl-game-id :started)
-                                (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
-                                (models/->PlayerWantsToMove repl-game-id 2 [1 1] :south)
-                                (models/->PlayerWantsToMove repl-game-id 3 [1 1] :west)
-                                (models/->PlayerWantsToMove repl-game-id 4 [1 1] :north)
-                                (models/->PlayerWantsToMove repl-game-id 5 [2 1] :east)
-                                (models/->PlayerWantsToMove repl-game-id 6 [2 1] :south)
-                                (models/->PlayerWantsToMove repl-game-id 7 [2 1] :west)
-                                (models/->PlayerWantsToMove repl-game-id 8 [2 1] :north)])
-          session' (fire-rules session)]
+    (let [timestamp #inst "2021-09-19T21:14:00.026-00:00"
+          session   (insert-all bomberman-session
+                                [(models/->TimestampNow    timestamp)
+                                 (models/->Board           repl-game-id board)
+                                 (models/->GameState       repl-game-id :started)
+                                 (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
+                                 (models/->PlayerWantsToMove repl-game-id 2 [1 1] :south)
+                                 (models/->PlayerWantsToMove repl-game-id 3 [1 1] :west)
+                                 (models/->PlayerWantsToMove repl-game-id 4 [1 1] :north)
+                                 (models/->PlayerWantsToMove repl-game-id 5 [2 1] :east)
+                                 (models/->PlayerWantsToMove repl-game-id 6 [2 1] :south)
+                                 (models/->PlayerWantsToMove repl-game-id 7 [2 1] :west)
+                                 (models/->PlayerWantsToMove repl-game-id 8 [2 1] :north)])
+          session'  (fire-rules session)]
       (->> (query session' bomberman/player-move?)
            (map (comp #(into {} %) :?player-move))
            (set)))
-    #{{:game-id repl-game-id :player-id 7, :next-position [1 1], :direction :west}
-      {:game-id repl-game-id :player-id 5, :next-position [3 1], :direction :east}
-      {:game-id repl-game-id :player-id 2, :next-position [1 2], :direction :south}
-      {:game-id repl-game-id :player-id 1, :next-position [2 1], :direction :east}}))
+    #{{:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 7, :next-position [1 1], :direction :west}
+      {:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 5, :next-position [3 1], :direction :east}
+      {:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 2, :next-position [1 2], :direction :south}
+      {:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 1, :next-position [2 1], :direction :east}}))
 
   (t/is
    (=
-    (let [session  (insert-all bomberman-session
-                               [(models/->Board           repl-game-id board)
-                                (models/->GameState       repl-game-id :started)
-                                (models/->PlayerWantsToMove repl-game-id 1 [3 1] :south)
-                                (models/->PlayerWantsToMove repl-game-id 2 [3 3] :east)])
-          session' (fire-rules session)]
+    (let [timestamp #inst "2021-09-19T21:14:00.026-00:00"
+          session   (insert-all bomberman-session
+                                [(models/->TimestampNow    timestamp)
+                                 (models/->Board           repl-game-id board)
+                                 (models/->GameState       repl-game-id :started)
+                                 (models/->PlayerWantsToMove repl-game-id 1 [3 1] :south)
+                                 (models/->PlayerWantsToMove repl-game-id 2 [3 3] :east)])
+          session'  (fire-rules session)]
       (->> (query session' bomberman/player-move?)
            (map (comp #(into {} %) :?player-move))
            (set)))
-    #{{:game-id repl-game-id :player-id 1, :next-position [3 2], :direction :south}
-      {:game-id repl-game-id :player-id 2, :next-position [4 3], :direction :east}})))
+    #{{:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 1, :next-position [3 2], :direction :south}
+      {:timestamp #inst "2021-09-19T21:14:00.026-00:00"
+       :game-id   repl-game-id :player-id 2, :next-position [4 3], :direction :east}})))
 
 (t/deftest player-cant-walk-on-bomb
   (t/testing "Player cant walk west as there is a bomb there"
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
-                                 [(models/->TimestampNow    (datetime/now))
-                                  (models/->GameState       repl-game-id :started)
-                                  (models/->Board           repl-game-id board)
-                                  (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
-                                  (models/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
-                                  (models/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now))])
-            session' (fire-rules session)]
+      (let [timestamp #inst "2021-09-19T21:16:40.856-00:00"
+            session   (insert-all bomberman-session
+                                  [(models/->TimestampNow    timestamp)
+                                   (models/->GameState       repl-game-id :started)
+                                   (models/->Board           repl-game-id board)
+                                   (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
+                                   (models/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
+                                   (models/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now))])
+            session'  (fire-rules session)]
         (->> (query session' bomberman/player-move?)
              (map (comp #(into {} %) :?player-move))
              (set)))
-      #{{:game-id repl-game-id :player-id 2, :next-position [1 1], :direction :west}}))))
+      #{{:timestamp #inst "2021-09-19T21:16:40.856-00:00"
+         :game-id   repl-game-id :player-id 2, :next-position [1 1], :direction :west}}))))
 
 (t/deftest player-wants-to-place-bomb-on-board
   (t/testing "should result in bomb on board."

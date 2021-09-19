@@ -284,20 +284,21 @@
   (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
   (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
 
-  (reduce
-   (fn [gs m] (projection gs (.toCloudEvent m)))
-   {}
-   [(models/->CreateGame                      repl-game-id "First game" "my-secret")
-    (models/->JoinGame                        repl-game-id player-1-ws-id "John")
-    (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
-    (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
-    (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
-    (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
-    (models/->PlayerMove             repl-game-id player-1-ws-id [2 1] :east)
-    (models/->PlayerMove             repl-game-id player-1-ws-id [2 1] :east)
-    (models/->StoneToRemove          repl-game-id [3 3])
-    (models/->GameWinner             repl-game-id "John")
-    (models/->EndGame                repl-game-id nil)])
+  (let [timestamp #inst "2021-09-19T21:10:59.559-00:00"]
+    (reduce
+     (fn [gs m] (projection gs (.toCloudEvent m)))
+     {}
+     [(models/->CreateGame                      repl-game-id "First game" "my-secret")
+      (models/->JoinGame                        repl-game-id player-1-ws-id "John")
+      (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
+      (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
+      (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
+      (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
+      (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
+      (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
+      (models/->StoneToRemove                   repl-game-id [3 3])
+      (models/->GameWinner                      repl-game-id "John")
+      (models/->EndGame                         repl-game-id nil)]))
 
 
   (reduce

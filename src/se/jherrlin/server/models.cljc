@@ -25,11 +25,13 @@
   (toCloudEvent [this]))
 
 
-(defrecord TimestampNow [now])
-(defrecord Board        [game-id board])
-(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp])
-(defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
+(defrecord TimestampNow          [now])
+(defrecord Board                 [game-id board])
+(defrecord FireOnBoard           [game-id player-id fire-position-xy fire-start-timestamp])
+(defrecord BombOnBoard           [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
 (defrecord PlayerOnBoardPosition [game-id player-id player-current-xy])
+(defrecord PlayerOnBoardFireLength  [game-id player-id player-position-xy fire-length])
+(defrecord ItemOnBoard              [game-id item-position-xy item-power])
 
 (defrecord BombExploading [timestamp game-id player-id position-xy fire-length]
   CloudEvent
@@ -59,9 +61,11 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "flying-bomb" this)))
 
-(defrecord PlayerMove [game-id player-id next-position direction]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:player" game-id "move" this)))
+(defrecord PlayerMove [timestamp game-id player-id next-position direction]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:player" game-id "move" this)))
 
 (defrecord PlayerWantsToMove [game-id player-id current-xy direction]
   CloudEvent (toCloudEvent [this]
@@ -79,8 +83,6 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "stone" this)))
 
-(defrecord PlayerOnBoardFireLength  [game-id player-id player-position-xy fire-length])
-(defrecord ItemOnBoard              [game-id item-position-xy item-power])
 (defrecord PlayerPicksFireIncItemFromBoard [game-id player-id item-position-xy new-fire-length]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:player" game-id "picks-fire-inc-item" this)))
