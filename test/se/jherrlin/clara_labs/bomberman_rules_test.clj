@@ -398,51 +398,67 @@
                                 (map (comp #(into {} %) :?exploading-bombs))
                                 (set))})
       {:fire-on-board
-       #{{:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [3 3],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [1 1],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [1 2],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [4 1],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [1 3],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [3 1],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
-          :player-id 1,
-          :fire-position-xy [4 3],
-          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
+       #{{:game-id repl-game-id,
           :player-id 1,
           :fire-position-xy [3 2],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [2 3],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [1 2],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
           :player-id 1,
           :fire-position-xy [2 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
-         {:game-id repl-game-id
+         {:game-id repl-game-id,
           :player-id 1,
-          :fire-position-xy [2 3],
+          :fire-position-xy [4 1],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [3 3],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [1 3],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [4 3],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [1 1],
+          :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}
+         {:game-id repl-game-id,
+          :player-id 1,
+          :fire-position-xy [3 1],
           :fire-start-timestamp #inst "2021-08-28T15:10:47.100-00:00"}},
        :exploading-bombs
-       #{{:game-id repl-game-id :player-id 1, :position-xy [1 3], :fire-length 2}
-         {:game-id repl-game-id :player-id 1, :position-xy [3 3], :fire-length 2}
-         {:game-id repl-game-id :player-id 1, :position-xy [3 1], :fire-length 2}
-         {:game-id repl-game-id :player-id 1, :position-xy [1 1], :fire-length 2}}}))))
+       #{{:timestamp #inst "2021-08-28T15:10:47.100-00:00",
+          :game-id repl-game-id,
+          :player-id 1,
+          :position-xy [3 1],
+          :fire-length 2}
+         {:timestamp #inst "2021-08-28T15:10:47.100-00:00",
+          :game-id repl-game-id,
+          :player-id 1,
+          :position-xy [3 3],
+          :fire-length 2}
+         {:timestamp #inst "2021-08-28T15:10:47.100-00:00",
+          :game-id repl-game-id,
+          :player-id 1,
+          :position-xy [1 3],
+          :fire-length 2}
+         {:timestamp #inst "2021-08-28T15:10:47.100-00:00",
+          :game-id repl-game-id,
+          :player-id 1,
+          :position-xy [1 1],
+          :fire-length 2}}}))))
 
 (t/deftest exploading-bombs-create-fire-and-fire-destroys-stone
   (t/is
@@ -466,21 +482,27 @@
                               (map (comp #(into {} %) :?stones-to-remove))
                               (set))})
     {:fire-on-board
-     #{{:game-id repl-game-id
-        :player-id 1,
-        :fire-position-xy [1 2],
-        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-       {:game-id repl-game-id
+     #{{:game-id repl-game-id,
         :player-id 1,
         :fire-position-xy [1 1],
         :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
-       {:game-id repl-game-id
+       {:game-id repl-game-id,
+        :player-id 1,
+        :fire-position-xy [1 2],
+        :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}
+       {:game-id repl-game-id,
         :player-id 1,
         :fire-position-xy [2 1],
         :fire-start-timestamp #inst "2021-08-28T15:03:50.100-00:00"}},
-     :exploading-bombs #{{:game-id repl-game-id :player-id 1, :position-xy [1 1], :fire-length 10}},
-     :stones-to-remove #{{:game-id repl-game-id :position-xy [1 2]}
-                         {:game-id repl-game-id :position-xy [2 1]}}})))
+     :exploading-bombs
+     #{{:timestamp #inst "2021-08-28T15:03:50.100-00:00",
+        :game-id repl-game-id,
+        :player-id 1,
+        :position-xy [1 1],
+        :fire-length 10}},
+     :stones-to-remove
+     #{{:game-id repl-game-id, :position-xy [1 2]}
+       {:game-id repl-game-id, :position-xy [2 1]}}})))
 
 (t/deftest fire-burns-out
   (t/testing "When fire burns out it's removed from the board."

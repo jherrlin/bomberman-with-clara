@@ -9,13 +9,15 @@
 
 (defn template
   ([source subject type]
-   (template source subject type nil))
+   (template (datetime/now) source subject type nil))
   ([source subject type data]
+   (template (datetime/now) source subject type data))
+  ([time source subject type data]
    (cond-> {:id           (rand-uuid) ;; event id
             :source       source
             :subject      subject
             :type         type
-            :time         (datetime/now)
+            :time         time
             :content-type "application/edn"}
      data (assoc :data (into {} data)))))
 
@@ -24,19 +26,16 @@
 
 
 (defrecord TimestampNow [now])
-(defrecord Board        [game-id board]
-  CloudEvent
-  (toCloudEvent [this]
-    (template
-     "urn:se:jherrlin:bomberman:game" game-id "board" this)))
-
-(defrecord BombExploading [game-id player-id position-xy fire-length]
-  CloudEvent
-  (toCloudEvent [this]
-    (template
-     "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading" this)))
-
+(defrecord Board        [game-id board])
+(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp])
 (defrecord BombOnBoard [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
+(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy])
+
+(defrecord BombExploading [timestamp game-id player-id position-xy fire-length]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "bomb-exploading" this)))
 
 (defrecord BombToAdd [game-id player-id bomb-position-xy fire-length bomb-added-timestamp]
   CloudEvent
@@ -47,8 +46,6 @@
   CloudEvent
   (toCloudEvent [this]
     (template "urn:se:jherrlin:bomberman:player" game-id "dies" this)))
-
-(defrecord FireOnBoard [game-id player-id fire-position-xy fire-start-timestamp])
 
 (defrecord FireToAdd [game-id player-id fire-position-xy fire-start-timestamp]
   CloudEvent
@@ -65,8 +62,6 @@
 (defrecord PlayerMove [game-id player-id next-position direction]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:player" game-id "move" this)))
-
-(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy])
 
 (defrecord PlayerWantsToMove [game-id player-id current-xy direction]
   CloudEvent (toCloudEvent [this]

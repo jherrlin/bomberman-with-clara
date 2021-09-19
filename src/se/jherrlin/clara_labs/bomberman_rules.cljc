@@ -194,17 +194,18 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (retract! ?bomb)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
-  (insert-unconditional! (BombExploading. ?game-id ?player-id ?bomb-position-xy ?fire-length)))
+  (insert-unconditional! (BombExploading. ?now ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule bomb-exploading-when-hit-by-fire
   "Bomb is exploading if it's hit by fire."
+  [TimestampNow (= ?now now)]
   [FireOnBoard (= ?game-id game-id) (= ?player-id player-id) (= ?current-fire-xy fire-position-xy)]
   [?bomb <- BombOnBoard (= ?game-id game-id) (= ?player-id player-id) (= ?bomb-position-xy bomb-position-xy) (= ?fire-length fire-length)]
   [:test (= ?bomb-position-xy ?current-fire-xy)]
   =>
   (retract! ?bomb)
   (insert-unconditional! (BombToRemove. ?game-id ?bomb-position-xy))
-  (insert-unconditional! (BombExploading. ?game-id ?player-id ?bomb-position-xy ?fire-length)))
+  (insert-unconditional! (BombExploading. ?now ?game-id ?player-id ?bomb-position-xy ?fire-length)))
 
 (defrule remove-stones-hit-by-fire
   "If a stone is hit by fire, remove it."
