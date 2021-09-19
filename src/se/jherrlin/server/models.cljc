@@ -103,9 +103,11 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "stone-to-remove" this)))
 
-(defrecord FireToRemove [game-id fire-position-xy]
-  CloudEvent (toCloudEvent [this]
-               (template "urn:se:jherrlin:bomberman:game" game-id "fire-to-remove" this)))
+(defrecord FireToRemove [timestamp game-id fire-position-xy]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "fire-to-remove" this)))
 
 (defrecord BombToRemove [game-id bomb-position-xy]
   CloudEvent (toCloudEvent [this]

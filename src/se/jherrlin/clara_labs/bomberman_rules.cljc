@@ -232,7 +232,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (< 1500 (datetime/milliseconds-between ?fire-start-timestamp ?now))]
   =>
   (retract! ?fire)
-  (insert-unconditional! (FireToRemove. ?game-id ?fire-position-xy)))
+  (insert-unconditional! (FireToRemove. ?now ?game-id ?fire-position-xy)))
 
 (defrule warn-player-about-game-name-collision
   [?wants-to-create-game <- WantsToCreateGame (= ?game-name game-name) (= ?game-id game-id)]
