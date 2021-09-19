@@ -13,7 +13,8 @@
     :as a
     :refer [>! <! >!! <!! go chan buffer close! thread go-loop put!
             alts! alts!! timeout]]
-   [taoensso.timbre :as timbre]))
+   [taoensso.timbre :as timbre]
+   [se.jherrlin.datetime :as datetime]))
 
 
 (def add-event-fn! (-> system/production :event-store :add-event-fn!))
@@ -62,7 +63,8 @@
      print-events-table)
 
 
-(let [game-id        #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5"
+(let [timestamp      (datetime/now)
+      game-id        #uuid "65168a85-ef2f-4c59-a08b-e3da88bf7bc5"
       john-player-id #uuid "ceea28f0-4997-47af-8074-69526fdfc374"
       previous-state (->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
                           :events
@@ -73,7 +75,7 @@
        (game-state/game-state->enginge-facts)
        (concat
         [(models/->TimestampNow (java.util.Date.))
-         (models/->PlayerWantsToMove game-id john-player-id [1 1] :south)])
+         (models/->PlayerWantsToMove timestamp game-id john-player-id [1 1] :south)])
        (bomberman-rules/run-rules)
        :actions
        (rule-actions-to-cloud-events)

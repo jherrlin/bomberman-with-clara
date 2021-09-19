@@ -17,7 +17,8 @@
    [se.jherrlin.server.user-commands :as user-commands]
    [se.jherrlin.server.models :as models]
    [clojure.core.async :as a :refer [<! go-loop timeout]]
-   [taoensso.timbre :as timbre])
+   [taoensso.timbre :as timbre]
+   [se.jherrlin.datetime :as datetime])
   (:import [java.time Instant Duration]
            [se.jherrlin.server.models CreateGame JoinGame StartGame])
   (:gen-class))
@@ -35,10 +36,10 @@
 
 (defmulti command->engine-fact (fn [gs command] (:action command)))
 
-(defmethod command->engine-fact :move [gs {:keys [game-id user-id direction] :as command}]
+(defmethod command->engine-fact :move [gs {:keys [timestamp game-id user-id direction] :as command}]
   (let [game-state'     @gs
         user-current-xy (game-state/player-current-xy game-state' game-id user-id)]
-    (models/->PlayerWantsToMove game-id user-id user-current-xy direction)))
+    (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction)))
 
 (defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id] :as command}]
   (let [game-state'         @gs

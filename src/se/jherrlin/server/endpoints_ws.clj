@@ -2,7 +2,8 @@
   (:require [taoensso.timbre :as timbre]
             [clojure.spec.alpha :as s]
             [se.jherrlin.server.user-commands :as user-commands]
-            [se.jherrlin.server.application-service :as application-service]))
+            [se.jherrlin.server.application-service :as application-service]
+            [se.jherrlin.datetime :as datetime]))
 
 
 (defmulti handler :id)
@@ -18,7 +19,8 @@
 
 (defmethod handler :command/user-action
   [{:keys [?reply-fn incomming-actions ?data] :as req}]
-  (user-commands/register-incomming-user-command! incomming-actions ?data))
+  (def ?data ?data)
+  (user-commands/register-incomming-user-command! incomming-actions (assoc ?data :timestamp (datetime/now))))
 
 (defmethod handler :game/create
   [req]

@@ -312,17 +312,17 @@
    (=
     (let [timestamp #inst "2021-09-19T21:14:00.026-00:00"
           session   (insert-all bomberman-session
-                                [(models/->TimestampNow    timestamp)
-                                 (models/->Board           repl-game-id board)
-                                 (models/->GameState       repl-game-id :started)
-                                 (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
-                                 (models/->PlayerWantsToMove repl-game-id 2 [1 1] :south)
-                                 (models/->PlayerWantsToMove repl-game-id 3 [1 1] :west)
-                                 (models/->PlayerWantsToMove repl-game-id 4 [1 1] :north)
-                                 (models/->PlayerWantsToMove repl-game-id 5 [2 1] :east)
-                                 (models/->PlayerWantsToMove repl-game-id 6 [2 1] :south)
-                                 (models/->PlayerWantsToMove repl-game-id 7 [2 1] :west)
-                                 (models/->PlayerWantsToMove repl-game-id 8 [2 1] :north)])
+                                [(models/->TimestampNow      timestamp)
+                                 (models/->Board                       repl-game-id board)
+                                 (models/->GameState                   repl-game-id :started)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 1 [1 1] :east)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 2 [1 1] :south)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 3 [1 1] :west)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 4 [1 1] :north)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 5 [2 1] :east)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 6 [2 1] :south)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 7 [2 1] :west)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 8 [2 1] :north)])
           session'  (fire-rules session)]
       (->> (query session' bomberman/player-move?)
            (map (comp #(into {} %) :?player-move))
@@ -340,11 +340,11 @@
    (=
     (let [timestamp #inst "2021-09-19T21:14:00.026-00:00"
           session   (insert-all bomberman-session
-                                [(models/->TimestampNow    timestamp)
-                                 (models/->Board           repl-game-id board)
-                                 (models/->GameState       repl-game-id :started)
-                                 (models/->PlayerWantsToMove repl-game-id 1 [3 1] :south)
-                                 (models/->PlayerWantsToMove repl-game-id 2 [3 3] :east)])
+                                [(models/->TimestampNow      timestamp)
+                                 (models/->Board                       repl-game-id board)
+                                 (models/->GameState                   repl-game-id :started)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 1 [3 1] :south)
+                                 (models/->PlayerWantsToMove timestamp repl-game-id 2 [3 3] :east)])
           session'  (fire-rules session)]
       (->> (query session' bomberman/player-move?)
            (map (comp #(into {} %) :?player-move))
@@ -360,12 +360,12 @@
      (=
       (let [timestamp #inst "2021-09-19T21:16:40.856-00:00"
             session   (insert-all bomberman-session
-                                  [(models/->TimestampNow    timestamp)
-                                   (models/->GameState       repl-game-id :started)
-                                   (models/->Board           repl-game-id board)
-                                   (models/->PlayerWantsToMove repl-game-id 1 [1 1] :east)
-                                   (models/->PlayerWantsToMove repl-game-id 2 [2 1] :west)
-                                   (models/->BombOnBoard     repl-game-id 2 [2 1] 3 (datetime/now))])
+                                  [(models/->TimestampNow      timestamp)
+                                   (models/->GameState                   repl-game-id :started)
+                                   (models/->Board                       repl-game-id board)
+                                   (models/->PlayerWantsToMove timestamp repl-game-id 1 [1 1] :east)
+                                   (models/->PlayerWantsToMove timestamp repl-game-id 2 [2 1] :west)
+                                   (models/->BombOnBoard                 repl-game-id 2 [2 1] 3 (datetime/now))])
             session'  (fire-rules session)]
         (->> (query session' bomberman/player-move?)
              (map (comp #(into {} %) :?player-move))
