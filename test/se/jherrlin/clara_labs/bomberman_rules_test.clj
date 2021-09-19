@@ -64,7 +64,6 @@
                                   (models/->PlayerOnBoardPosition repl-game-id 1 [1 1])
                                   (models/->FireOnBoard           repl-game-id 1 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->PlayerOnBoardPosition repl-game-id 2 [2 1])
-
                                   (models/->PlayerOnBoardPosition repl-game-id 3 [3 1])])
             session' (fire-rules session)]
         {:dead-players
@@ -83,13 +82,14 @@
           :player-id 2,
           :killed-by-player-id 1}},
        :end-games
-       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :winner 3}}})))
+       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}})))
 
   (t/testing "If no player is left, end the game."
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->GameState repl-game-id :started)])
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->GameState repl-game-id :started)])
             session' (fire-rules session)]
         {:dead-players
          (->> (query session' bomberman/dead-players?)
@@ -101,7 +101,8 @@
               (set))})
       {:dead-players #{},
        :end-games
-       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :winner nil}}}))))
+       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+          :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}}))))
 
 (t/deftest player-join-game
   (t/testing "Users can join game is state and password is correct"

@@ -200,15 +200,20 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/end
   [game-state {:keys [subject data] :as event}]
-  (let [winner (:winner data)
-        game   (game game-state subject)
+  (let [end-timestamp (:timestamp data)
+        game  (game game-state subject)
         game' (-> game
                   (assoc-in [:game-state] :ended)
-                  (assoc-in [:winner] winner))]
+                  (assoc-in [:end-timestamp end-timestamp] :ended))]
     (-> game-state
-        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :winner]))
+        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state]))
         (assoc-in [:old-games subject] game')
         (update-in [:active-games] dissoc (:game-name game)))))
+
+(defmethod projection :se.jherrlin.bomberman.game/winner
+  [game-state {:keys [subject data] :as event}]
+  (let [{:keys [winner]} data]
+    (assoc-in game-state [:games subject :winner] winner)))
 
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
@@ -287,12 +292,12 @@
     (models/->JoinGame                        repl-game-id player-2-ws-id "Hannah")
     (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
     (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
-    ;; (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
-    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-    ;; (StoneToRemove.          repl-game-id [3 3])
-    ;; (EndGame.                repl-game-id nil)
-    ])
+    (models/->PlayerPicksFireIncItemFromBoard repl-game-id player-1-ws-id [1 1] 3)
+    (models/->PlayerMove             repl-game-id player-1-ws-id [2 1] :east)
+    (models/->PlayerMove             repl-game-id player-1-ws-id [2 1] :east)
+    (models/->StoneToRemove          repl-game-id [3 3])
+    (models/->GameWinner             repl-game-id "John")
+    (models/->EndGame                repl-game-id nil)])
 
 
   (reduce

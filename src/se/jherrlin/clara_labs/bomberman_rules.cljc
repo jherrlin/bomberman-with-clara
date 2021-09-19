@@ -12,13 +12,13 @@
                               EndGame FireOnBoard FireToAdd FireToRemove
                               FlyingBomb GameState ItemOnBoard JoinGame JoinGameError
                               PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
-                              PlayerWantsToJoinGame PlayerWantsToMove
+                              PlayerWantsToJoinGame PlayerWantsToMove GameWinner
                               PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
                               Stone StoneToRemove TimestampNow WantsToCreateGame]]))
   #?(:clj
      (:import [se.jherrlin.server.models
                ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
-               EndGame FireOnBoard FireToAdd FireToRemove
+               EndGame FireOnBoard FireToAdd FireToRemove GameWinner
                FlyingBomb GameState ItemOnBoard JoinGame JoinGameError
                PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
                PlayerWantsToJoinGame PlayerWantsToMove
@@ -151,20 +151,24 @@
   (insert-unconditional! (PlayerDies. ?game-id ?player-id ?fire-player-id)))
 
 (defrule game-ends-if-there-is-only-one-player-left
+  [TimestampNow (= ?now now)]
   [GameState (= ?game-id game-id) (= :started game-state)]
   [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (= (count ?players-alive) 1)]
   =>
   (let [end-game-id     (-> ?players-alive first :game-id)
         alive-player-id (-> ?players-alive first :player-id)]
-    (insert-unconditional! (EndGame. end-game-id alive-player-id))))
+    (insert-unconditional! (GameWinner. ?game-id alive-player-id))
+    (insert-unconditional! (EndGame. end-game-id ?now))))
 
 (defrule game-ends-if-there-is-no-player-left
+  [TimestampNow (= ?now now)]
   [GameState (= ?game-id game-id) (= :started game-state)]
   [?player-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (empty? ?player-alive)]
   =>
-  (insert-unconditional! (EndGame. ?game-id nil)))
+  (insert-unconditional! (GameWinner. ?game-id nil))
+  (insert-unconditional! (EndGame. ?game-id ?now)))
 
 (defrule exploading-bomb-throws-fire-flames
   "When a bomb exploads, fire is created in all four directions.
@@ -415,6 +419,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?bomb-to-add <- BombToAdd])
 
+(defquery game-winner?
+  []
+  [?game-winner <- GameWinner])
+
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
@@ -433,6 +441,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
       :fire-to-remove       (map :?fire-to-remove        (query session' fire-to-remove?))
       :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))
+      :game-winners         (map :?game-winner           (query session' game-winner?))
 
       :player-wants-to-move        (map :?player-wants-to-move        (query session' player-wants-to-move?))
       :player-wants-to-place-bomb  (map :?player-wants-to-place-bomb  (query session' player-wants-to-place-bomb?))
