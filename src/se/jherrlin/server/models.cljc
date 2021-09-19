@@ -177,9 +177,13 @@
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "start" this)))
 
-(defrecord EndGame [game-id winner]
+(defrecord EndGame [game-id timestamp]
   CloudEvent (toCloudEvent [this]
                (template "urn:se:jherrlin:bomberman:game" game-id "end" this)))
+
+(defrecord GameWinner [game-id winner]
+  CloudEvent (toCloudEvent [this]
+               (template "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
 
 
 #?(:clj (compile 'se.jherrlin.server.models))
