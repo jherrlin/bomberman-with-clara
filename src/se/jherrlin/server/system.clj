@@ -2,7 +2,6 @@
   (:require
    [chime.core :as chime]
    [com.stuartsierra.component :as component]
-   [se.jherrlin.server.components.http-middleware :as components.http-middleware]
    [se.jherrlin.server.components.httpkit :as components.httpkit]
    [se.jherrlin.server.components.nrepl :as components.nrepl]
    [se.jherrlin.server.components.router :as components.router]
@@ -17,22 +16,15 @@
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
    [se.jherrlin.server.user-commands :as user-commands]
    [se.jherrlin.server.models :as models]
-   [se.jherrlin.clara-labs.board :as board]
-   [clojure.core.async
-    :as a
-    :refer [>! <! >!! <!! go chan buffer close! thread go-loop put!
-            alts! alts!! timeout]]
+   [clojure.core.async :as a :refer [<! go-loop timeout]]
    [taoensso.timbre :as timbre])
   (:import [java.time Instant Duration]
-           [se.jherrlin.server.models
-            PlayerMove StoneToRemove FireToRemove BombToRemove BombExploading FireOnBoard PlayerDies BombOnBoard FlyingBomb
-            CreateGame JoinGame StartGame EndGame PlayerWantsToPlaceBomb ActiveGame])
+           [se.jherrlin.server.models CreateGame JoinGame StartGame])
   (:gen-class))
 
 (comment
   (remove-ns 'se.jherrlin.server.system)
   )
-
 
 (defonce incomming-commands-state
   (atom {}))
@@ -62,7 +54,6 @@
         facing-direction (game-state/player-facing-direction game-state' game-id user-id)]
     (models/->PlayerWantsToThrowBomb game-id user-id user-current-xy facing-direction)))
 
-
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
   [incomming-commands-state gs]
@@ -73,10 +64,6 @@
            (map vals)
            (apply concat)
            (map (partial command->engine-fact gs))))
-
-;; (partial command->engine-fact gs k)
-
-
 
 (defn sort-events [x]
   (some->> x
@@ -116,8 +103,6 @@
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
 
-
-
 (defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
   (timbre/info "Creating system.")
   (component/system-map
@@ -141,8 +126,7 @@
                        (components.httpkit/create webserver)
                        [:logging :router])))
 
-
-(def production
+(defonce production
   (system
    {:game-state   {:projection-fn game-state/the-projection}
     :http-handler #'server.endpoints/handler
@@ -153,24 +137,10 @@
                                                  #_(Duration/ofMinutes 1)
                                                  (Duration/ofMillis 200))}}))
 
-
-;; (game-state/the-projection {} (->> @event-store :events reverse (take 20))
-;;                              )
-;; (->> @event-store
-;;      :events
-;;      (filter (comp #{#uuid "c1b5bc52-a5e0-4f48-ac4d-da76bbe1d747"} :subject))
-;;      (sort-by :time #(compare %2 %1))
-;;      )
 (defn -main
   "Main entry to start the server."
   [& args]
   (alter-var-root #'production component/start))
-
-(defn trunc
-  [s n]
-  (subs s 0 (min (count s) n)))
-
-
 
 (comment
   (alter-var-root #'production component/start)
@@ -197,14 +167,6 @@
 
   (count (game-state/game-state->enginge-facts @game-state'))
 
-  (->> @event-store
-       :events
-       (map (fn [{:keys [data] :as event}]
-              (-> event
-                  (dissoc :id :content-type)
-                  (assoc :data (trunc (str data) 100)))))
-       (clojure.pprint/print-table))
-
   (java.util.UUID/randomUUID)
   (def repl-subject "JOHN-HANNAS-game")
   (def player-1-id "johns-id")
@@ -227,9 +189,6 @@
     [(models/->TimestampNow (java.util.Date.))]))
 
 
-
-
-  ;; (add-events-fn! [(.toCloudEvent (PlayerWantsToPlaceBomb. repl-subject player-1-id [1 1] 3 (java.util.Date.) 3))])
   @game-state'
   (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
 
