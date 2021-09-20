@@ -242,7 +242,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
                                   (models/->ActiveGame        2 "first-game" "pwd" :created)])
             session' (fire-rules session)]
 
