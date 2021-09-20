@@ -195,7 +195,7 @@
   CloudEvent
   (toCloudEvent [this]
     (template
-     timestamp"urn:se:jherrlin:bomberman:game" game-id "start" this)))
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "start" this)))
 
 (defrecord EndGame [game-id timestamp]
   CloudEvent

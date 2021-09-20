@@ -170,9 +170,9 @@
 
 (defmethod projection :se.jherrlin.bomberman.game/create-game
   [game-state {:keys [subject data] :as event}]
-  (let [{:keys [game-id game-name]} data]
+  (let [{:keys [game-id game-name timestamp]} data]
     (-> game-state
-        (assoc-in [:games subject] (assoc (into {} data) :subject subject))
+        (assoc-in [:games subject] (assoc (into {} data) :subject subject :game-create-timestamp timestamp))
         (assoc-in [:active-games game-name] game-id))))
 
 (def player-positions
@@ -197,7 +197,7 @@
   (let [{:keys [timestamp]} data]
     (-> game-state
         (assoc-in [:games subject :game-state] :started)
-        (assoc-in [:games subject :started-timestamp] timestamp))))
+        (assoc-in [:games subject :game-started-timestamp] timestamp))))
 
 (defmethod projection :se.jherrlin.bomberman.game/end
   [game-state {:keys [subject data] :as event}]
@@ -207,7 +207,7 @@
                   (assoc-in [:game-state] :ended)
                   (assoc-in [:end-timestamp] end-timestamp))]
     (-> game-state
-        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :started-timestamp :winner :end-timestamp]))
+        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :game-started-timestamp :winner :end-timestamp]))
         (assoc-in [:old-games subject] game')
         (update-in [:active-games] dissoc (:game-name game)))))
 
