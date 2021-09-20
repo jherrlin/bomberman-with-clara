@@ -1,0 +1,26 @@
+{:games
+ {1
+  {:game-id 1,
+   :fire (),
+   :stones (),
+   :password "pwd",
+   :game-create-timestamp #inst "2021-09-20T20:15:34.000-00:00",
+   :game-name "GameName",
+   :game-state :created,
+   :flying-bombs (),
+   :game-password "pwd",
+   :items (),
+   :timestamp #inst "2021-09-20T20:15:34.000-00:00",
+   :bombs (),
+   :subject 1,
+   :board
+   [[{:type :wall, :x 0, :y 0}
+     {:type :wall, :x 1, :y 0}
+     {:type :wall, :x 2, :y 0}]
+    [{:type :wall, :x 0, :y 1}
+     {:type :floor, :x 1, :y 1}
+     {:type :wall, :x 2, :y 1}]
+    [{:type :wall, :x 0, :y 2}
+     {:type :wall, :x 1, :y 2}
+     {:type :wall, :x 2, :y 2}]]}},
+ :active-games {"GameName" 1}}

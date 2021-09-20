@@ -41,6 +41,15 @@
      (add-index (only-walls length)         10)
      ]))
 
+(def mini
+  #_(let [length 3]
+    [(add-index (only-walls length)          0)
+     (add-index (walls-on-each-side length)  1)
+     (add-index (only-walls length)          2)])
+  [[{:type :wall, :x 0, :y 0} {:type :wall, :x 1, :y 0} {:type :wall, :x 2, :y 0}]
+   [{:type :wall, :x 0, :y 1} {:type :floor, :x 1, :y 1}{:type :wall, :x 2, :y 1}]
+   [{:type :wall, :x 0, :y 2} {:type :wall, :x 1, :y 2} {:type :wall, :x 2, :y 2}]])
+
 (defn individual-state [[x y] board]
   (get-in board [y x]))
 

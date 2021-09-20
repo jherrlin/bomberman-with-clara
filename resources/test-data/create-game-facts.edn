@@ -1,0 +1,1 @@
+(#se.jherrlin.server.models.Board{:game-id 1, :board [[{:type :wall, :x 0, :y 0} {:type :wall, :x 1, :y 0} {:type :wall, :x 2, :y 0}] [{:type :wall, :x 0, :y 1} {:type :floor, :x 1, :y 1} {:type :wall, :x 2, :y 1}] [{:type :wall, :x 0, :y 2} {:type :wall, :x 1, :y 2} {:type :wall, :x 2, :y 2}]]} #se.jherrlin.server.models.GameState{:game-id 1, :game-state :created})
