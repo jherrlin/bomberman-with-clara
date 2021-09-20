@@ -4,8 +4,8 @@
             [taoensso.timbre :as timbre]))
 
 
-;; (def initial-game-state {})
-(def initial-game-state (resources/read-edn-file "game-states/some-games.edn"))
+(def initial-game-state {})
+;; (def initial-game-state (resources/read-edn-file "game-states/some-games.edn"))
 (defonce game-state (atom initial-game-state))
 
 (comment

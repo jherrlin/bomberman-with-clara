@@ -30,6 +30,18 @@
   (reset! game-state' se.jherrlin.server.components.game-state/initial-game-state)
   (reset! event-store se.jherrlin.server.components.event-store/store-init)
   (reset! incomming-commands-state/incomming-commands-state {})
+
+  (spit "/tmp/before-games-1.edn" (with-out-str (clojure.pprint/pprint @game-state')))
+  )
+
+(comment
+  (reset! game-state'
+          (->> (resources/read-edn-file "events/danks-alfa-testning-events.edn")
+               :events
+               (reverse)
+               (game-state/the-projection {})))
+
+  (reset! event-store (resources/read-edn-file "events/danks-alfa-testning-events.edn"))
   )
 
 
@@ -88,3 +100,21 @@
      (game-state/the-projection {})
      (game-state/game-state->enginge-facts)
      (map type))
+
+(->> (resources/read-edn-file "events/danks-alfa-testning-events.edn")
+     :events
+     (reverse)
+     (game-state/the-projection {}))
+
+(comment
+  (->> @event-store
+       :events
+       (reverse)
+       (game-state/the-projection {})
+       )
+  )
+
+
+(let [game-id 1]
+  [(models/->CreateGame game-id "GameName" "GamePassword")]
+  )

@@ -89,6 +89,7 @@
                                game-state-facts
                                [(models/->TimestampNow (java.util.Date.))])
           _                   (def rule-enginge-facts rule-enginge-facts)
+          _                   (timbre/info "Rule enginge counts: " (count rule-enginge-facts))
           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
           _                   (def actions-from-enging actions-from-enging)
           _                   (def the-sorted-events (to-cloud-events (sort-events actions-from-enging)))]
@@ -200,6 +201,8 @@
     (game-state/the-projection {} (->> @event-store :events reverse (take 22)))))
 
   (reset! game-state' (game-state/the-projection @game-state' (->> @event-store :events reverse)))
+
+  (game-state/the-projection {} (->> @event-store :events reverse))
 
 
   (user-commands/register-incomming-user-command!

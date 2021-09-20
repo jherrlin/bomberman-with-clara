@@ -209,5 +209,19 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
 
+(defrecord CreatedGameInactivityTimeout [timestamp game-id reason]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "created-game-inactivity-timeout" this)))
+
+(defrecord StartedGameInactivityTimeout [timestamp game-id reason]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "started-game-inactivity-timeout" this)))
+
+(defrecord GameStartedTimestamp [timestamp game-id])
+(defrecord GameCreatedTimestamp [timestamp game-id])
 
 #?(:clj (compile 'se.jherrlin.server.models))

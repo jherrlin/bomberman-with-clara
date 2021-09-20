@@ -172,7 +172,10 @@
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [game-id game-name timestamp]} data]
     (-> game-state
-        (assoc-in [:games subject] (assoc (into {} data) :subject subject :game-create-timestamp timestamp))
+        (assoc-in [:games subject] (assoc (into {} data)
+                                          :subject               subject
+                                          :game-create-timestamp timestamp
+                                          :game-state            :created))
         (assoc-in [:active-games game-name] game-id))))
 
 (def player-positions
