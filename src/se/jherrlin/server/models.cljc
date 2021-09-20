@@ -191,7 +191,7 @@
 
 (defrecord PlayerWantsToStartGame [game-id])
 (defrecord StartGameError [game-id message])
-(defrecord StartGame [game-id timestamp]
+(defrecord StartGame [timestamp game-id]
   CloudEvent
   (toCloudEvent [this]
     (template

@@ -269,7 +269,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (<= 2 (count ?players-alive))]
   =>
   (retract! ?player-wants-to-start-game)
-  (insert-unconditional! (StartGame. ?game-id ?now)))
+  (insert-unconditional! (StartGame. ?now ?game-id)))
 
 (defrule player-wants-to-start-game-but-not-enough-player-have-joined
   [?player-wants-to-start-game <- PlayerWantsToStartGame (= ?game-id game-id)]

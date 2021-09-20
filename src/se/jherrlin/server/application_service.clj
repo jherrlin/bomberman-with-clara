@@ -29,11 +29,12 @@
           _                                 (def game-id game-id)
           player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
           _                                 (def player-wants-to-create-game player-wants-to-create-game)
+          facts                             (concat (game-state/game-state->active-game-facts @game-state)
+                                                    [(models/->TimestampNow now)]
+                                                    [player-wants-to-create-game])
+          _                                 (def facts facts)
           {:keys [create-game-errors create-games] :as actions}
-          (bomberman-rules/run-create-game-rules
-           (concat (game-state/game-state->active-game-facts @game-state)
-                   [(models/->TimestampNow now)]
-                   [player-wants-to-create-game]))
+          (bomberman-rules/run-create-game-rules facts)
           _                                 (def actions actions)
           _                                 (def create-game-errors create-game-errors)
           _                                 (def create-games create-games)]
