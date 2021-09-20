@@ -252,12 +252,13 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert-unconditional! (CreateGameError. ?game-id-2 ?game-name-2 "Game with that name already exists!")))
 
 (defrule create-game
+  [TimestampNow (= ?now now)]
   [?wants-to-create-game <- WantsToCreateGame
    (= ?game-name game-name)
    (= ?game-id game-id)
    (= ?password password)]
   =>
-  (insert! (CreateGame. ?game-id ?game-name ?password)))
+  (insert! (CreateGame. ?now ?game-id ?game-name ?password)))
 
 (defrule player-wants-to-start-game
   [TimestampNow (= ?now now)]

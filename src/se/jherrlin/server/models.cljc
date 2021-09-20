@@ -156,22 +156,25 @@
   (generate-items (generate-stones board/board2 reserved-floors))
   )
 
+
 (defrecord WantsToCreateGame [game-id game-name password])
 (defrecord ActiveGame        [game-id game-name password game-state])
 (defrecord CreateGameError   [game-id game-name message])
-(defrecord CreateGame        [game-id game-name password]
-  CloudEvent (toCloudEvent [this]
-               (let [stones   (generate-stones board/board2 reserved-floors)
-                     defaults {:game-state    :created
-                               :game-name     game-name
-                               :game-password password
-                               :board         board/board2
-                               :stones        stones
-                               :fire          '()
-                               :flying-bombs  '()
-                               :bombs         '()
-                               :items         (generate-items stones)}]
-                 (template "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
+(defrecord CreateGame        [timestamp game-id game-name password]
+  CloudEvent
+  (toCloudEvent [this]
+    (let [stones   (generate-stones board/board2 reserved-floors)
+          defaults {:game-state    :created
+                    :game-name     game-name
+                    :game-password password
+                    :board         board/board2
+                    :stones        stones
+                    :fire          '()
+                    :flying-bombs  '()
+                    :bombs         '()
+                    :items         (generate-items stones)}]
+      (template
+       timestamp "urn:se:jherrlin:bomberman:game" game-id "create-game" (merge defaults this)))))
 
 (defrecord GameState [game-id game-state])
 (defrecord PlayerWantsToJoinGame [player-id player-name game-id password])

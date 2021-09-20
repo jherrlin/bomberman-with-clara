@@ -201,7 +201,8 @@
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")])
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password")])
             session' (fire-rules session)]
         {:errors (->> (query session' bomberman/create-game-error?)
                       (map (comp #(into {} %) :?create-game-error))
@@ -210,13 +211,15 @@
                       (map (comp #(into {} %) :?create-game))
                       (set))})
       {:errors #{},
-       :games #{{:game-id 1, :game-name "first-game", :password "game-password"}}})))
+       :games  #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+                  :game-id   1, :game-name "first-game", :password "game-password"}}})))
 
   (t/testing "Two player cant start a game with the same name at the same time."
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
                                   (models/->WantsToCreateGame 2 "first-game" "my-second-game")])
             session' (fire-rules session)]
 
@@ -227,12 +230,12 @@
                       (map (comp #(into {} %) :?create-game))
                       (set))})
       {:errors
-       #{{:game-id 2,
+       #{{:game-id   2,
           :game-name "first-game",
-          :message "Game with that name already exists!"}
-         {:game-id 1,
+          :message   "Game with that name already exists!"}
+         {:game-id   1,
           :game-name "first-game",
-          :message "Game with that name already exists!"}},
+          :message   "Game with that name already exists!"}},
        :games #{}})))
 
   (t/testing "A new game cant be started with the same name as an active game."
@@ -250,16 +253,17 @@
                       (map (comp #(into {} %) :?create-game))
                       (set))})
       {:errors
-       #{{:game-id 1,
+       #{{:game-id   1,
           :game-name "first-game",
-          :message "Game with that name already exists!"}},
+          :message   "Game with that name already exists!"}},
        :games #{}})))
 
   (t/testing "If there is no name collisions, games can be started."
     (t/is
      (=
       (let [session  (insert-all bomberman-session
-                                 [(models/->WantsToCreateGame 1 "first-game" "game-password")
+                                 [(models/->TimestampNow      #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
                                   (models/->WantsToCreateGame 2 "second-game" "my-second-game")
                                   (models/->ActiveGame        3 "some-active-game" "pwd" :created)])
             session' (fire-rules session)]
@@ -271,8 +275,10 @@
                       (set))})
       {:errors #{},
        :games
-       #{{:game-id 2, :game-name "second-game", :password "my-second-game"}
-         {:game-id 1, :game-name "first-game", :password "game-password"}}}))))
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id 2, :game-name "second-game", :password "my-second-game"}
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+          :game-id 1, :game-name "first-game", :password "game-password"}}}))))
 
 (t/deftest start-new-game
   (t/testing "A game can be started"
