@@ -78,7 +78,7 @@
 
 (defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn!
                  add-event-fn! add-events-fn!]
-  (println "Game loop is now started " task-execution-timestamp)
+  (timbre/trace "Game loop is now started " task-execution-timestamp)
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
@@ -89,21 +89,19 @@
                                game-state-facts
                                [(models/->TimestampNow (java.util.Date.))])
           _                   (def rule-enginge-facts rule-enginge-facts)
-          _                   (println "Count rule-enginge-facts: " (count rule-enginge-facts))
           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
           _                   (def actions-from-enging actions-from-enging)
           _                   (def the-sorted-events (to-cloud-events (sort-events actions-from-enging)))]
       (add-events-fn! the-sorted-events)
-      ;; (reset! game-state (game-state/the-projection @game-state the-sorted))
       (reset! incomming-commands-state {})
       (doseq [game (-> @game-state :games (vals))]
         (ws-broadcast-fn! [:new/game-state game]))
-      (println "Game loop is now done " (java.util.Date.)))
+      (timbre/trace "Game loop is now done " (java.util.Date.)))
 
     (catch Exception e
       (timbre/error "Error in game loop: " e))))
 
-(defn system [{:keys [scheduler timbre webserver ws-handler http-handler game-state]}]
+(defn system [{:keys [scheduler logging webserver ws-handler http-handler game-state]}]
   (timbre/info "Creating system.")
   (component/system-map
    :incomming-actions incomming-commands-state
@@ -112,7 +110,7 @@
    :game-state        (component/using
                        (components.game-state/create (:projection-fn game-state))
                        [:event-store])
-   :logging           (components.timbre/create timbre)
+   :logging           (components.timbre/create logging)
    :scheduler         (component/using
                        (components.chime/create scheduler)
                        [:game-state :incomming-actions :websocket :event-store])
@@ -128,7 +126,9 @@
 
 (defonce production
   (system
-   {:game-state   {:projection-fn game-state/the-projection}
+   {:logging      {:logfile  "./logs/bomberman.log"
+                   :println? true}
+    :game-state   {:projection-fn game-state/the-projection}
     :http-handler #'server.endpoints/handler
     :webserver    {:port 3000}
     :ws-handler   #'server.endpoints-ws/handler
@@ -244,7 +244,6 @@
                                 game-state-facts
                                 [(models/->TimestampNow (java.util.Date.))])
            _                   (def rule-enginge-facts rule-enginge-facts)
-           _                   (println "Count rule-enginge-facts: " (count rule-enginge-facts))
            actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
            _                   (def actions-from-enging actions-from-enging)
            _                   (def the-sorted (to-cloud-events (sort-events actions-from-enging)))]

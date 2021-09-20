@@ -80,10 +80,8 @@
              db)))}
    {:n :start-game
     :s (fn [{:keys [game-state] :as db} [_]]
-         (println "Processing :start-game facts")
          (bomberman-rules/run-start-game-rules
-          (game-state/game-state->enginge-facts-1 game-state)))}
-   ])
+          (game-state/game-state->enginge-facts-1 game-state)))}])
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))

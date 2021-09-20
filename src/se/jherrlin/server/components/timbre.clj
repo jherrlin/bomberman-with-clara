@@ -5,7 +5,7 @@
    [taoensso.timbre.appenders.core :as appenders]))
 
 
-(defn config-logging [{:keys [logfile-path] :as config}]
+(defn config-logging [{:keys [logfile println?] :as config}]
   (timbre/info "Configure loggin with `timbre`.")
   ;; timbre/default-config
   (let [time-config (assoc
@@ -16,9 +16,9 @@
       (cond-> {:timestamp-opts time-config
                ;:ns-whitelist ["se.jherrlin.*"]
                }
-        logfile-path
-        (assoc :appenders {:println {:enabled? false} ;; dont print logs to repl, the Emacs buffer may be so slow.
-                           :spit    (appenders/spit-appender {:fname     logfile-path
+        logfile
+        (assoc :appenders {:println {:enabled? println?}
+                           :spit    (appenders/spit-appender {:fname     logfile
                                                               :hostname_ "server"
                                                               :instant   java.util.Date})}))
       config))))

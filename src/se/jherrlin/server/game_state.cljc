@@ -1,6 +1,7 @@
 (ns se.jherrlin.server.game-state
   (:require [clojure.string :as str]
-            [se.jherrlin.server.models :as models]))
+            [se.jherrlin.server.models :as models]
+            [taoensso.timbre :as timbre]))
 
 (comment
   (remove-ns 'se.jherrlin.server.game-state)
@@ -271,7 +272,7 @@
     (update-in game-state [:games subject :fire] #(remove (comp #{fire-position-xy} :fire-position-xy) %))))
 
 (defmethod projection :default [game-state event]
-  (println "Error! Could not find projection for event:" event)
+  (timbre/trace "Error! Could not find projection for event:" event)
   game-state)
 
 (defn the-projection [state events]
