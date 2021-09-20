@@ -204,9 +204,9 @@
         game  (game game-state subject)
         game' (-> game
                   (assoc-in [:game-state] :ended)
-                  (assoc-in [:end-timestamp end-timestamp] :ended))]
+                  (assoc-in [:end-timestamp] end-timestamp))]
     (-> game-state
-        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state]))
+        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :started-timestamp :winner :end-timestamp]))
         (assoc-in [:old-games subject] game')
         (update-in [:active-games] dissoc (:game-name game)))))
 

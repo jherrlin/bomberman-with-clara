@@ -9,7 +9,24 @@
             ["semantic-ui-react" :as semantic-ui]))
 
 
-(def events
+(defn download-csv [value export-name]
+  (let [data-blob (js/Blob. #js [value] #js {:type "application/edn"})
+        link (.createElement js/document "a")]
+    (set! (.-href link) (.createObjectURL js/URL data-blob))
+    (.setAttribute link "download" export-name)
+    (.appendChild (.-body js/document) link)
+    (.click link)
+    (.removeChild (.-body js/document) link)))
+
+(re-frame/reg-event-fx
+ ::download-game-events
+ (fn [_ [_ events]]
+   (def events)
+   (js/console.log events)
+   (download-csv events "game-events.edn")
+   {}))
+
+(def events-
   [{:n ::events}
    {:n ::time-travel-location
     :s (fn [db [k]] (get db k 1))}])
@@ -21,7 +38,7 @@
  (fn [[events position-in-time] _]
    (client.common/events->screen events position-in-time)))
 
-(doseq [{:keys [n s e]} events]
+(doseq [{:keys [n s e]} events-]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
   (re-frame/reg-event-db n (or e (fn [db [_ e]] (assoc db n e)))))
 
@@ -33,7 +50,14 @@
     (when events
       [:<>
        [:div {:style {:text-align "center"}}
-        [:h2 "Look back at the game"]]
+        [:h2 "Look back at the game"]
+
+        [:div
+         [:> semantic-ui/Button
+          {:label   "Download game events"
+           :icon    "download"
+           :onClick #(re-frame/dispatch
+                      [::download-game-events (with-out-str (pprint/pprint events))])}]]]
 
        [:div {:style {:text-align "center"}}
         [client.common/screen screen]]
