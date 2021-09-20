@@ -235,6 +235,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (insert-unconditional! (FireToRemove. ?now ?game-id ?fire-position-xy)))
 
 (defrule warn-player-about-game-name-collision
+  [TimestampNow (= ?now now)]
   [?wants-to-create-game <- WantsToCreateGame (= ?game-name game-name) (= ?game-id game-id)]
   [                         ActiveGame        (= ?game-name game-name)]
   =>

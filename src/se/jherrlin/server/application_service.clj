@@ -7,21 +7,36 @@
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]))
 
+(comment
+  (remove-ns 'se.jherrlin.server.application-service)
+  )
+
 
 (defn create-game! [game-state add-events-fn! create-event-data]
+  (def game-state game-state)
+  (def add-events-fn! add-events-fn!)
+  (def create-event-data create-event-data)
   (if-not (s/valid? ::user-commands/create-game create-event-data)
     {:status :error
      :message
      (s/explain-data ::user-commands/create-game create-event-data)}
     (let [{:keys [game-name game-password]} create-event-data
+          _                                 (def game-name game-name)
+          _                                 (def game-password game-password)
           now                               (datetime/now)
+          _                                 (def now now)
           game-id                           (java.util.UUID/randomUUID)
+          _                                 (def game-id game-id)
           player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
+          _                                 (def player-wants-to-create-game player-wants-to-create-game)
           {:keys [create-game-errors create-games] :as actions}
           (bomberman-rules/run-create-game-rules
            (concat (game-state/game-state->active-game-facts @game-state)
                    [(models/->TimestampNow now)]
-                   [player-wants-to-create-game]))]
+                   [player-wants-to-create-game]))
+          _                                 (def actions actions)
+          _                                 (def create-game-errors create-game-errors)
+          _                                 (def create-games create-games)]
       (cond
         (seq create-game-errors)
         {:status  :error
