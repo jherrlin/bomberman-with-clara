@@ -62,12 +62,6 @@
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
 
-(defn game-state->active-game-facts [gs]
-  (->> gs
-       (games)
-       (map (fn [{:keys [game-name game-id password game-state]}]
-              (models/->ActiveGame game-id game-name password game-state)))))
-
 (defn game-to-facts [{:keys [stones board players game-id game-state bombs items fire] :as game}]
   (concat
    [(models/->Board game-id board)
