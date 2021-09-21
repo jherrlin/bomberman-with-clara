@@ -50,3 +50,10 @@
        (running-games)
        (map game-facts)
        (apply concat)))
+
+(defn started-games-facts [game-state]
+  (->> game-state
+       (game-state/games)
+       (filter (comp #{:started} :game-state))
+       (map game-facts)
+       (apply concat)))

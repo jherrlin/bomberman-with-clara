@@ -84,7 +84,7 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state2/games-facts @game-state)
+          game-state-facts    (game-state2/started-games-facts @game-state)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
