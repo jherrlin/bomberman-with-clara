@@ -113,8 +113,3 @@
        (game-state/the-projection {})
        )
   )
-
-
-(let [game-id 1]
-  [(models/->CreateGame game-id "GameName" "GamePassword")]
-  )

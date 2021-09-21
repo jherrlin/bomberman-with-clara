@@ -6,7 +6,8 @@
    [se.jherrlin.datetime :as datetime]
    [se.jherrlin.server.models :as models]
    [clara.tools.inspect :as inspect]
-   [clojure.test :as t]))
+   [clojure.test :as t]
+   [se.jherrlin.clara-labs.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.clara-labs.bomberman-rules-test)
@@ -200,10 +201,11 @@
   (t/testing "When no games exists, create one."
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
-                                 [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->WantsToCreateGame 1 "first-game" "game-password")])
-            session' (fire-rules session)]
+      (let [game-board board/mini
+            session    (insert-all bomberman-session
+                                   [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
+                                    (models/->WantsToCreateGame 1 "first-game" "game-password" game-board '() '())])
+            session'   (fire-rules session)]
         {:errors (->> (query session' bomberman/create-game-error?)
                       (map (comp #(into {} %) :?create-game-error))
                       (set))
@@ -211,16 +213,32 @@
                       (map (comp #(into {} %) :?create-game))
                       (set))})
       {:errors #{},
-       :games  #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-                  :game-id   1, :game-name "first-game", :password "game-password"}}})))
+       :games
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 1,
+          :game-name "first-game",
+          :password "game-password",
+          :board
+          [[{:type :wall, :x 0, :y 0}
+            {:type :wall, :x 1, :y 0}
+            {:type :wall, :x 2, :y 0}]
+           [{:type :wall, :x 0, :y 1}
+            {:type :floor, :x 1, :y 1}
+            {:type :wall, :x 2, :y 1}]
+           [{:type :wall, :x 0, :y 2}
+            {:type :wall, :x 1, :y 2}
+            {:type :wall, :x 2, :y 2}]],
+          :stones (),
+          :items ()}}})))
 
   (t/testing "Two player cant start a game with the same name at the same time."
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
+      (let [game-board board/board2
+            session  (insert-all bomberman-session
                                  [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
-                                  (models/->WantsToCreateGame 2 "first-game" "my-second-game")])
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password" game-board '() '())
+                                  (models/->WantsToCreateGame 2 "first-game" "my-second-game" game-board '() '())])
             session' (fire-rules session)]
 
         {:errors (->> (query session' bomberman/create-game-error?)
@@ -241,9 +259,10 @@
   (t/testing "A new game cant be started with the same name as an active game."
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
+      (let [game-board board/board2
+            session  (insert-all bomberman-session
                                  [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password" game-board '() '())
                                   (models/->ActiveGame        2 "first-game" "pwd" :created)])
             session' (fire-rules session)]
 
@@ -262,10 +281,11 @@
   (t/testing "If there is no name collisions, games can be started."
     (t/is
      (=
-      (let [session  (insert-all bomberman-session
+      (let [game-board board/mini
+            session  (insert-all bomberman-session
                                  [(models/->TimestampNow      #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->WantsToCreateGame 1 "first-game" "game-password")
-                                  (models/->WantsToCreateGame 2 "second-game" "my-second-game")
+                                  (models/->WantsToCreateGame 1 "first-game" "game-password" game-board '() '())
+                                  (models/->WantsToCreateGame 2 "second-game" "my-second-game" game-board '() '())
                                   (models/->ActiveGame        3 "some-active-game" "pwd" :created)])
             session' (fire-rules session)]
         {:errors (->> (query session' bomberman/create-game-error?)
@@ -276,10 +296,38 @@
                       (set))})
       {:errors #{},
        :games
-       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-          :game-id 2, :game-name "second-game", :password "my-second-game"}
-         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-          :game-id 1, :game-name "first-game", :password "game-password"}}}))))
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 2,
+          :game-name "second-game",
+          :password "my-second-game",
+          :board
+          [[{:type :wall, :x 0, :y 0}
+            {:type :wall, :x 1, :y 0}
+            {:type :wall, :x 2, :y 0}]
+           [{:type :wall, :x 0, :y 1}
+            {:type :floor, :x 1, :y 1}
+            {:type :wall, :x 2, :y 1}]
+           [{:type :wall, :x 0, :y 2}
+            {:type :wall, :x 1, :y 2}
+            {:type :wall, :x 2, :y 2}]],
+          :stones (),
+          :items ()}
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 1,
+          :game-name "first-game",
+          :password "game-password",
+          :board
+          [[{:type :wall, :x 0, :y 0}
+            {:type :wall, :x 1, :y 0}
+            {:type :wall, :x 2, :y 0}]
+           [{:type :wall, :x 0, :y 1}
+            {:type :floor, :x 1, :y 1}
+            {:type :wall, :x 2, :y 1}]
+           [{:type :wall, :x 0, :y 2}
+            {:type :wall, :x 1, :y 2}
+            {:type :wall, :x 2, :y 2}]],
+          :stones (),
+          :items ()}}}))))
 
 (t/deftest start-new-game
   (t/testing "A game can be started"

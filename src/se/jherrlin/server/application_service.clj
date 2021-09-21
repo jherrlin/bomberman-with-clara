@@ -5,7 +5,8 @@
             [se.jherrlin.server.models :as models]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
             [taoensso.timbre :as timbre]
-            [se.jherrlin.datetime :as datetime]))
+            [se.jherrlin.datetime :as datetime]
+            [se.jherrlin.clara-labs.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.server.application-service)
@@ -27,7 +28,13 @@
           _                                 (def now now)
           game-id                           (java.util.UUID/randomUUID)
           _                                 (def game-id game-id)
-          player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password)
+          game-board                        board/board2
+          _                                 (def game-board game-board)
+          stones                            (board/generate-stones board/board2 board/reserved-floors)
+          _                                 (def stones stones)
+          items                             (board/generate-items stones)
+          _                                 (def items items)
+          player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password game-board stones items)
           _                                 (def player-wants-to-create-game player-wants-to-create-game)
           facts                             (concat (game-state/game-state->active-game-facts @game-state)
                                                     [(models/->TimestampNow now)]

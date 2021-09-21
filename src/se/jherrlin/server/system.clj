@@ -18,9 +18,10 @@
    [se.jherrlin.server.models :as models]
    [clojure.core.async :as a :refer [<! go-loop timeout]]
    [taoensso.timbre :as timbre]
-   [se.jherrlin.datetime :as datetime])
-  (:import [java.time Instant Duration]
-           [se.jherrlin.server.models CreateGame JoinGame StartGame])
+   [se.jherrlin.datetime :as datetime]
+   [clojure.pprint :as pprint]
+   [se.jherrlin.clara-labs.board :as board])
+  (:import [java.time Instant Duration])
   (:gen-class))
 
 (comment
@@ -174,16 +175,7 @@
   (def player-2-id "hannahs-id")
   (def timestamp #inst "2021-09-19T21:57:59.144-00:00")
 
-  (add-events-fn! [(.toCloudEvent (CreateGame.           repl-subject "First game" "my-secret"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject player-1-id "John"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject player-2-id "Hannah"))])
-  (add-events-fn! [(.toCloudEvent (StartGame.            repl-subject))])
-  (add-events-fn! [(.toCloudEvent (command->engine-fact
-                                   game-state'
-                                   {:game-id   repl-subject
-                                    :user-id   player-1-id
-                                    :action    :move
-                                    :direction :west}))])
+
   (bomberman-rules/run-rules
    (concat
     (incomming-actions incomming-commands-state game-state')
@@ -278,11 +270,6 @@
   (def jakob-id "JAKOBS-id")
   (def repl-subject-2 "SIMON-JAKOBS-game")
   (def timestamp #inst "2021-09-19T21:57:59.144-00:00")
-
-  (add-events-fn! [(.toCloudEvent (CreateGame.           repl-subject-2 "Simon och Jakob spel" "my-secret"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject-2 simon-id "Simon"))])
-  (add-events-fn! [(.toCloudEvent (JoinGame.   timestamp repl-subject-2 jakob-id "Jakob"))])
-  (add-events-fn! [(.toCloudEvent (StartGame.            repl-subject-2))])
 
 
   (user-commands/register-incomming-user-command!

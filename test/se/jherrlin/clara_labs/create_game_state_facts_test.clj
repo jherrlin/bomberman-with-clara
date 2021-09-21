@@ -10,17 +10,6 @@
 
 
 
-;; https://stackoverflow.com/questions/17991565/clojure-defrecord-serialization-classnotfoundexception/17992918
-(defn output
-  "Write defrecords to file."
-  [filename obj]
-  (spit filename (pr-str obj)))
-
-(defn pull
-  "Read defrecords from resource file."
-  [filename]
-  (with-in-str (slurp (io/resource filename))
-    (read)))
 
 (comment
   (->> (let [game-id 1]
@@ -31,7 +20,7 @@
        (vals)
        (first)
        (game-state2/facts)
-       (output "/home/john/git/clara-labs-frontend/resources/test-data/create-game-facts.edn"))
+       (resources/output "/home/john/git/clara-labs-frontend/resources/test-data/create-game-facts.edn"))
   )
 
 (t/deftest game-state-facts
@@ -48,6 +37,6 @@
            (game-state2/facts)
            (map #(into {} %))
            (set))
-      (->> (pull "test-data/create-game-facts.edn")
+      (->> (resources/pull "test-data/create-game-facts.edn")
            (map #(into {} %))
            (set))))))

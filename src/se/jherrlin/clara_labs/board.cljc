@@ -146,3 +146,47 @@
    [1 1]
    :south)
   )
+
+(def reserved-floors
+  #{[1 1]
+    [1 2]
+    [2 1]
+
+    [1 8]
+    [1 9]
+    [2 9]
+
+    [16 1]
+    [17 1]
+    [17 2]
+
+    [17 8]
+    [17 9]
+    [16 9]})
+
+(defn generate-stones [board reserved-positions]
+  (->> (flatten board)
+       (filter (comp #{:floor} :type))
+       (map (fn [{:keys [x y]}]
+              (let [n (rand-int 10)]
+                (cond
+                  (#{0 1 2 3} n)     nil
+                  (#{4 5 6 7 8 9} n) [x y]))))
+       (remove reserved-positions)
+       (remove nil?)))
+
+(defn generate-items [stones]
+  (->> stones
+       (map (fn [[x y]]
+              (let [n (rand-int 10)]
+                (cond
+                  (#{0 1}             n) {:item-position-xy [x y] :item-power :inc-fire-length}
+                  (#{2 3 4 5 6 7 8 9} n) nil))))
+       (remove nil?)))
+
+(comment
+  (generate-items (generate-stones board2 reserved-floors))
+  ;; board/board2
+  ;; (generate-items stones)
+  ;; (generate-stones board/board2 reserved-floors)
+  )

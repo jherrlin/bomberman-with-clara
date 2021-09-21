@@ -292,7 +292,7 @@
     (reduce
      (fn [gs m] (projection gs (.toCloudEvent m)))
      {}
-     [(models/->CreateGame                      repl-game-id "First game" "my-secret")
+     [(models/->CreateGame     timestamp        repl-game-id "First game" "my-secret" board/mini '() '())
       (models/->JoinGame       timestamp        repl-game-id player-1-ws-id "John")
       (models/->JoinGame       timestamp        repl-game-id player-2-ws-id "Hannah")
       (models/->StartGame      timestamp        repl-game-id )
@@ -309,7 +309,7 @@
     (reduce
      (fn [gs m] (projection gs (.toCloudEvent m)))
      {}
-     [(models/->CreateGame                      repl-game-id "First game" "my-secret")
+     [(models/->CreateGame    timestamp         repl-game-id "First game" "my-secret" board/mini '() '())
       (models/->JoinGame      timestamp         repl-game-id player-1-ws-id "John")
       (models/->JoinGame      timestamp         repl-game-id player-2-ws-id "Hannah")
       (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")

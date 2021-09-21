@@ -257,9 +257,12 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?wants-to-create-game <- WantsToCreateGame
    (= ?game-name game-name)
    (= ?game-id game-id)
-   (= ?password password)]
+   (= ?password password)
+   (= ?board board)
+   (= ?stones stones)
+   (= ?items items)]
   =>
-  (insert! (CreateGame. ?now ?game-id ?game-name ?password)))
+  (insert! (CreateGame. ?now ?game-id ?game-name ?password ?board ?stones ?items)))
 
 (defrule player-wants-to-start-game
   [TimestampNow (= ?now now)]
