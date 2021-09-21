@@ -71,7 +71,7 @@
           game                       (game-state/game @game-state game-id)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
-           (concat (game-state/game-to-facts game)
+           (concat (game-state2/game-facts game)
                    [(game-state2/active-game-fact game)]
                    [(models/->TimestampNow (datetime/now))]
                    [player-wants-to-start-game]))]
@@ -101,7 +101,7 @@
           player-wants-to-join-game                         (models/->PlayerWantsToJoinGame player-id player-name game-id game-password)
           {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules
                                                              (concat
-                                                              (game-state/game-to-facts game)
+                                                              (game-state2/game-facts game)
                                                               [(models/->TimestampNow now)]
                                                               [(game-state2/active-game-fact game)]
                                                               [player-wants-to-join-game]))]
