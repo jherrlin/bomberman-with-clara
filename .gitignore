@@ -1,0 +1,9 @@
+.cpcache/
+.shadow-cljs/
+classes/
+logs/
+node_modules/
+package-lock.json
+resources/public/js/
+target/
+public/js
