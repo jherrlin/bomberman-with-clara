@@ -14,7 +14,8 @@
                               PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
                               PlayerWantsToJoinGame PlayerWantsToMove GameWinner
                               PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
-                              Stone StoneToRemove TimestampNow WantsToCreateGame]]))
+                              Stone StoneToRemove TimestampNow WantsToCreateGame
+                              CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp]]))
   #?(:clj
      (:import [se.jherrlin.server.models
                ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
@@ -23,7 +24,8 @@
                PlayerDies PlayerMove PlayerOnBoardFireLength PlayerOnBoardPosition PlayerPicksFireIncItemFromBoard
                PlayerWantsToJoinGame PlayerWantsToMove
                PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
-               Stone StoneToRemove TimestampNow WantsToCreateGame])))
+               Stone StoneToRemove TimestampNow WantsToCreateGame
+               CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp])))
 
 
 (comment
@@ -324,6 +326,26 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (PlayerPicksFireIncItemFromBoard. ?now ?game-id ?player-id ?item-position-xy (inc ?fire-length))))
 
+(defrule created-game-timeout
+  "A game left in lobby will be removed after a certain amount of time.
+300000ms = 5min"
+  [TimestampNow         (= ?now now)]
+  [GameCreatedTimestamp (= ?game-created-timestamp timestamp) (= ?game-id game-id)]
+  [:test (< 300000 (datetime/milliseconds-between ?game-created-timestamp ?now))]
+  =>
+  (insert! (CreatedGameInactivityTimeout. ?now ?game-id :inactivity)))
+
+(defrule started-game-timeout
+  "A running game will be removed after a certain amount of time.
+600000ms = 10min"
+  [TimestampNow         (= ?now now)]
+  [GameStartedTimestamp (= ?game-created-timestamp timestamp) (= ?game-id game-id)]
+  [:test (< 300000 (datetime/milliseconds-between ?game-created-timestamp ?now))]
+  =>
+  (insert! (StartedGameInactivityTimeout. ?now ?game-id :inactivity)))
+
+
+
 ;; For the frontend
 (defrule start-game-but-not-enough-player-have-joined
   "Used by frontend to determine if a game can be started."
@@ -332,6 +354,11 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [:test (< (count ?players-alive) 2)]
   =>
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
+
+;; (defrule created-game-ends-automatically-if-timeout-is-reached
+;;   "If game is in lobby more that a certain amount of time. It's removed."
+
+;;   )
 
 ;; (defrule game-can-be-started
 ;;   "Used by frontend to determine if a game can be started."
@@ -348,6 +375,14 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 ;;   )
 
 ;; Queries
+(defquery created-game-inactivity-timeout?
+  []
+  [?created-game-inactivity-timeout <- CreatedGameInactivityTimeout])
+
+(defquery started-game-inactivity-timeout?
+  []
+  [?started-game-inactivity-timeout <- StartedGameInactivityTimeout])
+
 (defquery picks-fire-inc-item-from-board?
   []
   [?picks-fire-inc-item-from-board <- PlayerPicksFireIncItemFromBoard])
@@ -442,6 +477,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?game-winner <- GameWinner])
 
 
+
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
 
@@ -470,7 +506,10 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
       :end-games                   (map :?end-game             (query session' end-game?))
 
-      :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board (query session' picks-fire-inc-item-from-board?))}}))
+      :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board (query session' picks-fire-inc-item-from-board?))
+
+      :inactive-created-games (map :?created-game-inactivity-timeout (query session' created-game-inactivity-timeout?))
+      :inactive-started-games (map :?started-game-inactivity-timeout (query session' started-game-inactivity-timeout?))}}))
 
 (defn run-create-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)

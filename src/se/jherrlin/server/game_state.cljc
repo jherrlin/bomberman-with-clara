@@ -123,6 +123,14 @@
         (assoc-in [:old-games subject] game')
         (update-in [:active-games] dissoc (:game-name game)))))
 
+(defmethod projection :se.jherrlin.bomberman.game/created-game-inactivity-timeout
+  [game-state {:keys [subject data] :as event}]
+  (update game-state :games dissoc subject))
+
+(defmethod projection :se.jherrlin.bomberman.game/started-game-inactivity-timeout
+  [game-state {:keys [subject data] :as event}]
+  (update game-state :games dissoc subject))
+
 (defmethod projection :se.jherrlin.bomberman.game/winner
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [winner]} data]

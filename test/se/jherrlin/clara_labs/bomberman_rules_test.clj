@@ -823,3 +823,47 @@
           :fire-length          3,
           :bomb-added-timestamp #inst "2021-09-07T19:50:17.258-00:00"}},
        :flying-bombs #{}})))
+
+(t/deftest game-timeouts
+  (t/testing "No timeout events when threshold not reached."
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->TimestampNow          #inst "2021-09-21T18:00:00.000-00:00")
+                                  (models/->GameCreatedTimestamp  #inst "2021-09-21T18:00:00.000-00:00" 1)
+                                  (models/->GameStartedTimestamp  #inst "2021-09-21T18:00:00.000-00:00" 2)])
+            session' (fire-rules session)]
+        {:inactive-created-games
+         (->> (query session' bomberman/created-game-inactivity-timeout?)
+              (map (comp #(into {} %) :?created-game-inactivity-timeout))
+              (set))
+         :inactive-started-games
+         (->> (query session' bomberman/started-game-inactivity-timeout?)
+              (map (comp #(into {} %) :?started-game-inactivity-timeout))
+              (set))})
+      {:inactive-created-games #{}, :inactive-started-games #{}})))
+
+  (t/testing "Threshold reached"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->TimestampNow          #inst "2021-09-22T18:00:00.000-00:00")
+                                  (models/->GameCreatedTimestamp  #inst "2021-09-21T18:00:00.000-00:00" 1)
+                                  (models/->GameStartedTimestamp  #inst "2021-09-21T18:00:00.000-00:00" 2)])
+            session' (fire-rules session)]
+        {:inactive-created-games
+         (->> (query session' bomberman/created-game-inactivity-timeout?)
+              (map (comp #(into {} %) :?created-game-inactivity-timeout))
+              (set))
+         :inactive-started-games
+         (->> (query session' bomberman/started-game-inactivity-timeout?)
+              (map (comp #(into {} %) :?started-game-inactivity-timeout))
+              (set))})
+      {:inactive-created-games
+       #{{:timestamp #inst "2021-09-22T18:00:00.000-00:00",
+          :game-id 1,
+          :reason :inactivity}},
+       :inactive-started-games
+       #{{:timestamp #inst "2021-09-22T18:00:00.000-00:00",
+          :game-id 2,
+          :reason :inactivity}}}))))
