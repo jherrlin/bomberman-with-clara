@@ -340,7 +340,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 600000ms = 10min"
   [TimestampNow         (= ?now now)]
   [GameStartedTimestamp (= ?game-created-timestamp timestamp) (= ?game-id game-id)]
-  [:test (< 300000 (datetime/milliseconds-between ?game-created-timestamp ?now))]
+  [:test (< 600000 (datetime/milliseconds-between ?game-created-timestamp ?now))]
   =>
   (insert! (StartedGameInactivityTimeout. ?now ?game-id :inactivity)))
 

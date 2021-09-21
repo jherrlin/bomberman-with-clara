@@ -7,9 +7,9 @@
 (defn game-facts [{:keys [game-create-timestamp game-id game-started-timestamp game-state] :as game}]
   (concat
    (when game-create-timestamp
-     [(models/->GameCreatedTimestamp game-id game-create-timestamp)])
+     [(models/->GameCreatedTimestamp game-create-timestamp game-id)])
    (when game-started-timestamp
-     [(models/->GameStartedTimestamp game-id game-started-timestamp)])
+     [(models/->GameStartedTimestamp game-started-timestamp game-id)])
    [(models/->Board game-id (game-state/board game))
     (models/->GameState game-id game-state)]
    (->> (game-state/players game)
