@@ -4,7 +4,7 @@
             [taoensso.timbre :as timbre]))
 
 
-(defn facts [{:keys [game-create-timestamp game-id game-started-timestamp game-state] :as game}]
+(defn game-facts [{:keys [game-create-timestamp game-id game-started-timestamp game-state] :as game}]
   (concat
    (when game-create-timestamp
      [(models/->GameCreatedTimestamp game-id game-create-timestamp)])

@@ -19,7 +19,7 @@
        :games
        (vals)
        (first)
-       (game-state2/facts)
+       (game-state2/game-facts)
        (resources/output "test-data/started-game-facts.edn"))
   )
 
@@ -40,7 +40,7 @@
            :games
            (vals)
            (first)
-           (game-state2/facts)
+           (game-state2/game-facts)
            ;; (map (fn [f] [(type f) f]))
            (map #(into {} %))
            (set))

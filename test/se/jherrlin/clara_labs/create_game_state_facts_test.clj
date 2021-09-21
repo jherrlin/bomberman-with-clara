@@ -16,7 +16,7 @@
        :games
        (vals)
        (first)
-       (game-state2/facts)
+       (game-state2/game-facts)
        (resources/output "test-data/create-game-facts.edn"))
   )
 
@@ -31,7 +31,7 @@
            :games
            (vals)
            (first)
-           (game-state2/facts)
+           (game-state2/game-facts)
            (map #(into {} %))
            (set))
       (->> (resources/pull "test-data/create-game-facts.edn")
@@ -39,7 +39,7 @@
            (set))))))
 
 (comment
-  (->> (game-state2/facts
+  (->> (game-state2/game-facts
         {:game-id 1,
          :fire (),
          :stones (),
