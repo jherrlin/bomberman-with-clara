@@ -14,7 +14,8 @@
     :refer [>! <! >!! <!! go chan buffer close! thread go-loop put!
             alts! alts!! timeout]]
    [taoensso.timbre :as timbre]
-   [se.jherrlin.datetime :as datetime]))
+   [se.jherrlin.datetime :as datetime]
+   [se.jherrlin.server.game-state2 :as game-state2]))
 
 
 (def add-event-fn! (-> system/production :event-store :add-event-fn!))
@@ -84,7 +85,7 @@
                           (take 31)
                           (game-state/the-projection {}))]
   (->> previous-state
-       (game-state/game-state->enginge-facts)
+       (game-state2/games-facts)
        (concat
         [(models/->TimestampNow (java.util.Date.))
          (models/->PlayerWantsToMove timestamp game-id john-player-id [1 1] :south)])
@@ -98,7 +99,7 @@
      (reverse)
      (take 31)
      (game-state/the-projection {})
-     (game-state/game-state->enginge-facts)
+     (game-state2/games-facts)
      (map type))
 
 (->> (resources/read-edn-file "events/danks-alfa-testning-events.edn")

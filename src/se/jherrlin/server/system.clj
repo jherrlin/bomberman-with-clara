@@ -20,7 +20,8 @@
    [taoensso.timbre :as timbre]
    [se.jherrlin.datetime :as datetime]
    [clojure.pprint :as pprint]
-   [se.jherrlin.clara-labs.board :as board])
+   [se.jherrlin.clara-labs.board :as board]
+   [se.jherrlin.server.game-state2 :as game-state2])
   (:import [java.time Instant Duration])
   (:gen-class))
 
@@ -83,7 +84,7 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state/game-state->enginge-facts @game-state)
+          game-state-facts    (game-state2/games-facts @game-state)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
@@ -167,7 +168,7 @@
        :events
        count)
 
-  (count (game-state/game-state->enginge-facts @game-state'))
+  (count (game-state2/games-facts @game-state'))
 
   (java.util.UUID/randomUUID)
   (def repl-subject "JOHN-HANNAS-game")
@@ -179,7 +180,7 @@
   (bomberman-rules/run-rules
    (concat
     (incomming-actions incomming-commands-state game-state')
-    (game-state/game-state->enginge-facts @game-state')
+    (game-state2/games-facts @game-state')
     [(models/->TimestampNow (java.util.Date.))]))
 
 
@@ -189,7 +190,7 @@
 
 
   (bomberman-rules/run-rules
-   (game-state/game-state->enginge-facts
+   (game-state2/games-facts
     (game-state/the-projection {} (->> @event-store :events reverse (take 22)))))
 
   (reset! game-state' (game-state/the-projection @game-state' (->> @event-store :events reverse)))
@@ -232,7 +233,7 @@
      (let [game-state          game-state'
            user-action-facts   (incomming-actions incomming-commands-state game-state)
            _                   (def user-action-facts user-action-facts)
-           game-state-facts    (game-state/game-state->enginge-facts @game-state)
+           game-state-facts    (game-state2/games-facts @game-state)
            _                   (def game-state-facts game-state-facts)
            rule-enginge-facts  (concat
                                 user-action-facts
