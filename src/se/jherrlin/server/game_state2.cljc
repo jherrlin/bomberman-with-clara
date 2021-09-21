@@ -31,3 +31,7 @@
                (models/->ItemOnBoard game-id item-position-xy item-power))))
    (->> (game-state/fires game)
         (map models/map->FireOnBoard))))
+
+(defn active-game-fact [{:keys [game-name game-id password game-state] :as game}]
+  (models/->ActiveGame game-id game-name password game-state))
+

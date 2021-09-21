@@ -4,6 +4,7 @@
             [se.jherrlin.server.user-commands :as user-commands]
             [se.jherrlin.server.models :as models]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+            [se.jherrlin.server.game-state2 :as game-state2]
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.clara-labs.board :as board]))
@@ -70,7 +71,7 @@
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
            (concat (game-state/game-to-facts game)
-                   [(game-state/game-to-active-game-facts game)]
+                   [(game-state2/active-game-fact game)]
                    [(models/->TimestampNow (datetime/now))]
                    [player-wants-to-start-game]))]
       (cond
@@ -101,7 +102,7 @@
                                                              (concat
                                                               (game-state/game-to-facts game)
                                                               [(models/->TimestampNow now)]
-                                                              [(game-state/game-to-active-game-facts game)]
+                                                              [(game-state2/active-game-fact game)]
                                                               [player-wants-to-join-game]))]
       (cond
         (seq join-game-errors)

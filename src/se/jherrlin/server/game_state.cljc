@@ -62,9 +62,6 @@
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
 
-(defn game-to-active-game-facts [{:keys [game-name game-id password game-state] :as game}]
-  (models/->ActiveGame game-id game-name password game-state))
-
 (defn game-state->active-game-facts [gs]
   (->> gs
        (games)
