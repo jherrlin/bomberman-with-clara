@@ -3,6 +3,7 @@
             [se.jherrlin.server.resources :as resources]
             [se.jherrlin.server.models :as models]
             [clojure.pprint :as pprint]
+            [clojure.java.io :as io]
             [se.jherrlin.server.game-state2 :as game-state2]
             [se.jherrlin.server.game-state :as game-state]
             [se.jherrlin.clara-labs.board :as board]))
@@ -21,7 +22,7 @@
        (vals)
        (first)
        (game-state2/facts)
-       (resources/output "/home/john/git/clara-labs-frontend/resources/test-data/started-game-facts.edn"))
+       (resources/output "test-data/started-game-facts.edn"))
   )
 
 
@@ -42,6 +43,7 @@
            (vals)
            (first)
            (game-state2/facts)
+           ;; (map (fn [f] [(type f) f]))
            (map #(into {} %))
            (set))
       (->> (resources/pull "test-data/started-game-facts.edn")

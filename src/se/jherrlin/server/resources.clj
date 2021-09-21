@@ -19,7 +19,7 @@
 (defn output
   "Write defrecords to file."
   [filename obj]
-  (spit filename (pr-str obj)))
+  (spit (io/resource filename) (pr-str obj)))
 
 (defn pull
   "Read defrecords from resource file."
