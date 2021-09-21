@@ -48,4 +48,5 @@
   (->> game-state
        (game-state/games)
        (running-games)
-       (map game-facts)))
+       (map game-facts)
+       (apply concat)))
