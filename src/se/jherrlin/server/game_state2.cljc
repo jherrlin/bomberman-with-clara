@@ -35,8 +35,11 @@
 (defn active-game-fact [{:keys [game-name game-id password game-state] :as game}]
   (models/->ActiveGame game-id game-name password game-state))
 
+(defn active-games [games]
+  (filter (comp not #{:ended} :game-state) games))
+
 (defn active-game-facts [gs]
   (->> gs
        (game-state/games)
-       (filter (comp not #{:ended} :game-state))
+       (active-games)
        (map active-game-fact)))

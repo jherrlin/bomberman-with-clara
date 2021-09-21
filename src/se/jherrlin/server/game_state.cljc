@@ -86,34 +86,6 @@
    (->> fire
         (map models/map->FireOnBoard))))
 
-(defn game-state->enginge-facts-1 [gs]
-  (->> [gs]
-       (filter (comp #{:started :created} :game-state))
-       (map (fn [{:keys [subject game-id game-state] :as game}]
-              (concat
-               [(models/->Board subject (board game))
-                (models/->GameState game-id game-state)]
-               (->> (players game)
-                    (vals)
-                    (filter (comp not #{:dead} :player-status))
-                    (map (fn [{:keys [player-id position] :as player}]
-                           (models/->PlayerOnBoardPosition subject player-id position))))
-               (->> (players game)
-                    (vals)
-                    (filter (comp not #{:dead} :player-status))
-                    (map (fn [{:keys [player-id position fire-length] :as player}]
-                           (models/->PlayerOnBoardFireLength subject player-id position fire-length))))
-               (->> (stones game)
-                    (map (partial models/->Stone subject)))
-               (->> (bombs game)
-                    (map models/map->BombOnBoard))
-               (->> (items game)
-                    (map (fn [{:keys [item-position-xy item-power]}]
-                           (models/->ItemOnBoard game-id item-position-xy item-power))))
-               (->> (fires game)
-                    (map models/map->FireOnBoard)))))
-       (apply concat)))
-
 (defn game-state->enginge-facts [gs]
   (->> gs
        :games
