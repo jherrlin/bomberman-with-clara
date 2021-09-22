@@ -39,22 +39,19 @@
 (defmulti command->engine-fact (fn [gs command] (:action command)))
 
 (defmethod command->engine-fact :move [gs {:keys [timestamp game-id user-id direction] :as command}]
-  (let [game-state'     @gs
-        user-current-xy (game-state/player-current-xy game-state' game-id user-id)]
+  (when-let [user-current-xy (game-state/player-current-xy @gs game-id user-id)]
     (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction)))
 
 (defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id timestamp] :as command}]
-  (let [game-state'         @gs
-        user-current-xy     (game-state/player-current-xy          game-state' game-id user-id)
-        user-fire-length    (game-state/player-fire-length         game-state' game-id user-id)
-        max-number-of-bombs (game-state/player-max-number-of-bombs game-state' game-id user-id)]
-    (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs)))
+  (when-let [user-current-xy  (game-state/player-current-xy          @gs game-id user-id)]
+    (let [user-fire-length    (game-state/player-fire-length         @gs game-id user-id)
+          max-number-of-bombs (game-state/player-max-number-of-bombs @gs game-id user-id)]
+      (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs))))
 
 (defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id timestamp] :as command}]
-  (let [game-state'      @gs
-        user-current-xy  (game-state/player-current-xy       game-state' game-id user-id)
-        facing-direction (game-state/player-facing-direction game-state' game-id user-id)]
-    (models/->PlayerWantsToThrowBomb timestamp game-id user-id user-current-xy facing-direction)))
+  (when-let [user-current-xy  (game-state/player-current-xy @gs game-id user-id)]
+    (let [facing-direction (game-state/player-facing-direction @gs game-id user-id)]
+      (models/->PlayerWantsToThrowBomb timestamp game-id user-id user-current-xy facing-direction))))
 
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
