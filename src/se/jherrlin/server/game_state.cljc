@@ -12,6 +12,10 @@
   ([game-state player-id]         (get-in game-state                [:players player-id :position]))
   ([game-state subject player-id] (get-in game-state [:games subject :players player-id :position])))
 
+(defn dead-player
+  ([game-state player-id]         (get-in game-state                [:dead-players player-id]))
+  ([game-state subject player-id] (get-in game-state [:games subject :dead-players player-id])))
+
 (defn player-fire-length
   ([game-state player-id]         (get-in game-state                [:players player-id :fire-length]))
   ([game-state subject player-id] (get-in game-state [:games subject :players player-id :fire-length])))
@@ -139,7 +143,8 @@
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction player-id]} data]
-    (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction)))
+    (when-not (dead-player game-state player-id)
+      (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction))))
 
 (defmethod projection :se.jherrlin.bomberman.player/picks-fire-inc-item
   [game-state {:keys [subject data] :as event}]
@@ -162,7 +167,8 @@
 (defmethod projection :se.jherrlin.bomberman.player/move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id next-position direction]} data]
-    (assoc-in game-state [:games subject :players player-id :position] next-position)))
+    (when-not (dead-player game-state player-id)
+      (assoc-in game-state [:games subject :players player-id :position] next-position))))
 
 (defmethod projection :se.jherrlin.bomberman.game/bomb-to-add
   [game-state {:keys [subject data] :as event}]
