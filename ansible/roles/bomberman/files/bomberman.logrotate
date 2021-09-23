@@ -1,0 +1,7 @@
+/webapps/bomberman/logs/bomberman.log {
+        daily
+        missingok
+        rotate 31
+        compress
+        create
+}

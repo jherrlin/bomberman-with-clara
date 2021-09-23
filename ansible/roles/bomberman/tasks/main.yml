@@ -40,7 +40,7 @@
       group: "root"
   register: result
 
-- name: Copy  deploy service
+- name: Copy deploy service
   copy:
       src: bomberman-deploy.service
       dest: "/etc/systemd/system/"
@@ -63,3 +63,11 @@
     name: bomberman-deploy.path
     state: started
     enabled: yes
+
+- name: Copy bomberman logrotate config
+  copy:
+      src: bomberman.logrotate
+      dest: "/etc/logrotate.d/bomberman"
+      owner: "root"
+      group: "root"
+  register: result
