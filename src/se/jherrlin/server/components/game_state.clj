@@ -34,7 +34,10 @@
                          (reset! game-state
                                  (projection-fn
                                   @game-state
-                                  (take diffcount (-> new-state :events))))))))
+                                  (->> new-state
+                                       :events
+                                       (take diffcount)
+                                       (reverse))))))))
         (assoc this
                :projection-fn projection-fn
                :game-state    game-state))))
