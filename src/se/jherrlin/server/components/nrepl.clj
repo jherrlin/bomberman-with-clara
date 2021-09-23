@@ -21,9 +21,10 @@
   (stop [this]
     (if-let [server (get this :server)]
       (do
-        (timbre/info "Stopping NREPL component.")
-        (nrepl/stop-server server)
-        (assoc this :server nil))
+        ;; (timbre/info "Stopping NREPL component.")
+        ;; (nrepl/stop-server server)
+        ;; (assoc this :server nil)
+        )
       (do
         (timbre/info "Stopping NREPL component but no server instance found!")
         this))))
