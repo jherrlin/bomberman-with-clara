@@ -134,7 +134,7 @@
 (defrule place-bomb
   "Player place bomb in her current location."
   [TimestampNow (= ?now now)]
-  [PlayerWantsToPlaceBomb
+  [?player-wants-to-place-bomb <- PlayerWantsToPlaceBomb
    (= ?game-id game-id)
    (= ?place-bomb-player-id player-id)
    (= ?fire-length fire-length)
@@ -148,6 +148,7 @@
   [?bombs-placed-by-player <- (acc/count) from [BombOnBoard (= ?game-id game-id) (= player-id ?place-bomb-player-id)]]
   [:test (< ?bombs-placed-by-player ?max-nr-of-bombs-for-player)]
   =>
+  (retract! ?player-wants-to-place-bomb)
   (insert-unconditional! (BombToAdd.   ?now ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp))
   (insert-unconditional! (BombOnBoard. ?game-id ?place-bomb-player-id ?player-current-xy ?fire-length ?timestamp)))
 
