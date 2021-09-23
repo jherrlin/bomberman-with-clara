@@ -1,6 +1,7 @@
 (ns se.jherrlin.server.user-commands
   (:require [clojure.spec.alpha :as s]
             [taoensso.timbre :as timbre]
+            [clojure.test.check.generators :as gen]
             [clojure.string :as str]))
 
 (s/def ::non-blank-string (s/and string? (complement str/blank?)))
@@ -42,8 +43,22 @@
 (defmethod register-incomming-user-command! :default [incomming-commands-state m]
   (timbre/error "In dont know what to do with" m))
 
+(defn generate-bot-action [game-id bot-id]
+  (let [r (rand-int 100)]
+    (cond
+      (>= 2 r)
+      {:action :place-bomb
+       :game-id game-id
+       :user-id bot-id}
+      (< 2 r)
+      (assoc (gen/generate (s/gen ::move))
+             :action :move
+             :game-id game-id
+             :user-id bot-id))))
+
 
 (comment
+  (gen/sample (s/gen ::move))
 
   (s/valid? ::start-game
             {:action  :start-game

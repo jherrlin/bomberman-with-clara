@@ -17,17 +17,10 @@
         (let [address (or (:address args) "127.0.0.1")
               port    (or (:port args) 50505)
               server  (nrepl.server/start-server :bind address :port port)]
-          (assoc this :server server)))))
+          (assoc this :server server :port port :address address)))))
   (stop [this]
-    (if-let [server (get this :server)]
-      (do
-        ;; (timbre/info "Stopping NREPL component.")
-        ;; (nrepl/stop-server server)
-        ;; (assoc this :server nil)
-        )
-      (do
-        (timbre/info "Stopping NREPL component but no server instance found!")
-        this))))
+    (timbre/info "NREPL wont be stopped!")
+    this))
 
 (defn create
   "Create NREPL component

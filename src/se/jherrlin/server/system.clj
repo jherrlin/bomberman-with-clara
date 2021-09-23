@@ -16,12 +16,15 @@
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
    [se.jherrlin.server.user-commands :as user-commands]
    [se.jherrlin.server.models :as models]
+   [clojure.spec.alpha :as s]
    [clojure.core.async :as a :refer [<! go-loop timeout]]
    [taoensso.timbre :as timbre]
    [se.jherrlin.datetime :as datetime]
    [clojure.pprint :as pprint]
    [se.jherrlin.clara-labs.board :as board]
-   [se.jherrlin.server.game-state2 :as game-state2])
+   [se.jherrlin.server.game-state2 :as game-state2]
+   [se.jherrlin.server.application-service :as application-service]
+   [se.jherrlin.server.resources :as resources])
   (:import [java.time Instant Duration])
   (:gen-class))
 
@@ -39,18 +42,21 @@
 (defmulti command->engine-fact (fn [gs command] (:action command)))
 
 (defmethod command->engine-fact :move [gs {:keys [timestamp game-id user-id direction] :as command}]
-  (when-let [user-current-xy (game-state/player-current-xy @gs game-id user-id)]
-    (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction)))
+  (when-not (game-state/dead-player @gs game-id user-id)
+    (let [user-current-xy (game-state/player-current-xy @gs game-id user-id)]
+      (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction))))
 
 (defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id timestamp] :as command}]
-  (when-let [user-current-xy  (game-state/player-current-xy          @gs game-id user-id)]
-    (let [user-fire-length    (game-state/player-fire-length         @gs game-id user-id)
+  (when-not (game-state/dead-player @gs game-id user-id)
+    (let [user-current-xy  (game-state/player-current-xy          @gs game-id user-id)
+          user-fire-length    (game-state/player-fire-length         @gs game-id user-id)
           max-number-of-bombs (game-state/player-max-number-of-bombs @gs game-id user-id)]
       (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs))))
 
 (defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id timestamp] :as command}]
-  (when-let [user-current-xy  (game-state/player-current-xy @gs game-id user-id)]
-    (let [facing-direction (game-state/player-facing-direction @gs game-id user-id)]
+  (when-not (game-state/dead-player @gs game-id user-id)
+    (let [user-current-xy  (game-state/player-current-xy @gs game-id user-id)
+          facing-direction (game-state/player-facing-direction @gs game-id user-id)]
       (models/->PlayerWantsToThrowBomb timestamp game-id user-id user-current-xy facing-direction))))
 
 (defn incomming-actions
@@ -151,6 +157,53 @@
   (def game-state' (-> production :game-state :game-state))
   (def event-store (-> production :event-store :store))
   (def broadcast-fn! (get-in production [:websocket :broadcast-fn!]))
+
+  (->> @event-store
+       :events
+       (reverse)
+       (reduce game-state/projection {})
+       )
+
+  @game-state'
+  (spit "/tmp/facts-to-analyze.edn" (pr-str rule-enginge-facts))
+
+  (def facts-to-debug
+    (with-in-str (slurp "/tmp/facts-to-analyze.edn")
+      (read)))
+
+  (bomberman-rules/run-rules facts-to-debug)
+  (map type facts-to-debug)
+
+  (let [game-id #uuid "7a095fed-2863-488d-9d49-ea2ef3ad26da"]
+    (map (fn [{:keys [bot-id bot-name]}]
+           (add-events-fn! [(.toCloudEvent (models/->JoinGame (java.util.Date.) game-id bot-id bot-name))]))
+         [{:bot-id   #uuid "e24b0220-b98d-4319-8991-9c634da7027c"
+           :bot-name "Bot 1"}
+          {:bot-id   #uuid "ebc270ae-62fe-42de-90ec-a6b3875eb56e"
+           :bot-name "Bot 2"}
+          {:bot-id   #uuid "a9d89612-cd08-46ab-8303-89918a633193"
+           :bot-name "Bot 3"}]))
+
+  (def run-bot-commands? (atom true))
+  (go-loop []
+    (let [game-id #uuid "7a095fed-2863-488d-9d49-ea2ef3ad26da"]
+      (doall
+       (map (fn [{:keys [bot-id]}]
+              (user-commands/register-incomming-user-command!
+               incomming-commands-state
+               (assoc (user-commands/generate-bot-action game-id bot-id)
+                      :timestamp (datetime/now))))
+            [{:bot-id   #uuid "e24b0220-b98d-4319-8991-9c634da7027c"
+              :bot-name "Bot 1"}
+             {:bot-id   #uuid "ebc270ae-62fe-42de-90ec-a6b3875eb56e"
+              :bot-name "Bot 2"}
+             {:bot-id   #uuid "a9d89612-cd08-46ab-8303-89918a633193"
+              :bot-name "Bot 3"}])))
+    (when @run-bot-commands?
+      (<! (timeout 100))
+      (recur)))
+  (reset! run-bot-commands? false)
+
 
 
   @game-state'

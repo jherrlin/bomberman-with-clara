@@ -57,10 +57,10 @@
   (reset! event-store (resources/read-edn-file "events/danks-alfa-testning-events.edn"))
 
 
-  (reset! game-state' (resources/read-edn-file "events/kamrat-game/kamrat-game-state.edn"))
-  (reset! event-store (resources/read-edn-file "events/kamrat-game/kamrat-actions.edn"))
+  (reset! game-state' (resources/read-edn-file "events/kamrat-2021-09-23/kamrat-test-2021-09-23_15-29-game-state.edn"))
+  (reset! event-store (resources/read-edn-file "events/kamrat-2021-09-23/kamrat-test-2021-09-23_15-29-events.edn"))
   (reset! system/incomming-commands-state
-          (resources/read-edn-file "events/kamrat-game/kamrat-incomming-commands.edn"))
+          (resources/read-edn-file "events/kamrat-2021-09-23/kamrat-test-2021-09-23_15-29-incomming-commands.edn"))
 
   )
 
