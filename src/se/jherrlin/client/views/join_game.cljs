@@ -57,7 +57,7 @@
             ^{:key (str game-id)}
             [:> semantic-ui/Table.Row
              [:> semantic-ui/Table.Cell game-name]
-             [:> semantic-ui/Table.Cell (->> players (map :player-name) (str/join ", "))]
+             [:> semantic-ui/Table.Cell (->> players (map (comp first :player-name)) (str/join ", "))]
              [:> semantic-ui/Table.Cell [:> semantic-ui/Form.Button
                                          {:on-click #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id game-id}])}
                                          "join"]]])]]])]))
