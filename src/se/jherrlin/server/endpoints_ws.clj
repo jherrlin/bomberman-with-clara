@@ -34,7 +34,7 @@
     (timbre/debug id client-id ?data)
     (?reply-fn (->> req :game-state deref :games vals
                     (filter (comp #{:created} :game-state))
-                    (map #(select-keys % [:game-name :subject]))))))
+                    (map #(select-keys % [:game-name :subject :players]))))))
 
 (defmethod handler :game/join
   [req]

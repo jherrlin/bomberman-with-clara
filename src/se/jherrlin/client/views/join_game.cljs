@@ -4,7 +4,8 @@
             [cljs.pprint :as pprint]
             [se.jherrlin.client.views.game-lobby :as game-lobby]
             [se.jherrlin.server.user-commands :as user-commands]
-            ["semantic-ui-react" :as semantic-ui]))
+            ["semantic-ui-react" :as semantic-ui]
+            [clojure.string :as str]))
 
 (def events
   [{:n ::available-games}])
@@ -45,18 +46,26 @@
 (defn view []
   (let [the-list @(re-frame/subscribe [::available-games])]
     [:div
+     [:p "The list dont update itself, navigate to another side and then back to
+     update the list."]
      (if-not (seq the-list)
        [:p "No games to join."]
-       (for [{:keys [game-name subject]} the-list]
-         ^{:key (str subject)}
-         [:<>
-          [:br]
-          [:br]
-          [:div game-name
-           [:button
-            {:on-click  #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id subject}])
-             :body      "Join game"}
-            "join"]]]))]))
+       [:<>
+        [:> semantic-ui/Table {:celled true}
+         [:> semantic-ui/Table.Header
+          [:> semantic-ui/Table.Row
+           [:> semantic-ui/Table.HeaderCell "Game name"]
+           [:> semantic-ui/Table.HeaderCell "Players (first char)"]
+           [:> semantic-ui/Table.HeaderCell "Join"]]]
+         [:> semantic-ui/Table.Body
+          (for [{:keys [game-name subject players]} the-list]
+            ^{:key (str subject)}
+            [:> semantic-ui/Table.Row
+             [:> semantic-ui/Table.Cell game-name]
+             [:> semantic-ui/Table.Cell (->> players vals (map (comp first :player-name)) (str/join ", "))]
+             [:> semantic-ui/Table.Cell [:> semantic-ui/Form.Button
+                                         {:on-click #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id subject}])}
+                                         "join"]]])]]])]))
 
 (defn login []
   (let [form-values     @(re-frame/subscribe [:form-values ::join-game])
@@ -116,8 +125,7 @@
                     (fn [{{:keys [game-id game-name]} :path :as a}]
                       (let [game-id (uuid game-id)]
                         (re-frame/dispatch [:form-value ::join-game :action :join-game])
-                        (re-frame/dispatch [:form-value ::join-game :game-id game-id]))
-                      (println "enter login"))
+                        (re-frame/dispatch [:form-value ::join-game :game-id game-id])))
                     :stop
                     (fn [_]
-                      (println "leave login"))}]}]])
+                      (re-frame/dispatch [:form-reset ::join-game]))}]}]])
