@@ -35,7 +35,9 @@
        "Lobby for " game-name ", game password is: " password]
       [:p "Wait here until enough player have joined the game. There needs to be
       at least 2 players (maximum 4) before you can start the game. When enough
-      players have joined, a \"Start game!\" button will show up."]
+      players have joined, a \"Start game!\" button will show up. If a game is
+      not started within 5 minutes, it will be garbage collected."]
+
       (if (seq start-game-errors)
         [:p (-> start-game-errors first :message)]
         [:div {:style {:display         "flex"

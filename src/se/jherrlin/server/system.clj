@@ -39,22 +39,27 @@
   (reset! incomming-commands-state {})
   )
 
+(defn started-game-player-is-not-dead-and-have-xy? [gs game-id user-id]
+  (and (#{:started} (:game-state (game-state/game gs game-id)))
+       (not (game-state/dead-player  gs game-id user-id))
+       (game-state/player-current-xy gs game-id user-id)))
+
 (defmulti command->engine-fact (fn [gs command] (:action command)))
 
 (defmethod command->engine-fact :move [gs {:keys [timestamp game-id user-id direction] :as command}]
-  (when-not (game-state/dead-player @gs game-id user-id)
+  (when (started-game-player-is-not-dead-and-have-xy? @gs game-id user-id)
     (let [user-current-xy (game-state/player-current-xy @gs game-id user-id)]
       (models/->PlayerWantsToMove timestamp game-id user-id user-current-xy direction))))
 
 (defmethod command->engine-fact :place-bomb [gs {:keys [user-id game-id timestamp] :as command}]
-  (when-not (game-state/dead-player @gs game-id user-id)
+  (when (started-game-player-is-not-dead-and-have-xy? @gs game-id user-id)
     (let [user-current-xy  (game-state/player-current-xy          @gs game-id user-id)
           user-fire-length    (game-state/player-fire-length         @gs game-id user-id)
           max-number-of-bombs (game-state/player-max-number-of-bombs @gs game-id user-id)]
       (models/->PlayerWantsToPlaceBomb timestamp game-id user-id user-current-xy user-fire-length max-number-of-bombs))))
 
 (defmethod command->engine-fact :throw-bomb [gs {:keys [game-id user-id timestamp] :as command}]
-  (when-not (game-state/dead-player @gs game-id user-id)
+  (when (started-game-player-is-not-dead-and-have-xy? @gs game-id user-id)
     (let [user-current-xy  (game-state/player-current-xy @gs game-id user-id)
           facing-direction (game-state/player-facing-direction @gs game-id user-id)]
       (models/->PlayerWantsToThrowBomb timestamp game-id user-id user-current-xy facing-direction))))
@@ -88,10 +93,13 @@
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
           game-state-facts    (game-state2/started-games-facts @game-state)
+          created-game-facts  (game-state2/created-game-facts @game-state)
+          _                   (def created-game-facts created-game-facts)
           _                   (def game-state-facts game-state-facts)
           rule-enginge-facts  (concat
                                user-action-facts
                                game-state-facts
+                               created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
           _                   (def rule-enginge-facts rule-enginge-facts)
           _                   (timbre/info "Rule enginge counts: " (count rule-enginge-facts))
@@ -174,7 +182,7 @@
   (bomberman-rules/run-rules facts-to-debug)
   (map type facts-to-debug)
 
-  (let [game-id #uuid "7a095fed-2863-488d-9d49-ea2ef3ad26da"]
+  (let [game-id #uuid "246e1ee5-48d3-47e4-b9fe-c66e648439a0"]
     (map (fn [{:keys [bot-id bot-name]}]
            (add-events-fn! [(.toCloudEvent (models/->JoinGame (java.util.Date.) game-id bot-id bot-name))]))
          [{:bot-id   #uuid "e24b0220-b98d-4319-8991-9c634da7027c"
@@ -186,7 +194,7 @@
 
   (def run-bot-commands? (atom true))
   (go-loop []
-    (let [game-id #uuid "7a095fed-2863-488d-9d49-ea2ef3ad26da"]
+    (let [game-id #uuid "246e1ee5-48d3-47e4-b9fe-c66e648439a0"]
       (doall
        (map (fn [{:keys [bot-id]}]
               (user-commands/register-incomming-user-command!
@@ -241,7 +249,10 @@
 
   (bomberman-rules/run-rules
    (game-state2/games-facts
-    (game-state/the-projection {} (->> @event-store :events reverse (take 22)))))
+    (game-state/the-projection {} (->> @event-store :events reverse))
+    ))
+
+
 
   (reset! game-state' (game-state/the-projection @game-state' (->> @event-store :events reverse)))
 

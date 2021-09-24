@@ -6,8 +6,6 @@
 
 (defn game-facts [{:keys [game-create-timestamp game-id game-started-timestamp game-state] :as game}]
   (concat
-   (when game-create-timestamp
-     [(models/->GameCreatedTimestamp game-create-timestamp game-id)])
    (when game-started-timestamp
      [(models/->GameStartedTimestamp game-started-timestamp game-id)])
    [(models/->Board game-id (game-state/board game))
@@ -57,3 +55,10 @@
        (filter (comp #{:started} :game-state))
        (map game-facts)
        (apply concat)))
+
+(defn created-game-facts [game-state]
+  (->> game-state
+       (game-state/games)
+       (filter (comp #{:created} :game-state))
+       (map (fn [{:keys [game-create-timestamp game-id]}]
+              (models/->GameCreatedTimestamp game-create-timestamp game-id)))))

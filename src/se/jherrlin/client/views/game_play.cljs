@@ -59,7 +59,9 @@
          [:> semantic-ui/Header {:as "h3"}
           (if (seq start-game-errors)
             (-> start-game-errors first :message)
-            "GAME ON!")]
+            [:div
+             [:h2 "GAME ON!"]
+             [:div "Game will be garbage collected after 10 minutes."]])]
          (for [{:keys [player-name player-nr player-id]} (->> game-state
                                                               :players
                                                               (vals))]

@@ -143,7 +143,9 @@
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction player-id]} data]
-    (when-not (dead-player game-state player-id)
+    (when-not
+        (and (dead-player       game-state player-id)
+             (player-current-xy game-state player-id))
       (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction))))
 
 (defmethod projection :se.jherrlin.bomberman.player/picks-fire-inc-item

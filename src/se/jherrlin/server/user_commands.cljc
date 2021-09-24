@@ -46,11 +46,11 @@
 (defn generate-bot-action [game-id bot-id]
   (let [r (rand-int 100)]
     (cond
-      (>= 2 r)
+      (>= 1 r)
       {:action :place-bomb
        :game-id game-id
        :user-id bot-id}
-      (< 2 r)
+      (< 1 r)
       (assoc (gen/generate (s/gen ::move))
              :action :move
              :game-id game-id
