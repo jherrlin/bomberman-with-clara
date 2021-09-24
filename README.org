@@ -16,5 +16,22 @@ The running game can be found at https://bomberman.lambda-group.se/
 
 * Event sourcing
 
-  Events in the system tries to follow the [[https://cloudevents.io/][CloudEvent]] specification. Much of
-  the text below is take directly from Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]].
+  Events in the system tries to follow the [[https://cloudevents.io/][CloudEvent]] specification. Take a look
+  at Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]] for nice documentation.
+
+  In this bomberman game all events are saved into a list. Each time the list
+  updates the changes are sent through a [[https://clojuredocs.org/clojure.core/reduce][reduce]] function together with the old
+  game state. The reduce function updates the old state with the new events and
+  returns a new game state.
+
+  #+BEGIN_SRC artist :results output code
+    +------------------+
+    | List with events |
+    +-------+----------+
+            |
+            |
+            ↓
+    +-------+---------+        ------------
+    | Reduce function +------>( Game state )
+    +-----------------+        ------------
+  #+END_SRC
