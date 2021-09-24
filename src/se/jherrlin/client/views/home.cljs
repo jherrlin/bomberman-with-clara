@@ -51,22 +51,22 @@
                " talk"] " that give a good introduction to Clara. I first heard
        of Clara through Felix podcast " [:a {:target "_blank"
                                              :href   "https://thesearch.space/episodes/2-ryan-brush-on-retaking-rules-for-developers"} "The
-       Search Space"] "."]]
-       [:> semantic-ui/Header {:as "h4"} "Event sourcing"]
-       [:p "is the concept of accumulating state through events. The current
+       Search Space"] "."]
+        [:> semantic-ui/Header {:as "h4"} "Event sourcing"]
+        [:p "is the concept of accumulating state through events. The current
        game state is a projection from running the events through a reduce
        function. Below is a table with all of the events in the example game.
        Some data have been removed to make the table easier to read. You can
        drag the timeline back and forth and a new game state will be calculated
        from the events up until the time you point it to. "
-        "Johan Halebys " [:a
-                          {:href   "https://occurrent.org/documentation#introduction"
-                           :target "_blank"} "Occurrent"] "
+         "Johan Halebys " [:a
+                           {:href   "https://occurrent.org/documentation#introduction"
+                            :target "_blank"} "Occurrent"] "
         is a good source for reading about event sourcing. I have followed
         Johans exampe and used the " [:a
                                       {:target "_blank"
                                        :href   "https://cloudevents.io/"} "cloudevents"] " specification for
-        event structure in this project."]
+        event structure in this project."]]
 
        [:> semantic-ui/Header {:as "h3"}
         "How"]

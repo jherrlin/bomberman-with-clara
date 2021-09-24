@@ -34,16 +34,25 @@
   ((ring/ring-handler
     (ring/router
      [["/" {:summary "Index page"
-            :get (fn [req]
-                   {:status 200 :body (pages/index-html req)})}]
+            :get     (fn [req]
+                       {:status 200 :body (pages/index-html req)})}]
 
       (websocket-endpoints websocket)
 
       ["/events-demo"
        {:get (fn [req]
-               (def req req)
                {:status 200
-                :body events-demo})}]
+                :body   events-demo})}]
+
+      ["/list-games"
+       {:get (fn [req]
+               {:status 200
+                :body
+                (->> game-state :game-state deref :games vals (filter (comp #{:created} :game-state))
+                     (map #(select-keys % [:game-id :game-name :players]))
+                     (map (fn [{:keys [players] :as game}]
+                            (assoc game :players
+                                   (->> players (vals) (map #(select-keys % [:player-name])))))))})}]
 
       ["/swagger.json"
        {:get {:no-doc  true

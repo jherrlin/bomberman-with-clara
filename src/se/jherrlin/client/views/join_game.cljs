@@ -14,11 +14,6 @@
   (::available-games @re-frame.db/app-db)
   )
 
-{:status :ok,
- :data
- {:game-id #uuid "355d82d6-e038-4dac-ada5-080570be7921",
-  :player-id #uuid "a6a0bc9c-9845-471c-a726-aa53c1c4c5a5",
-  :player-name "asd"}}
 (re-frame/reg-event-fx
  ::join-game
  (fn [_ [_ join-game-data]]
@@ -39,9 +34,9 @@
 (re-frame/reg-event-fx
  ::get-available-games
  (fn [_ [_]]
-   {:ws-send {:data       [:game/list nil]
-              :on-success (fn [games]
-                            (re-frame/dispatch [::available-games games]))}}))
+   (re-frame/dispatch [:http-get
+                       {:url        "/list-games"
+                        :on-success [::available-games]}])))
 
 (defn view []
   (let [the-list @(re-frame/subscribe [::available-games])]
@@ -58,13 +53,13 @@
            [:> semantic-ui/Table.HeaderCell "Players (first char)"]
            [:> semantic-ui/Table.HeaderCell "Join"]]]
          [:> semantic-ui/Table.Body
-          (for [{:keys [game-name subject players]} the-list]
-            ^{:key (str subject)}
+          (for [{:keys [game-name game-id players]} the-list]
+            ^{:key (str game-id)}
             [:> semantic-ui/Table.Row
              [:> semantic-ui/Table.Cell game-name]
-             [:> semantic-ui/Table.Cell (->> players vals (map (comp first :player-name)) (str/join ", "))]
+             [:> semantic-ui/Table.Cell (->> players (map :player-name) (str/join ", "))]
              [:> semantic-ui/Table.Cell [:> semantic-ui/Form.Button
-                                         {:on-click #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id subject}])}
+                                         {:on-click #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id game-id}])}
                                          "join"]]])]]])]))
 
 (defn login []

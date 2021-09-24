@@ -19,22 +19,11 @@
 
 (defmethod handler :game/create
   [req]
-  (def req req)
-  (def game-state (-> req :game-state))
-  (def add-events-fn! (-> req :event-store :add-events-fn!))
   (let [{:keys [?data ?reply-fn event-store game-state client-id id]} req
         {:keys [add-events-fn!]}                                      event-store]
     (timbre/debug id client-id ?data)
     (?reply-fn
      (application-service/create-game! game-state add-events-fn! (assoc ?data :action :create-game)))))
-
-(defmethod handler :game/list
-  [req]
-  (let [{:keys [?reply-fn id client-id ?data]} req]
-    (timbre/debug id client-id ?data)
-    (?reply-fn (->> req :game-state deref :games vals
-                    (filter (comp #{:created} :game-state))
-                    (map #(select-keys % [:game-name :subject :players]))))))
 
 (defmethod handler :game/join
   [req]

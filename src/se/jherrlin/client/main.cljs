@@ -1,16 +1,17 @@
 (ns se.jherrlin.client.main
-  (:require [re-frame.core :as re-frame]
-            [reagent.dom :as rd]
-            [reitit.core :as r]
-            [se.jherrlin.client.websocket :as websocket]
-            [se.jherrlin.client.ajax :as ajax]
-            [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
-            [se.jherrlin.server.game-state :as game-state]
-            [se.jherrlin.server.models :as models]
-            [reitit.frontend.easy :as rfe]
-            [se.jherrlin.client.router :as client.router]
-            [se.jherrlin.client.events :as events]
-            ["semantic-ui-react" :as semantic-ui]))
+  (:require
+   [se.jherrlin.client.websocket :as websocket]
+   [re-frame.core :as re-frame]
+   [reagent.dom :as rd]
+   [reitit.core :as r]
+   [se.jherrlin.client.ajax :as ajax]
+   [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+   [se.jherrlin.server.game-state :as game-state]
+   [se.jherrlin.server.models :as models]
+   [reitit.frontend.easy :as rfe]
+   [se.jherrlin.client.router :as client.router]
+   [se.jherrlin.client.events :as events]
+   ["semantic-ui-react" :as semantic-ui]))
 
 
 (defn header-menu [router]
