@@ -90,21 +90,36 @@
              :message "unknown"})))))
 
 (defn join-game! [game-state add-events-fn! join-game-event-data]
+  (def game-state game-state)
+  (def add-events-fn! add-events-fn!)
+  (def join-game-event-data join-game-event-data)
   (if-not (s/valid? ::user-commands/join-game join-game-event-data)
     {:status :error
      :message
      (s/explain-data ::user-commands/join-game join-game-event-data)}
     (let [{:keys [game-password game-id player-name]}       join-game-event-data
+          _                                                 (def game-password game-password)
+          _                                                 (def game-id game-id)
+          _                                                 (def player-name player-name)
           now                                               (datetime/now)
+          _                                                 (def now now)
           player-id                                         (java.util.UUID/randomUUID)
+          _                                                 (def player-id player-id)
           game                                              (game-state/game @game-state game-id)
+          _                                                 (def game game)
           player-wants-to-join-game                         (models/->PlayerWantsToJoinGame player-id player-name game-id game-password)
-          {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules
-                                                             (concat
-                                                              (game-state2/game-facts game)
-                                                              [(models/->TimestampNow now)]
-                                                              [(game-state2/active-game-fact game)]
-                                                              [player-wants-to-join-game]))]
+          _                                                 (def player-wants-to-join-game player-wants-to-join-game)
+          _                                                 (def player-wants-to-join-game player-wants-to-join-game)
+          facts                                             (concat
+                                                             (game-state2/game-facts game)
+                                                             [(models/->TimestampNow now)]
+                                                             [(game-state2/active-game-fact game)]
+                                                             [player-wants-to-join-game])
+          _                                                 (def facts facts)
+          {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules facts)
+          _                                                 (def join-game-errors join-game-errors)
+          _                                                 (def join-games join-games)
+          _                                                 (def actions actions)]
       (cond
         (seq join-game-errors)
         {:status  :error

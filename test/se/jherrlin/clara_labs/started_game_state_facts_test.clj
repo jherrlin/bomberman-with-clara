@@ -10,9 +10,9 @@
 (comment
   (->> (let [game-id 1]
          [(models/->CreateGame #inst "2021-09-20T20:15:34.000-00:00" game-id "GameName" "pwd" board/mini '() '())
-          (models/->JoinGame   #inst "2021-09-20T20:15:40.000-00:00" game-id 1 "Player 1")
-          (models/->JoinGame   #inst "2021-09-20T20:15:42.000-00:00" game-id 2 "Player 2")
-          (models/->JoinGame   #inst "2021-09-20T20:15:44.000-00:00" game-id 3 "Player 3")
+          (models/->JoinGame   #inst "2021-09-20T20:15:40.000-00:00" game-id 1 "Player 1" 1 [1 1])
+          (models/->JoinGame   #inst "2021-09-20T20:15:42.000-00:00" game-id 2 "Player 2" 2 [1 1])
+          (models/->JoinGame   #inst "2021-09-20T20:15:44.000-00:00" game-id 3 "Player 3" 3 [1 1])
           (models/->StartGame  #inst "2021-09-20T20:15:47.000-00:00" game-id)])
        (map #(.toCloudEvent %))
        (game-state/the-projection {})
@@ -31,9 +31,9 @@
      (=
       (->> (let [game-id 1]
              [(models/->CreateGame #inst "2021-09-20T20:15:34.000-00:00" game-id "GameName" "pwd" board/mini '() '())
-              (models/->JoinGame   #inst "2021-09-20T20:15:40.000-00:00" game-id 1 "Player 1")
-              (models/->JoinGame   #inst "2021-09-20T20:15:42.000-00:00" game-id 2 "Player 2")
-              (models/->JoinGame   #inst "2021-09-20T20:15:44.000-00:00" game-id 3 "Player 3")
+              (models/->JoinGame   #inst "2021-09-20T20:15:40.000-00:00" game-id 1 "Player 1" 1 [1 1])
+              (models/->JoinGame   #inst "2021-09-20T20:15:42.000-00:00" game-id 2 "Player 2" 2 [1 1])
+              (models/->JoinGame   #inst "2021-09-20T20:15:44.000-00:00" game-id 3 "Player 3" 3 [1 1])
               (models/->StartGame  #inst "2021-09-20T20:15:47.000-00:00" game-id)])
            (map #(.toCloudEvent %))
            (game-state/the-projection {})

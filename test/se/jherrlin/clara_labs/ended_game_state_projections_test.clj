@@ -15,8 +15,8 @@
                  player-1-id 1
                  player-2-id 2]
              [(models/->CreateGame   #inst "2021-09-20T20:15:34.000-00:00" game-id "GameName" "pwd" board/mini '() '())
-              (models/->JoinGame     #inst "2021-09-20T20:15:40.000-00:00" game-id player-1-id "Player 1")
-              (models/->JoinGame     #inst "2021-09-20T20:15:42.000-00:00" game-id player-2-id "Player 2")
+              (models/->JoinGame     #inst "2021-09-20T20:15:40.000-00:00" game-id player-1-id "Player 1" 1 [1 1])
+              (models/->JoinGame     #inst "2021-09-20T20:15:42.000-00:00" game-id player-2-id "Player 2" 2 [1 1])
               (models/->StartGame    #inst "2021-09-20T20:15:47.000-00:00" game-id)
               (models/->GameWinner   #inst "2021-09-20T20:15:49.100-00:00" game-id "leo")
               (models/->GameShutdown #inst "2021-09-20T20:15:49.100-00:00" game-id)

@@ -294,13 +294,27 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   (retract! ?player-wants-to-start-game)
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
-(defrule player-wants-to-join-game
-  [TimestampNow (= ?now now)]
-  [?player-wants-to-join-game <- PlayerWantsToJoinGame (= ?game-id game-id) (= ?player-password password) (= ?player-name player-name) (= ?player-id player-id)]
-  [ActiveGame                  (= :created game-state) (= ?game-id game-id) (= ?game-password password)]
-  [:test (= ?player-password ?game-password)]
+(def player-positions
+  {1 [1  1]
+   2 [17 9]
+   3 [1  9]
+   4 [17 1]})
+
+(defrule players-wants-to-join-game
+  [TimestampNow               (= ?now now)]
+  [ActiveGame                 (= :created game-state) (= ?game-id game-id) (= ?game-password password)]
+  [?players-wants-to-join-game <- (acc/all) :from [PlayerWantsToJoinGame (= ?game-id game-id) (= password ?game-password)]]
+  [?players-joined             <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
+  [:test (seq ?players-wants-to-join-game)]
   =>
-  (insert! (JoinGame. ?now ?game-id ?player-id ?player-name)))
+  (let [number-of-player-already-joined (count ?players-joined)]
+    (doseq [[idx {:keys [player-id player-name] :as player}] (some->> ?players-wants-to-join-game
+                                                                      (sort-by :player-name)
+                                                                      (map-indexed list))]
+      (let [idx       (inc idx)
+            player-nr (+ number-of-player-already-joined idx)
+            position  (get player-positions player-nr)]
+        (insert! (JoinGame. ?now ?game-id player-id player-name player-nr position))))))
 
 (defrule player-wants-to-join-game-but-password-is-wrong
   [?player-wants-to-join-game <- PlayerWantsToJoinGame     (= ?game-id game-id) (= ?player-password password)]

@@ -155,10 +155,18 @@
                       (set))})
       {:errors #{},
        :joins
-       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-          :game-id 2, :player-id 3, :player-name "Kalle"}
-         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-          :game-id 2, :player-id 1, :player-name "John"}}})))
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 2,
+          :player-id 1,
+          :player-name "John",
+          :player-nr 1,
+          :position [1 1]}
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 2,
+          :player-id 3,
+          :player-name "Kalle",
+          :player-nr 2,
+          :position [17 9]}}})))
 
   (t/testing "Player cant join game cause it's full."
     (t/is
@@ -197,12 +205,14 @@
          :joins  (->> (query session' bomberman/join-game?)
                       (map (comp #(into {} %) :?join-game))
                       (set))})
-      {:errors
-       #{{:game-id 2,
-          :message "Password to game is wrong!"}},
-       :joins #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
-                 :game-id 2, :player-id 3, :player-name "Kalle"}}}))
-    )
+      {:errors #{{:game-id 2, :message "Password to game is wrong!"}},
+       :joins
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id 2,
+          :player-id 3,
+          :player-name "Kalle",
+          :player-nr 1,
+          :position [1 1]}}})))
 
   (t/testing "Users cant join game if state is wrong"
     (t/is

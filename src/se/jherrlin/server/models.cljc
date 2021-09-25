@@ -137,7 +137,7 @@
 (defrecord GameState [game-id game-state])
 (defrecord PlayerWantsToJoinGame [player-id player-name game-id password])
 (defrecord JoinGameError [game-id message])
-(defrecord JoinGame [timestamp game-id player-id player-name]
+(defrecord JoinGame [timestamp game-id player-id player-name player-nr position]
   CloudEvent
   (toCloudEvent [this]
     (let [default {:user-facing-direction    :south

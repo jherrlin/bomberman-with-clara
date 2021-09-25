@@ -15,9 +15,9 @@
                player-2-id 2
                player-3-id 3]
            [(models/->CreateGame             #inst "2021-09-20T20:15:34.000-00:00" game-id "GameName" "pwd" board/mini '() '())
-            (models/->JoinGame               #inst "2021-09-20T20:15:40.000-00:00" game-id player-1-id "Player 1")
-            (models/->JoinGame               #inst "2021-09-20T20:15:42.000-00:00" game-id player-2-id "Player 2")
-            (models/->JoinGame               #inst "2021-09-20T20:15:44.000-00:00" game-id player-3-id "Player 3")
+            (models/->JoinGame               #inst "2021-09-20T20:15:40.000-00:00" game-id player-1-id "Player 1" 1 [1 1])
+            (models/->JoinGame               #inst "2021-09-20T20:15:42.000-00:00" game-id player-2-id "Player 2" 2 [1 1])
+            (models/->JoinGame               #inst "2021-09-20T20:15:44.000-00:00" game-id player-3-id "Player 3" 3 [1 1])
             (models/->StartGame              #inst "2021-09-20T20:15:47.000-00:00" game-id)
             (models/->PlayerWantsToMove      #inst "2021-09-20T20:15:48.000-00:00" game-id player-1-id [1 1] :west)
             (models/->PlayerMove             #inst "2021-09-20T20:15:48.100-00:00" game-id player-1-id [2 1] :west)
@@ -56,7 +56,7 @@
          :player-id 2,
          :user-facing-direction :south,
          :player-nr 2,
-         :position [17 9],
+         :position [1 1],
          :timestamp #inst "2021-09-20T20:15:42.000-00:00",
          :player-name "Player 2"},
         3
@@ -66,7 +66,7 @@
          :player-id 3,
          :user-facing-direction :south,
          :player-nr 3,
-         :position [1 9],
+         :position [1 1],
          :timestamp #inst "2021-09-20T20:15:44.000-00:00",
          :player-name "Player 3"}},
        :items '(),

@@ -96,22 +96,10 @@
                                           :game-create-timestamp timestamp
                                           :game-state            :created)))))
 
-(def player-positions
-  {1 [1  1]
-   2 [17 9]
-   3 [1  9]
-   4 [17 1]})
-
 (defmethod projection :se.jherrlin.bomberman.game/join-game
   [game-state {:keys [subject data] :as event}]
-  (let [players-in-game    (get-in game-state [:games subject :players])
-        number-of-players  (count players-in-game)
-        player-gets-number (inc number-of-players)]
-    (assoc-in game-state
-              [:games subject :players (:player-id data)]
-              (-> data
-                  (assoc :player-nr player-gets-number)
-                  (assoc :position (get player-positions player-gets-number))))))
+  (let [{:keys [player-id]} data]
+    (assoc-in game-state [:games subject :players player-id] data)))
 
 (defmethod projection :se.jherrlin.bomberman.game/start
   [game-state {:keys [subject data] :as event}]
