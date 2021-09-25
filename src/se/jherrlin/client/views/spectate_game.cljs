@@ -62,7 +62,7 @@
 
        [:div {:style {:text-align "center"}}
         [client.common/screen screen]]
-       [:br]
+       [:div "Timeline -->"]
        [:div {:style {:display         "flex"
                       :align-items     "center"
                       :justify-content "center"}}
@@ -76,6 +76,7 @@
           :on-change #(do
                         (let [nr (js/parseInt (.. % -target -value))]
                           (re-frame/dispatch [::time-travel-location nr])))}]]
+       [:div (str "Game projection up to event nr: " time-travel-location)]
        [:hr]
        [:p "Here is a table of the events (some data have been removed to make it easier to read)."]
        [:div
