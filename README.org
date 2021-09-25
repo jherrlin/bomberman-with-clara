@@ -35,3 +35,27 @@ The running game can be found at https://bomberman.lambda-group.se/
     | Reduce function +------>( Game state )
     +-----------------+        ------------
   #+END_SRC
+
+* Other libraries in use
+
+  here is a handful of the libraries used in this project and what they do.
+
+  - [[https://github.com/stuartsierra/component][component]] for orchestrating stateful server side components
+  - [[https://github.com/ptaoussanis/sente][sente]] for websocket communication
+  - [[https://github.com/day8/re-frame][re-frame]] for single pages client application
+
+* Production server setup and CD
+
+  Server setup is done with Ansible. Look in the =ansible= folder for details.
+  Continuous delivery is made with help from CircleCi. CirclCi tests the code
+  and builds an artifact. CirclCi then ships the artifact to the server via SSH.
+  When the server gets the new artifact Systemd picks up the changes and
+  restarts the application with the new artifact.
+
+* Update deps
+
+  Instructions on how to update dependencies.
+
+  #+BEGIN_SRC shell :results output code
+    clojure -Moutdated --write
+  #+END_SRC

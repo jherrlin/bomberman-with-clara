@@ -23,7 +23,7 @@
 (def game-state' (-> system/production :game-state :game-state))
 (def event-store (-> system/production :event-store :store))
 (def broadcast-fn! (get-in system/production [:websocket :broadcast-fn!]))
-
+(def event-store (-> system/production :event-store :store))
 
 
 (defn dump-app-states! [game-name]
