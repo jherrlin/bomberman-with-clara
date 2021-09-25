@@ -33,6 +33,10 @@
      [:> semantic-ui/Container {:text true}
       [:> semantic-ui/Header {:as "h3"}
        "Lobby for " game-name ", game password is: " password]
+
+      [:p "Dont leave the lobby! If you do, you wont be able to join the game
+      when it starts!"]
+
       [:p "Wait here until enough player have joined the game. There needs to be
       at least 2 players (maximum 4) before you can start the game. When enough
       players have joined, a \"Start game!\" button will show up. If a game is

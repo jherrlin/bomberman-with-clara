@@ -1,11 +1,13 @@
 (ns se.jherrlin.client.views.join-game
   (:require [se.jherrlin.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
+            [reitit.frontend.easy :as rfe]
             [cljs.pprint :as pprint]
             [se.jherrlin.client.views.game-lobby :as game-lobby]
             [se.jherrlin.server.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [se.jherrlin.datetime :as datetime]))
 
 (def events
   [{:n ::available-games}])
@@ -42,21 +44,33 @@
   (let [the-list @(re-frame/subscribe [::available-games])]
     [:div
      [:p "The list dont update itself, navigate to another page and then back to
-     update the list."]
+     update the list. If a created game havent been started in 5 minutes it will
+     be garbage collected."]
      (if-not (seq the-list)
-       [:p "No games to join."]
+       [:<>
+        [:p "No games to join!"]
+        [:div {:style {:display         "flex"
+                       :align-items     "center"
+                       :justify-content "center"}}
+         [:> semantic-ui/Button
+          {:primary true
+           :as      "a"
+           :href    (rfe/href :se.jherrlin.client.views.create-game/view)}
+          "Create new game!"]]]
        [:<>
         [:> semantic-ui/Table {:celled true}
          [:> semantic-ui/Table.Header
           [:> semantic-ui/Table.Row
            [:> semantic-ui/Table.HeaderCell "Game name"]
+           [:> semantic-ui/Table.HeaderCell "Created timestamp"]
            [:> semantic-ui/Table.HeaderCell "Players (first char)"]
            [:> semantic-ui/Table.HeaderCell "Join"]]]
          [:> semantic-ui/Table.Body
-          (for [{:keys [game-name game-id players]} the-list]
+          (for [{:keys [game-name game-id players game-create-timestamp]} the-list]
             ^{:key (str game-id)}
             [:> semantic-ui/Table.Row
              [:> semantic-ui/Table.Cell game-name]
+             [:> semantic-ui/Table.Cell (datetime/datetime-format game-create-timestamp)]
              [:> semantic-ui/Table.Cell (->> players (map (comp first :player-name)) (str/join ", "))]
              [:> semantic-ui/Table.Cell [:> semantic-ui/Form.Button
                                          {:on-click #(re-frame/dispatch [:push-state ::login {:game-name game-name :game-id game-id}])}

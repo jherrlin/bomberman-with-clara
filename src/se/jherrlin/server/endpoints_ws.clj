@@ -39,16 +39,3 @@
         {:keys [add-events-fn!]}                                      event-store]
     (timbre/debug id client-id ?data)
     (?reply-fn (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game)))))
-
-(defmethod handler :game/events
-  [req]
-  (let [{:keys [?data ?reply-fn event-store]} req
-        {:keys [game-id]}                     ?data]
-    (?reply-fn
-     (->> event-store
-          :store
-          deref
-          :events
-          (filter (comp #{game-id} :subject))
-          (sort-by :time #(compare %2 %1))
-          (reverse)))))

@@ -26,6 +26,19 @@
  (fn [[demo-events demo-position-in-time] _]
    (client.common/events->screen demo-events demo-position-in-time)))
 
+(re-frame/reg-event-fx
+ ::get-demo-event-success
+ (fn [_ [_ demo-events]]
+   (re-frame/dispatch [::demo-events demo-events])
+   (re-frame/dispatch [::demo-position-in-time 35])))
+
+(re-frame/reg-event-fx
+ ::get-demo-events
+ (fn [_ [_]]
+   (re-frame/dispatch [:http-get
+                       {:url        "/events-demo"
+                        :on-success [::get-demo-event-success]}])))
+
 (doseq [{:keys [n s e]} events-]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))
   (re-frame/reg-event-db n (or e (fn [db [_ e]] (assoc db n e)))))
@@ -125,9 +138,8 @@
        :max       (dec (count demo-events))
        :step      1
        :value     demo-position-in-time
-       :on-change #(do
-                     (let [nr (js/parseInt (.. % -target -value))]
-                       (re-frame/dispatch [::demo-position-in-time nr])))}]
+       :on-change #(let [nr (js/parseInt (.. % -target -value))]
+                     (re-frame/dispatch [::demo-position-in-time nr]))}]
      [:div (str "Point in time: " demo-position-in-time)]
      [:hr]
      [:div
@@ -141,10 +153,7 @@
      :view        [#'view]
      :controllers [{:start
                     (fn [_]
-                      (re-frame/dispatch [:http-get
-                                          {:url        "/events-demo"
-                                           :on-success [::demo-events]}])
-                      (re-frame/dispatch [::demo-position-in-time 1]))
+                      (re-frame/dispatch [::get-demo-events]))
                     :stop
                     (fn [_]
                       (println "leave new home"))}]}]])

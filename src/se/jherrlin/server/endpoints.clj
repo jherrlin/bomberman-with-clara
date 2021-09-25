@@ -13,6 +13,7 @@
    [reitit.ring :as ring]
    [reitit.ring.coercion :as ring.coercion]
    [reitit.ring.malli]
+   [clojure.spec.alpha :as s]
    [se.jherrlin.server.pages :as pages]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
@@ -26,11 +27,16 @@
    ["/websocket/chsk" (get websocket :reitit-routes)]])
 
 (def events-demo
-  (->> (resources/read-edn-file "events/2021-09-17_3-players.edn")
+  (->> (resources/read-edn-file "events/2021-09-25_3-bots.edn")
        (:events)
        (reverse)))
 
-(defn handler [{:keys [websocket game-state incomming-actions middleware] :as deps} req]
+(s/def ::uuid uuid?)
+(s/def ::game-id ::uuid)
+
+(defn handler [{:keys [websocket game-state incomming-actions middleware event-store] :as deps} req]
+  (def game-state game-state)
+  (def event-store event-store)
   ((ring/ring-handler
     (ring/router
      [["/" {:summary "Index page"
@@ -49,10 +55,30 @@
                {:status 200
                 :body
                 (->> game-state :game-state deref :games vals (filter (comp #{:created} :game-state))
-                     (map #(select-keys % [:game-id :game-name :players]))
+                     (map #(select-keys % [:game-id :game-name :players :game-create-timestamp]))
                      (map (fn [{:keys [players] :as game}]
                             (assoc game :players
                                    (->> players (vals) (map #(select-keys % [:player-name])))))))})}]
+
+      ["/game-events/:game-id"
+       {:coercion   reitit.coercion.spec/coercion
+        :parameters {:path-params ::game-id}
+        :get        (fn [req]
+                      (let [{{:keys [game-id]} :path-params} req
+                            game-uuid (java.util.UUID/fromString game-id)]
+                        {:status 200
+                         :body   (->> event-store
+                                      :store
+                                      deref
+                                      :events
+                                      (filter (comp #{game-uuid} :subject))
+                                      (sort-by :time #(compare %2 %1))
+                                      (reverse))}))}]
+
+      ["/past-games"
+       {:get (fn [req]
+               {:status 200
+                :body   (->> game-state :game-state deref :past-games)})}]
 
       ["/swagger.json"
        {:get {:no-doc  true

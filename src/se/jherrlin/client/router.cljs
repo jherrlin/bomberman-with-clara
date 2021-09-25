@@ -8,6 +8,7 @@
             [se.jherrlin.client.views.game-lobby :as views.game-lobby]
             [se.jherrlin.client.views.join-game :as views.join-game]
             [se.jherrlin.client.views.game-play :as views.game-play]
+            [se.jherrlin.client.views.past-games :as views.past-games]
             [se.jherrlin.client.views.home :as views.home]
             [se.jherrlin.client.views.spectate-game :as views.spectate-game]
             [reitit.frontend.controllers :as rfc]
@@ -82,6 +83,7 @@
     (views.game-lobby/routes)
     (views.join-game/routes)
     (views.game-play/routes)
+    (views.past-games/routes)
     (views.spectate-game/routes)
     ;; routes
     ]

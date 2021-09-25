@@ -58,7 +58,12 @@
        [:h1 "Game has ended!"]
        (if (= winner "K.O.")
          [:h2 winner]
-         [:h2 (str "Winner is: " winner)])]
+         [:h2 (str "Winner is: " winner)])
+       [:> semantic-ui/Button
+        {:primary true
+         :onClick #(re-frame/dispatch
+                    [:push-state :se.jherrlin.client.views.spectate-game/view {:game-id listen-to-game-id}])}
+        "Inspect game!"]]
       (#{:started} game-state)
       [:<>
        [:div {:style {:text-align "center"}}

@@ -22,7 +22,6 @@
  ::download-game-events
  (fn [_ [_ events]]
    (def events)
-   (js/console.log events)
    (download-csv events "game-events.edn")
    {}))
 
@@ -50,14 +49,16 @@
     (when events
       [:<>
        [:div {:style {:text-align "center"}}
-        [:h2 "Look back at the game"]
-
+        [:h2 "Look back at the game."]
+        [:h3 "Travel in time by dragging the scroll bar below game board."]
         [:div
          [:> semantic-ui/Button
           {:label   "Download game events"
            :icon    "download"
            :onClick #(re-frame/dispatch
-                      [::download-game-events (with-out-str (pprint/pprint events))])}]]]
+                      [::download-game-events (with-out-str (pprint/pprint events))])}]
+         [:p "If you wanna inspect the game events event further you can
+         download all events."]]]
 
        [:div {:style {:text-align "center"}}
         [client.common/screen screen]]
@@ -85,11 +86,9 @@
 (re-frame/reg-event-fx
  ::get-game-events
  (fn [_ [_ game-id]]
-   (def game-id' game-id)
-   {:ws-send {:data       [:game/events {:game-id game-id}]
-              :on-success (fn [data]
-                            (def data data)
-                            (re-frame/dispatch [::events data]))}}))
+   (re-frame/dispatch [:http-get
+                       {:url        (str "/game-events/" game-id)
+                        :on-success [::events]}])))
 
 (defn routes []
   [["/game/spectate/:game-id"
@@ -97,12 +96,9 @@
      :view        [#'view]
      :controllers [{:parameters {:path [:game-id]}
                     :start
-                    (fn [{{:keys [game-id]} :path :as a}]
-                      (println "heading to /game/spectate/:game-id")
-                      (def a a)
+                    (fn [{{:keys [game-id]} :path}]
                       (let [game-id (uuid game-id)]
-                        (def game-id game-id)
                         (re-frame/dispatch [::get-game-events game-id])))
                     :stop
                     (fn [_]
-                      (println "leaving" ::view))}]}]])
+                      (re-frame/dispatch [::time-travel-location 1]))}]}]])
