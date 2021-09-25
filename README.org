@@ -17,12 +17,17 @@ The running game can be found at https://bomberman.lambda-group.se/
 * Event sourcing
 
   Events in the system tries to follow the [[https://cloudevents.io/][CloudEvent]] specification. Take a look
-  at Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]] for nice documentation.
+  at Johan Halebys [[https://occurrent.org/documentation#introduction][Occurent]] for nice documentation on event sourcing.
 
-  In this bomberman game all events are saved into a list. Each time the list
-  updates the changes are sent through a [[https://clojuredocs.org/clojure.core/reduce][reduce]] function together with the old
-  game state. The reduce function updates the old state with the new events and
-  returns a new game state.
+  In this bomberman game all events are saved into a list, the list is called
+  the event store. Each time the list updates the changes are sent through a
+  [[https://clojuredocs.org/clojure.core/reduce][reduce]] function together with the old game state. The reduce function updates
+  the game state by taking the old game state and the new events and returns a
+  new game state. In CQRS terms the game state would be called a read model.
+  It's a derived state used by the game to represent the current state of the
+  game. The game is always reading from the game state and never does writes to
+  it. To update the game state the app creates new events that are appended to
+  the list in the event store.
 
   #+BEGIN_SRC artist :results output code
     +------------------+
