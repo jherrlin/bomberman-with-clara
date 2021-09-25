@@ -16,7 +16,7 @@
             (models/->CreatedGameInactivityTimeout #inst "2021-09-20T21:00:34.000-00:00" game-id :inactivity)])
          (map #(.toCloudEvent %))
          (game-state/the-projection {}))
-    {:games {}, :active-games {"GameName" 1}}))
+    {:games {}}))
 
   (t/is
    (=
@@ -25,4 +25,4 @@
             (models/->StartedGameInactivityTimeout #inst "2021-09-20T21:00:34.000-00:00" game-id :inactivity)])
          (map #(.toCloudEvent %))
          (game-state/the-projection {}))
-    {:games {}, :active-games {"GameName" 1}})))
+    {:games {}})))

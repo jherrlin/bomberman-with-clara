@@ -41,7 +41,7 @@
 (defn view []
   (let [the-list @(re-frame/subscribe [::available-games])]
     [:div
-     [:p "The list dont update itself, navigate to another side and then back to
+     [:p "The list dont update itself, navigate to another page and then back to
      update the list."]
      (if-not (seq the-list)
        [:p "No games to join."]

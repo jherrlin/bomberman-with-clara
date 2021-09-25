@@ -60,8 +60,14 @@
   ([game-state]                   (get-in game-state                [:flying-bombs]))
   ([game-state subject]           (get-in game-state [:games subject :flying-bombs])))
 
+(defn game-create-timestamp
+  ([game-state]                   (get-in game-state                [:game-create-timestamp]))
+  ([game-state subject]           (get-in game-state [:games subject :game-create-timestamp])))
+
 (defn games
   [game-state]                   (-> game-state (get-in [:games]) (vals)))
+
+
 
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
@@ -88,8 +94,7 @@
         (assoc-in [:games subject] (assoc (into {} data)
                                           :subject               subject
                                           :game-create-timestamp timestamp
-                                          :game-state            :created))
-        (assoc-in [:active-games game-name] game-id))))
+                                          :game-state            :created)))))
 
 (def player-positions
   {1 [1  1]
@@ -115,17 +120,16 @@
         (assoc-in [:games subject :game-state] :started)
         (assoc-in [:games subject :game-started-timestamp] timestamp))))
 
+(defmethod projection :se.jherrlin.bomberman.game/shutdown
+  [game-state {:keys [subject data] :as event}]
+  (assoc-in game-state [:games subject :game-state] :shutdown))
+
 (defmethod projection :se.jherrlin.bomberman.game/end
   [game-state {:keys [subject data] :as event}]
-  (let [end-timestamp (:timestamp data)
-        game  (game game-state subject)
-        game' (-> game
-                  (assoc-in [:game-state] :ended)
-                  (assoc-in [:end-timestamp] end-timestamp))]
+  (let [game (game game-state subject)]
     (-> game-state
-        (assoc-in [:games subject] (select-keys game' [:game-id :game-name :game-state :game-started-timestamp :winner :end-timestamp]))
-        (assoc-in [:old-games subject] game')
-        (update-in [:active-games] dissoc (:game-name game)))))
+        (update :games dissoc subject)
+        (update :past-games (fnil conj '()) (select-keys game [:game-id :game-name :winner])))))
 
 (defmethod projection :se.jherrlin.bomberman.game/created-game-inactivity-timeout
   [game-state {:keys [subject data] :as event}]
@@ -143,9 +147,9 @@
 (defmethod projection :se.jherrlin.bomberman.player/wants-to-move
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [direction player-id]} data]
-    (when-not
-        (and (dead-player       game-state player-id)
-             (player-current-xy game-state player-id))
+    (when (and (game-create-timestamp game-state subject)
+               (not (dead-player      game-state subject player-id))
+               (player-current-xy     game-state subject player-id))
       (assoc-in game-state [:games subject :players player-id :user-facing-direction] direction))))
 
 (defmethod projection :se.jherrlin.bomberman.player/picks-fire-inc-item
@@ -186,13 +190,15 @@
 (defmethod projection :se.jherrlin.bomberman.game/stone-to-remove
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [position-xy]} data]
-    (update-in game-state [:games subject :stones] #(remove (comp #{position-xy}) %))))
+    (when (game-create-timestamp game-state subject)
+      (update-in game-state [:games subject :stones] #(remove (comp #{position-xy}) %)))))
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-to-add
   [game-state {:keys [subject data] :as event}]
   (let [{:keys [player-id fire-position-xy fire-start-timestamp]} data
         data' (into {} data)]
-    (update-in game-state [:games subject :fire] conj data')))
+    (when (game-create-timestamp game-state subject)
+      (update-in game-state [:games subject :fire] conj data'))))
 
 (defmethod projection :se.jherrlin.bomberman.game/fire-to-remove
   [game-state {:keys [subject data] :as event}]

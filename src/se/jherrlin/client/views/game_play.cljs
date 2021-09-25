@@ -43,16 +43,23 @@
 
 
 (defn view []
-  (let [listen-to-game-id                       @(re-frame/subscribe [:listen-to-game-id])
-        {:keys [game-name] :as game-state}      @(re-frame/subscribe [:game-state])
-        player                                  @(re-frame/subscribe [:player])
-        screen                                  @(re-frame/subscribe [:screen])
-        {:keys [start-game-errors start-games]} @(re-frame/subscribe [:start-game])]
-    (when (and listen-to-game-id
-               (-> game-state :game-state (= :ended))
-               player)
-      (re-frame/dispatch [:push-state ::spectate-game/view {:game-id listen-to-game-id}]))
-    (when start-game-errors
+  (let [listen-to-game-id                                    @(re-frame/subscribe [:listen-to-game-id])
+        {:keys [game-name game-state winner] :as game-state} @(re-frame/subscribe [:game-state])
+        player                                               @(re-frame/subscribe [:player])
+        screen                                               @(re-frame/subscribe [:screen])
+        {:keys [start-game-errors start-games]}              @(re-frame/subscribe [:start-game])]
+    #_(when (and listen-to-game-id
+                 (-> game-state :game-state (= :ended))
+                 player)
+        (re-frame/dispatch [:push-state ::spectate-game/view {:game-id listen-to-game-id}]))
+    (cond
+      (#{:shutdown} game-state)
+      [:div {:style {:text-align "center"}}
+       [:h1 "Game has ended!"]
+       (if (= winner "K.O.")
+         [:h2 winner]
+         [:h2 (str "Winner is: " winner)])]
+      (#{:started} game-state)
       [:<>
        [:div {:style {:text-align "center"}}
         [:> semantic-ui/Container {:text true}
@@ -70,7 +77,9 @@
 
        [:br]
        [:div {:style {:text-align "center"}}
-        [client.common/screen screen]]])))
+        [client.common/screen screen]]]
+      :else
+      [:div "No active game could be found!"])))
 
 (defn routes []
   [["/game/play/:game-id"

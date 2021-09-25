@@ -15,7 +15,8 @@
                               PlayerWantsToJoinGame PlayerWantsToMove GameWinner
                               PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
                               Stone StoneToRemove TimestampNow WantsToCreateGame
-                              CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp]]))
+                              CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp
+                              GameIsInShutdown GameShutdown]]))
   #?(:clj
      (:import [se.jherrlin.server.models
                ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
@@ -25,7 +26,8 @@
                PlayerWantsToJoinGame PlayerWantsToMove
                PlayerWantsToPlaceBomb PlayerWantsToStartGame PlayerWantsToThrowBomb StartGame StartGameError
                Stone StoneToRemove TimestampNow WantsToCreateGame
-               CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp])))
+               CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp
+               GameIsInShutdown GameShutdown])))
 
 
 (comment
@@ -162,25 +164,31 @@
   (retract! ?dead-player)
   (insert-unconditional! (PlayerDies. ?now ?game-id ?player-id ?fire-player-id)))
 
-(defrule game-ends-if-there-is-only-one-player-left
+(defrule only-on-player-left-thats-the-winner
   [TimestampNow (= ?now now)]
   [GameState (= ?game-id game-id) (= :started game-state)]
   [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (= (count ?players-alive) 1)]
   =>
-  (let [end-game-id     (-> ?players-alive first :game-id)
-        alive-player-id (-> ?players-alive first :player-id)]
-    (insert-unconditional! (GameWinner. ?now ?game-id alive-player-id))
-    (insert-unconditional! (EndGame. end-game-id ?now))))
+  (let [alive-player-name (-> ?players-alive first :player-name)]
+    (insert-unconditional! (GameWinner. ?now ?game-id alive-player-name))
+    (insert-unconditional! (GameShutdown. ?now ?game-id))))
 
-(defrule game-ends-if-there-is-no-player-left
+(defrule no-player-left-is-a-knockout
   [TimestampNow (= ?now now)]
   [GameState (= ?game-id game-id) (= :started game-state)]
   [?player-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
   [:test (empty? ?player-alive)]
   =>
-  (insert-unconditional! (GameWinner. ?now ?game-id nil))
-  (insert-unconditional! (EndGame. ?game-id ?now)))
+  (insert-unconditional! (GameWinner.   ?now ?game-id "K.O."))
+  (insert-unconditional! (GameShutdown. ?now ?game-id)))
+
+(defrule game-is-in-shutdown-stage
+  "If game is in shutdown, end it."
+  [TimestampNow (= ?now now)]
+  [GameIsInShutdown (= ?game-id game-id)]
+  =>
+  (insert! (EndGame. ?now ?game-id)))
 
 (defrule exploading-bomb-throws-fire-flames
   "When a bomb exploads, fire is created in all four directions.
@@ -404,6 +412,9 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   []
   [?start-game <- StartGame])
 
+(defquery game-shutdown?
+  []
+  [?game-shutdown <- GameShutdown])
 
 (defquery create-game-error?
   []
@@ -506,6 +517,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
       :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
 
       :end-games                   (map :?end-game             (query session' end-game?))
+      :game-shutdowns              (map :?game-shutdown        (query session' game-shutdown?))
 
       :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board (query session' picks-fire-inc-item-from-board?))
 
@@ -529,60 +541,3 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
         session' (fire-rules session)]
     {:start-game-errors (map :?start-game-error (query session' start-game-error?))
      :start-games       (map :?start-game       (query session' start-game?))}))
-
-(comment
-  (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
-  (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
-  (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
-
-  (run-start-game-rules
-   [(PlayerWantsToStartGame. repl-game-id)
-    (GameState.              repl-game-id :created)
-    (PlayerOnBoardPosition.  repl-game-id player-1-ws-id [1 1])
-    (PlayerOnBoardPosition.  repl-game-id player-2-ws-id [1 1])])
-
-  (run-start-game-rules
-   [(PlayerWantsToStartGame. repl-game-id)
-    (GameState.              repl-game-id :created)
-    (PlayerOnBoardPosition.  repl-game-id player-1-ws-id [1 1])])
-
-  (run-create-game-rules
-   [(WantsToCreateGame. 1 "first-game" "game-password")])
-
-  (run-create-game-rules
-   [(WantsToCreateGame. 1 "first-game" "game-password")
-    (WantsToCreateGame. 2 "first-game" "my-second-game")])
-
-  (run-create-game-rules
-   [(WantsToCreateGame. 1 "first-game" "game-password")
-    (ActiveGame.        2 "first-game" "pwd" :created)])
-
-
-  (run-rules
-   [(->Board      repl-game-id board/board2)
-    (FlyingBomb. repl-game-id 1 [2 1] 3 #inst "2021-09-07T19:50:17.258-00:00" :east)
-    (->Stone      repl-game-id [3 1])])
-  (run-rules
-   [(->Board        repl-game-id (board/init 6))
-    (->TimestampNow                           #inst "2021-08-28T15:04:00.100-00:00")
-    (BombOnBoard.  repl-game-id   1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
-    (BombOnBoard.  repl-game-id   1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
-    (->Stone        repl-game-id     [3 1])
-    (->Stone        repl-game-id     [3 3])
-    (->Stone        666              [5 5])
-    (->Stone        666              [6 6])])
-  (let [session (insert-all bomberman-session
-                            [(->TimestampNow              #inst "2021-08-28T15:03:50.100-00:00")
-                             (->Board         repl-game-id (board/init 6))
-                             (BombOnBoard.   repl-game-id  1 [1 1] 10 #inst "2021-08-28T15:03:47.100-00:00")
-                             (BombOnBoard.   repl-game-id  1 [1 3] 10 #inst "2021-08-28T15:03:49.100-00:00")
-                             (->Stone         repl-game-id    [3 1])
-                             (->Stone         repl-game-id    [3 3])])
-        session' (fire-rules session)]
-    {:actions
-     {:player-moves         (map :?player-move (query session' player-move?))
-      :exploading-bombs   (map :?exploading-bombs (query session' exploading-bombs?))
-      :dead-players         (map :?dead-players (query session' dead-players?))}}
-    (query session)
-    )
-  )

@@ -4,7 +4,7 @@
             [taoensso.timbre :as timbre]))
 
 
-(defn game-facts [{:keys [game-create-timestamp game-id game-started-timestamp game-state] :as game}]
+(defn game-facts [{:keys [game-id game-started-timestamp game-state] :as game}]
   (concat
    (when game-started-timestamp
      [(models/->GameStartedTimestamp game-started-timestamp game-id)])
@@ -13,8 +13,8 @@
    (->> (game-state/players game)
         (vals)
         (filter (comp not #{:dead} :player-status))
-        (map (fn [{:keys [player-id position] :as player}]
-               (models/->PlayerOnBoardPosition game-id player-id position))))
+        (map (fn [{:keys [player-id position player-name] :as player}]
+               (models/->PlayerOnBoardPosition game-id player-id position player-name))))
    (->> (game-state/players game)
         (vals)
         (filter (comp not #{:dead} :player-status))
@@ -56,9 +56,16 @@
        (map game-facts)
        (apply concat)))
 
-(defn created-game-facts [game-state]
+(defn created-games-facts [game-state]
   (->> game-state
        (game-state/games)
        (filter (comp #{:created} :game-state))
        (map (fn [{:keys [game-create-timestamp game-id]}]
               (models/->GameCreatedTimestamp game-create-timestamp game-id)))))
+
+(defn shutdown-games-facts [game-state]
+  (->> game-state
+       (game-state/games)
+       (filter (comp #{:shutdown} :game-state))
+       (map (fn [{:keys [game-id]}]
+              (models/->GameIsInShutdown game-id)))))

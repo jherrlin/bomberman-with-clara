@@ -92,13 +92,16 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          game-state-facts    (game-state2/started-games-facts @game-state)
-          created-game-facts  (game-state2/created-game-facts @game-state)
+          started-game-facts  (game-state2/started-games-facts @game-state)
+          created-game-facts  (game-state2/created-games-facts @game-state)
+          shutdown-game-facts (game-state2/shutdown-games-facts @game-state)
           _                   (def created-game-facts created-game-facts)
-          _                   (def game-state-facts game-state-facts)
+          _                   (def started-game-facts started-game-facts)
+          _                   (def shutdown-game-facts shutdown-game-facts)
           rule-enginge-facts  (concat
+                               shutdown-game-facts
                                user-action-facts
-                               game-state-facts
+                               started-game-facts
                                created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
           _                   (def rule-enginge-facts rule-enginge-facts)

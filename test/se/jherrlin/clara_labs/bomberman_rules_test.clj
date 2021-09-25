@@ -24,6 +24,21 @@
 
 (defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
 
+
+(t/deftest end-game-in-shutdown
+  (t/testing "End game if in shutdown"
+    (t/is
+     (=
+      (let [session  (insert-all bomberman-session
+                                 [(models/->TimestampNow     #inst "2021-08-28T15:03:02.000-00:00")
+                                  (models/->GameIsInShutdown 1)])
+            session' (fire-rules session)]
+        {:game-ends
+         (->> (query session' bomberman/end-game?)
+              (map (comp #(into {} %) :?end-game))
+              (set))})
+      {:game-ends #{{:game-id 1, :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}}))))
+
 (t/deftest picks-fire-inc-item-from-board
   (t/testing "When player walks on fire inc item, fire length incs."
     (t/is
@@ -64,50 +79,62 @@
                                  [(models/->TimestampNow                               #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->GameState repl-game-id :started)
                                   (models/->FireOnBoard           repl-game-id 1 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->PlayerOnBoardPosition repl-game-id 1 [1 1])
+                                  (models/->PlayerOnBoardPosition repl-game-id 1 [1 1] "A")
                                   (models/->FireOnBoard           repl-game-id 1 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                  (models/->PlayerOnBoardPosition repl-game-id 2 [2 1])
-                                  (models/->PlayerOnBoardPosition repl-game-id 3 [3 1])])
+                                  (models/->PlayerOnBoardPosition repl-game-id 2 [2 1] "B")
+                                  (models/->PlayerOnBoardPosition repl-game-id 3 [3 1] "C")])
             session' (fire-rules session)]
         {:dead-players
          (->> (query session' bomberman/dead-players?)
               (map (comp #(into {} %) :?dead-players))
               (set))
-         :end-games
-         (->> (query session' bomberman/end-game?)
-              (map (comp #(into {} %) :?end-game))
+         :game-shutdowns
+         (->> (query session' bomberman/game-shutdown?)
+              (map (comp #(into {} %) :?game-shutdown))
+              (set))
+         :game-winners
+         (->> (query session' bomberman/game-winner?)
+              (map (comp #(into {} %) :?game-winner))
               (set))})
       {:dead-players
-       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
           :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
           :player-id 1,
           :killed-by-player-id 1}
-         {:timestamp #inst "2021-08-28T15:03:02.000-00:00"
+         {:timestamp #inst "2021-08-28T15:03:02.000-00:00",
           :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
           :player-id 2,
           :killed-by-player-id 1}},
-       :end-games
-       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8", :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}})))
+       :game-shutdowns
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8"}},
+       :game-winners
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+          :winner "C"}}})))
 
-  (t/testing "If no player is left, end the game."
+  (t/testing "If no player is left, it's a K.O."
     (t/is
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->GameState repl-game-id :started)])
             session' (fire-rules session)]
-        {:dead-players
-         (->> (query session' bomberman/dead-players?)
-              (map (comp #(into {} %) :?dead-players))
+        {:game-shutdowns
+         (->> (query session' bomberman/game-shutdown?)
+              (map (comp #(into {} %) :?game-shutdown))
               (set))
-         :end-games
-         (->> (query session' bomberman/end-game?)
-              (map (comp #(into {} %) :?end-game))
+         :game-winners
+         (->> (query session' bomberman/game-winner?)
+              (map (comp #(into {} %) :?game-winner))
               (set))})
-      {:dead-players #{},
-       :end-games
-       #{{:game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
-          :timestamp #inst "2021-08-28T15:03:02.000-00:00"}}}))))
+      {:game-shutdowns
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8"}},
+       :game-winners
+       #{{:timestamp #inst "2021-08-28T15:03:02.000-00:00",
+          :game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8",
+          :winner "K.O."}}}))))
 
 (t/deftest player-join-game
   (t/testing "Users can join game is state and password is correct"
@@ -138,10 +165,10 @@
      (=
       (let [session  (insert-all bomberman-session
                                  [(models/->ActiveGame            1 "first-game" "pwd" :created)
-                                  (models/->PlayerOnBoardPosition 1 1  [1 1])
-                                  (models/->PlayerOnBoardPosition 1 2  [2 1])
-                                  (models/->PlayerOnBoardPosition 1 3  [3 1])
-                                  (models/->PlayerOnBoardPosition 1 4  [4 1])
+                                  (models/->PlayerOnBoardPosition 1 1  [1 1] "A")
+                                  (models/->PlayerOnBoardPosition 1 2  [2 1] "B")
+                                  (models/->PlayerOnBoardPosition 1 3  [3 1] "C")
+                                  (models/->PlayerOnBoardPosition 1 4  [4 1] "D")
                                   (models/->PlayerWantsToJoinGame 5 "Preben" 1 "pwd")])
             session' (fire-rules session)]
 
@@ -338,8 +365,8 @@
                                  [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->PlayerWantsToStartGame game-id)
                                   (models/->GameState              game-id :created)
-                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1])
-                                  (models/->PlayerOnBoardPosition  game-id 2 [1 2])])
+                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1] "A")
+                                  (models/->PlayerOnBoardPosition  game-id 2 [1 2] "B")])
             session' (fire-rules session)]
         {:errors      (->> (query session' bomberman/start-game-error?)
                            (map (comp #(into {} %) :?start-game-error))
@@ -358,7 +385,7 @@
                                  [(models/->TimestampNow           #inst "2021-08-28T15:03:02.000-00:00")
                                   (models/->PlayerWantsToStartGame game-id)
                                   (models/->GameState              game-id :created)
-                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1])])
+                                  (models/->PlayerOnBoardPosition  game-id 1 [1 1] "A")])
             session' (fire-rules session)]
         {:errors      (->> (query session' bomberman/start-game-error?)
                            (map (comp #(into {} %) :?start-game-error))
@@ -608,7 +635,7 @@
                                [(models/->TimestampNow                #inst "2021-08-28T15:03:02.000-00:00")
                                 (models/->Board                 repl-game-id board)
                                 (models/->FireOnBoard           repl-game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
-                                (models/->PlayerOnBoardPosition repl-game-id 1 [1 1])])
+                                (models/->PlayerOnBoardPosition repl-game-id 1 [1 1] "A")])
           session' (fire-rules session)]
       (->> (query session' bomberman/dead-players?)
            (map (comp #(into {} %) :?dead-players))

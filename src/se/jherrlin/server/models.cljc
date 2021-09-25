@@ -29,7 +29,7 @@
 (defrecord Board                 [game-id board])
 (defrecord FireOnBoard           [game-id player-id fire-position-xy fire-start-timestamp])
 (defrecord BombOnBoard           [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
-(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy])
+(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy player-name])
 (defrecord PlayerOnBoardFireLength  [game-id player-id player-position-xy fire-length])
 (defrecord ItemOnBoard              [game-id item-position-xy item-power])
 
@@ -155,7 +155,7 @@
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "start" this)))
 
-(defrecord EndGame [game-id timestamp]
+(defrecord EndGame [timestamp game-id]
   CloudEvent
   (toCloudEvent [this]
     (template
@@ -166,6 +166,13 @@
   (toCloudEvent [this]
     (template
      timestamp "urn:se:jherrlin:bomberman:game" game-id "winner" this)))
+
+(defrecord GameIsInShutdown [game-id])
+(defrecord GameShutdown     [timestamp game-id]
+  CloudEvent
+  (toCloudEvent [this]
+    (template
+     timestamp "urn:se:jherrlin:bomberman:game" game-id "shutdown" this)))
 
 (defrecord CreatedGameInactivityTimeout [timestamp game-id reason]
   CloudEvent
