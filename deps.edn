@@ -26,7 +26,7 @@
            reagent-utils/reagent-utils     {:mvn/version "0.3.4"}
            ring/ring-defaults              {:mvn/version "0.3.3"}
            ring/ring-json                  {:mvn/version "0.5.1"}
-           thheller/shadow-cljs            {:mvn/version "2.15.9"}
+           thheller/shadow-cljs            {:mvn/version "2.15.10"}
            }
  :aliases {:test     {:extra-paths ["test"]
                       :extra-deps  {io.github.cognitect-labs/test-runner
