@@ -3,7 +3,7 @@
             [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.claraman.models :as models]
-            [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
+            [se.jherrlin.claraman.claraman-rules :as claraman-rules]
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.claraman.board :as board]))
@@ -42,7 +42,7 @@
                                              [player-wants-to-create-game])
           _                                 (def facts facts)
           {:keys [create-game-errors create-games] :as actions}
-          (bomberman-rules/run-create-game-rules facts)
+          (claraman-rules/run-create-game-rules facts)
           _                                 (def actions actions)
           _                                 (def create-game-errors create-game-errors)
           _                                 (def create-games create-games)]
@@ -69,7 +69,7 @@
           player-wants-to-start-game (models/->PlayerWantsToStartGame game-id)
           game                       (game-state/game @game-state game-id)
           {:keys [start-game-errors start-games] :as actions}
-          (bomberman-rules/run-start-game-rules
+          (claraman-rules/run-start-game-rules
            (concat (game-state/game-facts game)
                    [(game-state/active-game-fact game)]
                    [(models/->TimestampNow (datetime/now))]
@@ -115,7 +115,7 @@
                                                              [(game-state/active-game-fact game)]
                                                              [player-wants-to-join-game])
           _                                                 (def facts facts)
-          {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules facts)
+          {:keys [join-game-errors join-games] :as actions} (claraman-rules/run-join-game-rules facts)
           _                                                 (def join-game-errors join-game-errors)
           _                                                 (def join-games join-games)
           _                                                 (def actions actions)]

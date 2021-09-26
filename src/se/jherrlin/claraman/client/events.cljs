@@ -1,6 +1,6 @@
 (ns se.jherrlin.claraman.client.events
   (:require [re-frame.core :as re-frame]
-            [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
+            [se.jherrlin.claraman.claraman-rules :as claraman-rules]
             [se.jherrlin.claraman.game-state :as game-state]))
 
 
@@ -82,7 +82,7 @@
     :s (fn [{:keys [game-state] :as db} [_]]
          (->> game-state
               (game-state/game-facts)
-              (bomberman-rules/run-start-game-rules)))}])
+              (claraman-rules/run-start-game-rules)))}])
 
 (doseq [{:keys [n s e]} events]
   (re-frame/reg-sub n (or s (fn [db _] (n db))))

@@ -13,17 +13,12 @@
    [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.server.endpoints :as server.endpoints]
    [se.jherrlin.claraman.server.endpoints-ws :as server.endpoints-ws]
-   [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
+   [se.jherrlin.claraman.claraman-rules :as claraman-rules]
    [se.jherrlin.claraman.user-commands :as user-commands]
    [se.jherrlin.claraman.models :as models]
-   [clojure.spec.alpha :as s]
    [clojure.core.async :as a :refer [<! go-loop timeout]]
    [taoensso.timbre :as timbre]
-   [se.jherrlin.datetime :as datetime]
-   [clojure.pprint :as pprint]
-   [se.jherrlin.claraman.board :as board]
-   [se.jherrlin.claraman.server.application-service :as application-service]
-   [se.jherrlin.claraman.server.resources :as resources])
+   [se.jherrlin.datetime :as datetime])
   (:import [java.time Instant Duration])
   (:gen-class))
 
@@ -98,7 +93,7 @@
                                started-game-facts
                                created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
-          actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
+          actions-from-enging (claraman-rules/run-rules rule-enginge-facts)
           sorted-cloud-events (to-cloud-events (sort-events actions-from-enging))]
       (add-events-fn! sorted-cloud-events)
       (reset! incomming-commands-state {})
@@ -167,13 +162,9 @@
        )
 
   @game-state'
-  (spit "/tmp/facts-to-analyze.edn" (pr-str rule-enginge-facts))
 
-  (def facts-to-debug
-    (with-in-str (slurp "/tmp/facts-to-analyze.edn")
-      (read)))
 
-  (bomberman-rules/run-rules facts-to-debug)
+  (claraman-rules/run-rules facts-to-debug)
   (map type facts-to-debug)
 
   (let [game-id #uuid "246e1ee5-48d3-47e4-b9fe-c66e648439a0"]
@@ -229,7 +220,7 @@
   (def timestamp #inst "2021-09-19T21:57:59.144-00:00")
 
 
-  (bomberman-rules/run-rules
+  (claraman-rules/run-rules
    (concat
     (incomming-actions incomming-commands-state game-state')
     (game-state/games-facts @game-state')
@@ -241,7 +232,7 @@
 
 
 
-  (bomberman-rules/run-rules
+  (claraman-rules/run-rules
    (game-state/games-facts
     (game-state/the-projection {} (->> @event-store :events reverse))
     ))
@@ -295,7 +286,7 @@
                                 game-state-facts
                                 [(models/->TimestampNow (java.util.Date.))])
            _                   (def rule-enginge-facts rule-enginge-facts)
-           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
+           actions-from-enging (claraman-rules/run-rules rule-enginge-facts)
            _                   (def actions-from-enging actions-from-enging)
            _                   (def the-sorted (to-cloud-events (sort-events actions-from-enging)))]
        (add-events-fn! the-sorted)

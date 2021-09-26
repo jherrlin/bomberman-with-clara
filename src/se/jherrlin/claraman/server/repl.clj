@@ -4,7 +4,7 @@
    [se.jherrlin.claraman.models :as models]
    [se.jherrlin.claraman.server.resources :as resources]
    [se.jherrlin.claraman.board :as board]
-   [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
+   [se.jherrlin.claraman.claraman-rules :as claraman-rules]
    [clojure.pprint :as pprint]
    [clojure.edn :as edn]
    [clojure.java.io :as io]
@@ -108,7 +108,7 @@
        (concat
         [(models/->TimestampNow (java.util.Date.))
          (models/->PlayerWantsToMove timestamp game-id john-player-id [1 1] :south)])
-       (bomberman-rules/run-rules)
+       (claraman-rules/run-rules)
        :actions
        (rule-actions-to-cloud-events)
        (game-state/the-projection previous-state)))
