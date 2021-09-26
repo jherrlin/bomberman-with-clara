@@ -85,30 +85,22 @@
        (map #(.toCloudEvent %))
        (sort-by :time #(compare %2 %1))))
 
-(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn!
-                 add-event-fn! add-events-fn!]
+(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-events-fn!]
   (timbre/trace "Game loop is now started " task-execution-timestamp)
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
-          _                   (def user-action-facts user-action-facts)
           started-game-facts  (game-state/started-games-facts @game-state)
           created-game-facts  (game-state/created-games-facts @game-state)
           shutdown-game-facts (game-state/shutdown-games-facts @game-state)
-          _                   (def created-game-facts created-game-facts)
-          _                   (def started-game-facts started-game-facts)
-          _                   (def shutdown-game-facts shutdown-game-facts)
           rule-enginge-facts  (concat
                                shutdown-game-facts
                                user-action-facts
                                started-game-facts
                                created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
-          _                   (def rule-enginge-facts rule-enginge-facts)
-          _                   (timbre/info "Rule enginge counts: " (count rule-enginge-facts))
           actions-from-enging (bomberman-rules/run-rules rule-enginge-facts)
-          _                   (def actions-from-enging actions-from-enging)
-          _                   (def the-sorted-events (to-cloud-events (sort-events actions-from-enging)))]
-      (add-events-fn! the-sorted-events)
+          sorted-cloud-events (to-cloud-events (sort-events actions-from-enging))]
+      (add-events-fn! sorted-cloud-events)
       (reset! incomming-commands-state {})
       (doseq [game (-> @game-state :games (vals))]
         (ws-broadcast-fn! [:new/game-state game]))
@@ -162,7 +154,6 @@
   (alter-var-root #'production component/start)
   (alter-var-root #'production component/stop)
 
-  (def add-event-fn! (-> production :event-store :add-event-fn!))
   (def add-events-fn! (-> production :event-store :add-events-fn!))
   (def game-state' (-> production :game-state :game-state))
   (def event-store (-> production :event-store :store))
@@ -171,6 +162,7 @@
   (->> @event-store
        :events
        (reverse)
+       (take 198)
        (reduce game-state/projection {})
        )
 
@@ -245,7 +237,7 @@
 
 
   @game-state'
-  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-events-fn!)
 
 
 
@@ -288,7 +280,7 @@
     :user-id player-1-id})
 
 
-  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-events-fn!)
 
   (def run-loop? (atom true))
   (go-loop []
@@ -356,6 +348,6 @@
     :action  :place-bomb
     :user-id jakob-id})
 
-  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-event-fn! add-events-fn!)
+  (game-loop (java.util.Date.) game-state' incomming-commands-state broadcast-fn! add-events-fn!)
 
   )
