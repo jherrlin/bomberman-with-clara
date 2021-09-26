@@ -3,7 +3,7 @@
             [clara.rules.accumulators :as acc]
             [clara.tools.inspect :as inspect]
             [se.jherrlin.claraman.board :as board]
-            [se.jherrlin.clara-labs.fire-spread :as fire-spread]
+            [se.jherrlin.claraman.fire-spread :as fire-spread]
             [se.jherrlin.datetime :as datetime]
             [clojure.set :as set]
             #?(:clj se.jherrlin.claraman.models)

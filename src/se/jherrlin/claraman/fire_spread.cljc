@@ -1,4 +1,4 @@
-(ns se.jherrlin.clara-labs.fire-spread
+(ns se.jherrlin.claraman.fire-spread
   (:require [clojure.set :as set]
             [se.jherrlin.claraman.board :as board]))
 
