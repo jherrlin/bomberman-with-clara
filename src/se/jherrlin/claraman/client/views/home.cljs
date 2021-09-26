@@ -1,10 +1,10 @@
-(ns se.jherrlin.client.views.home
+(ns se.jherrlin.claraman.client.views.home
   (:require [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
             [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.datetime :as datetime]
-            [se.jherrlin.client.events :as client.events]
-            [se.jherrlin.client.common :as client.common]
+            [se.jherrlin.claraman.client.events :as client.events]
+            [se.jherrlin.claraman.client.common :as client.common]
             ["semantic-ui-react" :as semantic-ui]))
 
 

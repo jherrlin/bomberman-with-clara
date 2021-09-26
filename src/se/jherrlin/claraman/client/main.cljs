@@ -1,6 +1,6 @@
-(ns se.jherrlin.client.main
+(ns se.jherrlin.claraman.client.main
   (:require
-   [se.jherrlin.client.websocket :as websocket]
+   [se.jherrlin.claraman.client.websocket :as websocket]
    [re-frame.core :as re-frame]
    [reagent.dom :as rd]
    [reitit.core :as r]
@@ -9,8 +9,8 @@
    [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.models :as models]
    [reitit.frontend.easy :as rfe]
-   [se.jherrlin.client.router :as client.router]
-   [se.jherrlin.client.events :as events]
+   [se.jherrlin.claraman.client.router :as client.router]
+   [se.jherrlin.claraman.client.events :as events]
    ["semantic-ui-react" :as semantic-ui]))
 
 
@@ -20,18 +20,18 @@
      [:> semantic-ui/Menu {:size       "large"
                            :borderless true}
       [:> semantic-ui/Menu.Item
-       {:as "a" :href (rfe/href :se.jherrlin.client.views.home/view)} "Home"]
+       {:as "a" :href (rfe/href :se.jherrlin.claraman.client.views.home/view)} "Home"]
       [:> semantic-ui/Menu.Item
        {:as "a"
-        :href (rfe/href :se.jherrlin.client.views.create-game/view)} "Create game"]
+        :href (rfe/href :se.jherrlin.claraman.client.views.create-game/view)} "Create game"]
 
       [:> semantic-ui/Menu.Item
        {:as "a"
-        :href (rfe/href :se.jherrlin.client.views.join-game/view)} "Join game"]
+        :href (rfe/href :se.jherrlin.claraman.client.views.join-game/view)} "Join game"]
 
       [:> semantic-ui/Menu.Item
        {:as "a"
-        :href (rfe/href :se.jherrlin.client.views.past-games/view)} "Past games"]
+        :href (rfe/href :se.jherrlin.claraman.client.views.past-games/view)} "Past games"]
 
       #_[:> semantic-ui/Menu.Item
        {:as "a" :href (rfe/href :route2/db)} "DB"]

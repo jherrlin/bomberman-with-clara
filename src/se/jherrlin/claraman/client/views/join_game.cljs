@@ -1,9 +1,9 @@
-(ns se.jherrlin.client.views.join-game
-  (:require [se.jherrlin.client.form.managed :as form.managed]
+(ns se.jherrlin.claraman.client.views.join-game
+  (:require [se.jherrlin.claraman.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
             [reitit.frontend.easy :as rfe]
             [cljs.pprint :as pprint]
-            [se.jherrlin.client.views.game-lobby :as game-lobby]
+            [se.jherrlin.claraman.client.views.game-lobby :as game-lobby]
             [se.jherrlin.claraman.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]
             [clojure.string :as str]
@@ -55,7 +55,7 @@
          [:> semantic-ui/Button
           {:primary true
            :as      "a"
-           :href    (rfe/href :se.jherrlin.client.views.create-game/view)}
+           :href    (rfe/href :se.jherrlin.claraman.client.views.create-game/view)}
           "Create new game!"]]]
        [:<>
         [:> semantic-ui/Table {:celled true}

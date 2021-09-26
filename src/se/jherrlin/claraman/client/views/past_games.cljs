@@ -1,8 +1,8 @@
-(ns se.jherrlin.client.views.past-games
-  (:require [se.jherrlin.client.form.managed :as form.managed]
+(ns se.jherrlin.claraman.client.views.past-games
+  (:require [se.jherrlin.claraman.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
-            [se.jherrlin.client.views.game-lobby :as game-lobby]
+            [se.jherrlin.claraman.client.views.game-lobby :as game-lobby]
             [se.jherrlin.claraman.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]
             [clojure.string :as str]))
@@ -48,7 +48,7 @@
              [:> semantic-ui/Table.Cell game-name]
              [:> semantic-ui/Table.Cell winner]
              [:> semantic-ui/Table.Cell [:> semantic-ui/Form.Button
-                                         {:on-click #(re-frame/dispatch [:push-state :se.jherrlin.client.views.spectate-game/view {:game-id game-id}])}
+                                         {:on-click #(re-frame/dispatch [:push-state :se.jherrlin.claraman.client.views.spectate-game/view {:game-id game-id}])}
                                          "Inspect"]]])]]])]))
 
 (defn routes []

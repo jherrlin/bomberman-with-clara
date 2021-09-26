@@ -1,8 +1,8 @@
-(ns se.jherrlin.client.views.game-lobby
+(ns se.jherrlin.claraman.client.views.game-lobby
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
-            [se.jherrlin.client.common :as client.common]
-            [se.jherrlin.client.views.game-play :as game-play]
+            [se.jherrlin.claraman.client.common :as client.common]
+            [se.jherrlin.claraman.client.views.game-play :as game-play]
             ["semantic-ui-react" :as semantic-ui]
             [schema.core :as s]))
 

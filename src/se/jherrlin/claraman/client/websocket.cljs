@@ -1,4 +1,4 @@
-(ns se.jherrlin.client.websocket
+(ns se.jherrlin.claraman.client.websocket
   (:require [taoensso.timbre :as timbre]
             [cljs.pprint :as pprint]
             [re-frame.core :as re-frame]

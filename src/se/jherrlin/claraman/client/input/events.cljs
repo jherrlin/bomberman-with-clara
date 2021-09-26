@@ -1,4 +1,4 @@
-(ns se.jherrlin.client.input.events
+(ns se.jherrlin.claraman.client.input.events
   (:require
    [re-frame.core :as re-frame]
    [clojure.spec.alpha :as s]

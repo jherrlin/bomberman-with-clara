@@ -1,4 +1,4 @@
-(ns se.jherrlin.client.input.inputs)
+(ns se.jherrlin.claraman.client.input.inputs)
 
 
 (defn text [{:keys [attr on-blur on-change on-focus placeholder value]

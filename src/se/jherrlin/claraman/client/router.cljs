@@ -1,16 +1,16 @@
-(ns se.jherrlin.client.router
+(ns se.jherrlin.claraman.client.router
   (:require [re-frame.core :as re-frame]
             [reitit.coercion.spec :as rss]
             [cljs.pprint :as pprint]
             [reitit.core :as r]
             [reitit.frontend :as rf]
-            [se.jherrlin.client.views.create-game :as views.create-game]
-            [se.jherrlin.client.views.game-lobby :as views.game-lobby]
-            [se.jherrlin.client.views.join-game :as views.join-game]
-            [se.jherrlin.client.views.game-play :as views.game-play]
-            [se.jherrlin.client.views.past-games :as views.past-games]
-            [se.jherrlin.client.views.home :as views.home]
-            [se.jherrlin.client.views.spectate-game :as views.spectate-game]
+            [se.jherrlin.claraman.client.views.create-game :as views.create-game]
+            [se.jherrlin.claraman.client.views.game-lobby :as views.game-lobby]
+            [se.jherrlin.claraman.client.views.join-game :as views.join-game]
+            [se.jherrlin.claraman.client.views.game-play :as views.game-play]
+            [se.jherrlin.claraman.client.views.past-games :as views.past-games]
+            [se.jherrlin.claraman.client.views.home :as views.home]
+            [se.jherrlin.claraman.client.views.spectate-game :as views.spectate-game]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]))
 

@@ -1,9 +1,9 @@
-(ns se.jherrlin.client.common
+(ns se.jherrlin.claraman.client.common
   (:require [reitit.coercion.schema]
             [se.jherrlin.datetime :as datetime]
             [cljs.pprint :as pprint]
             [se.jherrlin.claraman.game-state :as game-state]
-            [se.jherrlin.client.events :as client.events]))
+            [se.jherrlin.claraman.client.events :as client.events]))
 
 
 (defn screen [screen']

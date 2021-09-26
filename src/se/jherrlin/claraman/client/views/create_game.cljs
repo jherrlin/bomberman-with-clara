@@ -1,8 +1,8 @@
-(ns se.jherrlin.client.views.create-game
-  (:require [se.jherrlin.client.form.managed :as form.managed]
+(ns se.jherrlin.claraman.client.views.create-game
+  (:require [se.jherrlin.claraman.client.form.managed :as form.managed]
             [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
-            [se.jherrlin.client.views.join-game :as join-game]
+            [se.jherrlin.claraman.client.views.join-game :as join-game]
             [se.jherrlin.claraman.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]))
 

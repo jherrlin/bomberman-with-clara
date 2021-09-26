@@ -1,9 +1,9 @@
-(ns se.jherrlin.client.form.managed
+(ns se.jherrlin.claraman.client.form.managed
   "Managed forms/inputs have options on how things should work. It's alywas
   possible to override default's."
   (:require [re-frame.core :as re-frame]
             [clojure.spec.alpha :as s]
-            se.jherrlin.client.input.events
+            se.jherrlin.claraman.client.input.events
             ["semantic-ui-react" :as semantic-ui]
             [clojure.string :as str]))
 

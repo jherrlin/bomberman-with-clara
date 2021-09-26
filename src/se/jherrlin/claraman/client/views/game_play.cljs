@@ -1,10 +1,10 @@
-(ns se.jherrlin.client.views.game-play
+(ns se.jherrlin.claraman.client.views.game-play
   (:require [reitit.coercion.schema]
             [re-frame.core :as re-frame]
             [schema.core :as s]
-            [se.jherrlin.client.websocket :as websocket]
-            [se.jherrlin.client.common :as client.common]
-            [se.jherrlin.client.views.spectate-game :as spectate-game]
+            [se.jherrlin.claraman.client.websocket :as websocket]
+            [se.jherrlin.claraman.client.common :as client.common]
+            [se.jherrlin.claraman.client.views.spectate-game :as spectate-game]
             [goog.events :as gev]
             ["semantic-ui-react" :as semantic-ui]
             [goog.events.KeyCodes :as keycodes])
@@ -62,7 +62,7 @@
        [:> semantic-ui/Button
         {:primary true
          :onClick #(re-frame/dispatch
-                    [:push-state :se.jherrlin.client.views.spectate-game/view {:game-id listen-to-game-id}])}
+                    [:push-state :se.jherrlin.claraman.client.views.spectate-game/view {:game-id listen-to-game-id}])}
         "Inspect game!"]]
       (#{:started} game-state)
       [:<>
