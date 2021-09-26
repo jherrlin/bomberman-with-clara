@@ -137,6 +137,23 @@
           :winner "K.O."}}}))))
 
 (t/deftest player-join-game
+  (t/testing "User cant join if player name is occupied"
+    (t/is
+     (=
+      (let [game-id  1
+            session  (insert-all bomberman-session
+                                 [(models/->PlayerWantsToJoinGame 1 "Hannah" game-id "pwd")
+                                  (models/->PlayerOnBoardPosition game-id 2 [1 1] "Hannah")])
+            session' (fire-rules session)]
+        {:errors (->> (query session' bomberman/join-game-error?)
+                      (map (comp #(into {} %) :?join-game-error))
+                      (set))
+         :joins  (->> (query session' bomberman/join-game?)
+                      (map (comp #(into {} %) :?join-game))
+                      (set))})
+      {:errors #{{:game-id 1, :message "Player with that name already exists"}},
+       :joins #{}})))
+
   (t/testing "Users can join game is state and password is correct"
     (t/is
      (=

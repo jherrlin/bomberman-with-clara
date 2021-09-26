@@ -362,6 +362,13 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert! (StartedGameInactivityTimeout. ?now ?game-id :inactivity)))
 
+(defrule player-wants-to-join-game-but-player-name-is-already-three
+  [?player-wants-to-join-game <- PlayerWantsToJoinGame (= ?game-id game-id) (= ?player-join-name player-name)]
+  [PlayerOnBoardPosition                               (= ?game-id game-id) (= ?player-on-board-name player-name)]
+  [:test (= ?player-join-name ?player-on-board-name)]
+  =>
+  (retract! ?player-wants-to-join-game)
+  (insert-unconditional! (JoinGameError. ?game-id "Player with that name already exists")))
 
 
 ;; For the frontend
@@ -373,10 +380,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
-;; TODO
-;; (defrule player-wants-to-join-game-but-player-name-is-already-three
-;;   =>
-;;   )
 
 ;; Queries
 (defquery created-game-inactivity-timeout?

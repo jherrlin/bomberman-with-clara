@@ -25,11 +25,11 @@
   (toCloudEvent [this]))
 
 
-(defrecord TimestampNow          [now])
-(defrecord Board                 [game-id board])
-(defrecord FireOnBoard           [game-id player-id fire-position-xy fire-start-timestamp])
-(defrecord BombOnBoard           [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
-(defrecord PlayerOnBoardPosition [game-id player-id player-current-xy player-name])
+(defrecord TimestampNow             [now])
+(defrecord Board                    [game-id board])
+(defrecord FireOnBoard              [game-id player-id fire-position-xy fire-start-timestamp])
+(defrecord BombOnBoard              [game-id player-id bomb-position-xy fire-length bomb-added-timestamp])
+(defrecord PlayerOnBoardPosition    [game-id player-id player-current-xy player-name])
 (defrecord PlayerOnBoardFireLength  [game-id player-id player-position-xy fire-length])
 (defrecord ItemOnBoard              [game-id item-position-xy item-power])
 
