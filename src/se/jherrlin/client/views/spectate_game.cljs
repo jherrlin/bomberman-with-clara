@@ -4,7 +4,7 @@
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.client.common :as client.common]
             [cljs.pprint :as pprint]
-            [se.jherrlin.server.game-state :as game-state]
+            [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.client.events :as client.events]
             ["semantic-ui-react" :as semantic-ui]))
 

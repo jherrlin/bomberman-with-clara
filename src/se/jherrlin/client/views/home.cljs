@@ -1,7 +1,7 @@
 (ns se.jherrlin.client.views.home
   (:require [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
-            [se.jherrlin.server.game-state :as game-state]
+            [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.client.events :as client.events]
             [se.jherrlin.client.common :as client.common]

@@ -10,7 +10,7 @@
    [se.jherrlin.server.components.timbre :as components.timbre]
    [se.jherrlin.server.components.event-store :as components.event-store]
    [se.jherrlin.server.components.game-state :as components.game-state]
-   [se.jherrlin.server.game-state :as game-state]
+   [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.server.endpoints :as server.endpoints]
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]

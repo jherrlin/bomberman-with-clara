@@ -1,6 +1,6 @@
 (ns se.jherrlin.server.repl
   (:require
-   [se.jherrlin.server.game-state :as game-state]
+   [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.models :as models]
    [se.jherrlin.server.resources :as resources]
    [se.jherrlin.clara-labs.board :as board]

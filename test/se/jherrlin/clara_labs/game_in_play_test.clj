@@ -3,7 +3,7 @@
              [se.jherrlin.server.resources :as resources]
              [se.jherrlin.claraman.models :as models]
              [clojure.pprint :as pprint]
-             [se.jherrlin.server.game-state :as game-state]
+             [se.jherrlin.claraman.game-state :as game-state]
              [se.jherrlin.clara-labs.board :as board]))
 
 

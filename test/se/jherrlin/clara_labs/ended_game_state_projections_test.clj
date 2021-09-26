@@ -1,7 +1,7 @@
 (ns se.jherrlin.clara-labs.ended-game-state-projections-test
   (:require  [clojure.test :as t]
              [se.jherrlin.claraman.models :as models]
-             [se.jherrlin.server.game-state :as game-state]
+             [se.jherrlin.claraman.game-state :as game-state]
              [se.jherrlin.clara-labs.board :as board]))
 
 (t/deftest game-state-projection-after-game-ends

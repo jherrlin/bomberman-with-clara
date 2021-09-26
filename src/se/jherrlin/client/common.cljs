@@ -2,7 +2,7 @@
   (:require [reitit.coercion.schema]
             [se.jherrlin.datetime :as datetime]
             [cljs.pprint :as pprint]
-            [se.jherrlin.server.game-state :as game-state]
+            [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.client.events :as client.events]))
 
 

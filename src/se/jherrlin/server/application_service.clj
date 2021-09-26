@@ -1,6 +1,6 @@
 (ns se.jherrlin.server.application-service
   (:require [clojure.spec.alpha :as s]
-            [se.jherrlin.server.game-state :as game-state]
+            [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.claraman.models :as models]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
