@@ -1,4 +1,4 @@
-(ns se.jherrlin.clara-labs.bomberman-rules
+(ns se.jherrlin.claraman.claraman-rules
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [clara.rules.accumulators :as acc]
             [clara.tools.inspect :as inspect]
@@ -31,7 +31,7 @@
 
 
 (comment
-  (remove-ns 'se.jherrlin.clara-labs.bomberman-rules)
+  (remove-ns 'se.jherrlin.claraman.claraman-rules)
   )
 
 
@@ -504,7 +504,7 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
 
 
 
-(defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
+(defsession bomberman-session 'se.jherrlin.claraman.claraman-rules)
 
 
 

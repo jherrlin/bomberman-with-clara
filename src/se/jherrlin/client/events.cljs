@@ -1,6 +1,6 @@
 (ns se.jherrlin.client.events
   (:require [re-frame.core :as re-frame]
-            [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+            [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
             [se.jherrlin.claraman.game-state :as game-state]))
 
 

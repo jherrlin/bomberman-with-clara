@@ -4,7 +4,7 @@
    [se.jherrlin.claraman.models :as models]
    [se.jherrlin.server.resources :as resources]
    [se.jherrlin.clara-labs.board :as board]
-   [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+   [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
    [clojure.pprint :as pprint]
    [clojure.edn :as edn]
    [clojure.java.io :as io]

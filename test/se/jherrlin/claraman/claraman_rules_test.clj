@@ -1,8 +1,8 @@
-(ns se.jherrlin.clara-labs.bomberman-rules-test
+(ns se.jherrlin.claraman.claraman-rules-test
   (:require
    [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
    [clara.rules.accumulators :as acc]
-   [se.jherrlin.clara-labs.bomberman-rules :as bomberman]
+   [se.jherrlin.claraman.claraman-rules :as bomberman]
    [se.jherrlin.datetime :as datetime]
    [se.jherrlin.claraman.models :as models]
    [clara.tools.inspect :as inspect]
@@ -10,7 +10,7 @@
    [se.jherrlin.clara-labs.board :as board]))
 
 (comment
-  (remove-ns 'se.jherrlin.clara-labs.bomberman-rules-test)
+  (remove-ns 'se.jherrlin.claraman.claraman-rules-test)
   )
 
 (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
@@ -22,7 +22,7 @@
    [{:type :wall :x 0 :y 3} {:type :floor :x 1 :y 3} {:type :floor :x 2 :y 3} {:type :floor :x 3 :y 3} {:type :floor :x 4 :y 3} {:type :wall  :x 5 :y 3}]
    [{:type :wall :x 0 :y 4} {:type :wall  :x 1 :y 4} {:type :wall  :x 2 :y 4} {:type :wall  :x 3 :y 4} {:type :wall  :x 4 :y 4} {:type :wall  :x 5 :y 4}]])
 
-(defsession bomberman-session 'se.jherrlin.clara-labs.bomberman-rules)
+(defsession bomberman-session 'se.jherrlin.claraman.claraman-rules)
 
 
 (t/deftest end-game-in-shutdown

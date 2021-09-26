@@ -3,7 +3,7 @@
             [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.claraman.models :as models]
-            [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
+            [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.clara-labs.board :as board]))
