@@ -1,6 +1,6 @@
 (ns se.jherrlin.clara-labs.fire-spread
   (:require [clojure.set :as set]
-            [se.jherrlin.clara-labs.board :as board]))
+            [se.jherrlin.claraman.board :as board]))
 
 
 (defn bomb-fire-spread-in-all-directions [[pos-x pos-y] fire-length]

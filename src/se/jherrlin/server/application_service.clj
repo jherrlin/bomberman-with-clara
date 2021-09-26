@@ -6,7 +6,7 @@
             [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]
-            [se.jherrlin.clara-labs.board :as board]))
+            [se.jherrlin.claraman.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.server.application-service)

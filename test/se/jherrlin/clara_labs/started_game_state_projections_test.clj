@@ -4,7 +4,7 @@
              [se.jherrlin.claraman.models :as models]
              [clojure.pprint :as pprint]
              [se.jherrlin.claraman.game-state :as game-state]
-             [se.jherrlin.clara-labs.board :as board]))
+             [se.jherrlin.claraman.board :as board]))
 
 (comment
   (->> (let [game-id 1]

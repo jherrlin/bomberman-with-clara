@@ -2,7 +2,7 @@
   (:require [clara.rules :refer [defquery defrule defsession fire-rules insert insert! insert-all insert-unconditional! query retract!]]
             [clara.rules.accumulators :as acc]
             [clara.tools.inspect :as inspect]
-            [se.jherrlin.clara-labs.board :as board]
+            [se.jherrlin.claraman.board :as board]
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.datetime :as datetime]
             [clojure.set :as set]

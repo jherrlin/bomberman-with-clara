@@ -1,5 +1,5 @@
 (ns se.jherrlin.claraman.models
-  (:require [se.jherrlin.clara-labs.board :as board]
+  (:require [se.jherrlin.claraman.board :as board]
             [se.jherrlin.datetime :as datetime]))
 
 

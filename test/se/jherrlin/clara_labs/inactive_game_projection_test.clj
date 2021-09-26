@@ -2,7 +2,7 @@
   (:require  [clojure.test :as t]
              [se.jherrlin.claraman.models :as models]
              [se.jherrlin.claraman.game-state :as game-state]
-             [se.jherrlin.clara-labs.board :as board]))
+             [se.jherrlin.claraman.board :as board]))
 
 
 (t/deftest game-state-projection-after-game-inactivity-timeout

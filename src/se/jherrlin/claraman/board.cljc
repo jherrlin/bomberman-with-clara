@@ -1,4 +1,4 @@
-(ns se.jherrlin.clara-labs.board)
+(ns se.jherrlin.claraman.board)
 
 (defn only-walls [n]
   (vec (take n (repeat {:type :wall}))))

@@ -21,7 +21,7 @@
    [taoensso.timbre :as timbre]
    [se.jherrlin.datetime :as datetime]
    [clojure.pprint :as pprint]
-   [se.jherrlin.clara-labs.board :as board]
+   [se.jherrlin.claraman.board :as board]
    [se.jherrlin.server.application-service :as application-service]
    [se.jherrlin.server.resources :as resources])
   (:import [java.time Instant Duration])

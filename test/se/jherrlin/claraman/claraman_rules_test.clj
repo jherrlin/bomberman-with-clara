@@ -7,7 +7,7 @@
    [se.jherrlin.claraman.models :as models]
    [clara.tools.inspect :as inspect]
    [clojure.test :as t]
-   [se.jherrlin.clara-labs.board :as board]))
+   [se.jherrlin.claraman.board :as board]))
 
 (comment
   (remove-ns 'se.jherrlin.claraman.claraman-rules-test)
