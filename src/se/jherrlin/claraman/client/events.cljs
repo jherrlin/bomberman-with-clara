@@ -46,7 +46,7 @@
 
 (defn game-state->screen [gs]
   (let [{:keys [players stones board bombs fire game-state items]} gs]
-    (when (#{:started :created} game-state)
+    (when game-state
       (some->> board
                (add-players-to-screen (vals players))
                (add-bombs-to-screen   bombs)
