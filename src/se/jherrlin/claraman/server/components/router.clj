@@ -3,7 +3,7 @@
             [taoensso.timbre :as timbre]))
 
 
-(defrecord Router [args websocket middleware game-state incomming-actions event-store]
+(defrecord Router [args websocket middleware game-state event-store]
   component/Lifecycle
 
   (start [this]
@@ -12,7 +12,6 @@
       (def websocket websocket)
       (assoc this :handler (partial handler {:websocket         websocket
                                              :game-state        game-state
-                                             :incomming-actions incomming-actions
                                              :middleware        middleware
                                              :event-store       event-store}))))
 

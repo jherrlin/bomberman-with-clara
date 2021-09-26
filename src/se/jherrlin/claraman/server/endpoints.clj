@@ -1,7 +1,6 @@
 (ns se.jherrlin.claraman.server.endpoints
   (:require
    [clojure.spec.alpha :as s]
-   [malli.util :as mu]
    [muuntaja.core :as m]
    reitit.coercion
    ring.middleware.keyword-params
@@ -13,7 +12,6 @@
    [reitit.ring :as ring]
    [reitit.ring.coercion :as ring.coercion]
    [reitit.ring.malli]
-   [clojure.spec.alpha :as s]
    [se.jherrlin.claraman.server.pages :as pages]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
@@ -34,9 +32,7 @@
 (s/def ::uuid uuid?)
 (s/def ::game-id ::uuid)
 
-(defn handler [{:keys [websocket game-state incomming-actions middleware event-store] :as deps} req]
-  (def game-state game-state)
-  (def event-store event-store)
+(defn handler [{:keys [websocket game-state middleware event-store] :as deps} req]
   ((ring/ring-handler
     (ring/router
      [["/" {:summary "Index page"

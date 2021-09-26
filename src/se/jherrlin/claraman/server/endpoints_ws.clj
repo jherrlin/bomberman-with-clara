@@ -1,6 +1,5 @@
 (ns se.jherrlin.claraman.server.endpoints-ws
   (:require [taoensso.timbre :as timbre]
-            [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.claraman.server.application-service :as application-service]
             [se.jherrlin.datetime :as datetime]))
 
@@ -15,8 +14,9 @@
   (timbre/debug "Dont know what do to with handler: " (:id req)))
 
 (defmethod handler :command/user-action
-  [{:keys [incomming-actions ?data]}]
-  (user-commands/register-incomming-user-command! incomming-actions (assoc ?data :timestamp (datetime/now))))
+  [{:keys [?data incomming-player-commands]}]
+  (let [{:keys [register-incomming-player-command!]} incomming-player-commands]
+    (register-incomming-player-command! (assoc ?data :timestamp (datetime/now)))))
 
 (defmethod handler :game/create
   [req]

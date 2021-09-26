@@ -10,6 +10,7 @@
    [se.jherrlin.claraman.server.components.timbre :as components.timbre]
    [se.jherrlin.claraman.server.components.event-store :as components.event-store]
    [se.jherrlin.claraman.server.components.game-state :as components.game-state]
+   [se.jherrlin.claraman.server.components.incomming-commands :as components.incomming-commands]
    [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.server.endpoints :as server.endpoints]
    [se.jherrlin.claraman.server.endpoints-ws :as server.endpoints-ws]
@@ -21,14 +22,6 @@
 
 (comment
   (remove-ns 'se.jherrlin.claraman.server.system)
-  )
-
-;; TODO make a server component that holds this state
-(defonce incomming-commands-state
-  (atom {}))
-
-(comment
-  (reset! incomming-commands-state {})
   )
 
 (defn started-game-player-is-not-dead-and-have-xy? [gs game-id user-id]
@@ -78,7 +71,8 @@
        (map #(.toCloudEvent %))
        (sort-by :time #(compare %2 %1))))
 
-(defn game-loop [task-execution-timestamp game-state incomming-commands-state ws-broadcast-fn! add-events-fn!]
+(defn game-loop [{:keys [task-execution-timestamp game-state ws-broadcast-fn! add-events-fn!
+                         incomming-commands-state reset-incomming-player-commands!]}]
   (timbre/trace "Game loop is now started " task-execution-timestamp)
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
@@ -94,7 +88,7 @@
           actions-from-enging (claraman-rules/run-rules rule-enginge-facts)
           sorted-cloud-events (to-cloud-events (sort-events actions-from-enging))]
       (add-events-fn! sorted-cloud-events)
-      (reset! incomming-commands-state {})
+      (reset-incomming-player-commands!)
       (doseq [game (-> @game-state :games (vals))]
         (ws-broadcast-fn! [:new/game-state game]))
       (timbre/trace "Game loop is now done " (java.util.Date.)))
@@ -105,27 +99,27 @@
 (defn system [{:keys [scheduler logging webserver ws-handler http-handler game-state]}]
   (timbre/info "Creating system.")
   (component/system-map
-   :incomming-actions incomming-commands-state
    :nrepl             (components.nrepl/create)
    :event-store       (components.event-store/create)
+   :incomming-player-commands   (components.incomming-commands/create)
    :game-state        (component/using
                        (components.game-state/create (:projection-fn game-state))
                        [:event-store])
    :logging           (components.timbre/create logging)
    :scheduler         (component/using
                        (components.chime/create scheduler)
-                       [:game-state :incomming-actions :websocket :event-store])
+                       [:game-state :websocket :event-store :incomming-player-commands])
    :websocket         (component/using
                        (components.sente/create {:handler ws-handler})
-                       [:game-state :incomming-actions :event-store])
+                       [:game-state :event-store :incomming-player-commands])
    :router            (component/using
                        (components.router/create {:handler http-handler})
-                       [:websocket :logging :game-state :incomming-actions :event-store])
+                       [:websocket :logging :game-state :event-store])
    :webserver         (component/using
                        (components.httpkit/create webserver)
                        [:logging :router])))
 
-(defonce production
+(def production
   (system
    {:logging      {:logfile  "./logs/bomberman.log"
                    :println? true}

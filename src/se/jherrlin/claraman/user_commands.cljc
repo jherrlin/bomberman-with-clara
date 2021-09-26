@@ -25,24 +25,6 @@
         :join       ::join-game
         :start      ::start-game))
 
-(defmulti register-incomming-user-command!
-  (fn [incomming-commands-state command]
-    (if (s/valid? ::commands command)
-      (:action command)
-      (timbre/error "Command dont confirm to spec: " command))))
-
-(defmethod register-incomming-user-command! :move [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
-
-(defmethod register-incomming-user-command! :place-bomb [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
-
-(defmethod register-incomming-user-command! :throw-bomb [incomming-commands-state {:keys [game-id action user-id] :as m}]
-  (swap! incomming-commands-state assoc-in [game-id user-id action] m))
-
-(defmethod register-incomming-user-command! :default [incomming-commands-state m]
-  (timbre/error "In dont know what to do with" m))
-
 (defn generate-bot-action [game-id bot-id]
   (let [r (rand-int 100)]
     (cond
@@ -55,7 +37,6 @@
              :action :move
              :game-id game-id
              :user-id bot-id))))
-
 
 (comment
   (gen/sample (s/gen ::move))

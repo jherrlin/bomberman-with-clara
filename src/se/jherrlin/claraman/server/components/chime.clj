@@ -7,11 +7,11 @@
 
 (def run-loop (atom nil))
 
-(defrecord ChimeAsync [args game-state incomming-actions websocket event-store]
+(defrecord ChimeAsync [args game-state websocket event-store incomming-player-commands]
   component/Lifecycle
 
   (start [this]
-    (let [{:keys [chimes]}  this
+    (let [{:keys [chimes]}     this
           {:keys [f schedule]} args]
       (if chimes
         (do
@@ -23,7 +23,13 @@
           (let [chimes (chime-ch schedule)]
             (go-loop []
               (when-let [timestamp (<! chimes)]
-                (f timestamp (:game-state game-state) incomming-actions (:broadcast-fn! websocket) (:add-events-fn! event-store))
+                (f
+                 {:task-execution-timestamp         timestamp
+                  :game-state                       (:game-state game-state)
+                  :ws-broadcast-fn!                 (:broadcast-fn! websocket)
+                  :add-events-fn!                   (:add-events-fn! event-store)
+                  :incomming-commands-state         (:incomming-commands-state incomming-player-commands)
+                  :reset-incomming-player-commands! (:reset-incomming-player-commands! incomming-player-commands)})
                 (when @run-loop
                   (recur))))
             (assoc this :chimes chimes))))))

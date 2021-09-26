@@ -20,6 +20,8 @@
   (alter-var-root #'system/production component/start)
   (alter-var-root #'system/production component/stop)
 
+  system/production
+
   (->> @event-store
        :events
        (reverse)
