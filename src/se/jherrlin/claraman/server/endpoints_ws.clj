@@ -5,37 +5,35 @@
             [se.jherrlin.datetime :as datetime]))
 
 
-(defmulti handler :id)
+(defmulti handler
+  (fn [{:keys [?data client-id id]}]
+    (timbre/debug "Incomming command: "id client-id ?data)
+    id))
 
 (defmethod handler :default
   [req]
-  ;; (def req req)
   (timbre/debug "Dont know what do to with handler: " (:id req)))
 
 (defmethod handler :command/user-action
-  [{:keys [?reply-fn incomming-actions ?data client-id id] :as req}]
-  (timbre/debug id client-id ?data)
+  [{:keys [incomming-actions ?data]}]
   (user-commands/register-incomming-user-command! incomming-actions (assoc ?data :timestamp (datetime/now))))
 
 (defmethod handler :game/create
   [req]
-  (let [{:keys [?data ?reply-fn event-store game-state client-id id]} req
-        {:keys [add-events-fn!]}                                      event-store]
-    (timbre/debug id client-id ?data)
+  (let [{:keys [?data ?reply-fn event-store game-state]} req
+        {:keys [add-events-fn!]}                         event-store]
     (?reply-fn
      (application-service/create-game! game-state add-events-fn! (assoc ?data :action :create-game)))))
 
 (defmethod handler :game/join
   [req]
-  (let [{:keys [?data ?reply-fn event-store game-state id client-id]} req
-        {:keys [add-events-fn!]}                                      event-store]
-    (timbre/debug id client-id ?data)
+  (let [{:keys [?data ?reply-fn event-store game-state]} req
+        {:keys [add-events-fn!]}                         event-store]
     (?reply-fn
      (application-service/join-game! game-state add-events-fn! (assoc ?data :action :join-game)))))
 
 (defmethod handler :game/start
   [req]
-  (let [{:keys [?data ?reply-fn event-store game-state id client-id]} req
-        {:keys [add-events-fn!]}                                      event-store]
-    (timbre/debug id client-id ?data)
+  (let [{:keys [?data ?reply-fn event-store game-state]} req
+        {:keys [add-events-fn!]}                         event-store]
     (?reply-fn (application-service/start-game! game-state add-events-fn! (assoc ?data :action :start-game)))))
