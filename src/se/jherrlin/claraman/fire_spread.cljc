@@ -72,27 +72,16 @@
   (fire-after-it-hit-objects
    [3 1] 3 (board/init 6) [])
 
-  ;; (fire-after-it-hit-objects
-  ;;  [1 1]
-  ;;  3
-  ;;  (board/init 6)
-  ;;  [#se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [2 1]}
-  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [3 1]}
-  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 2]}
-  ;;   #se.jherrlin.clara_labs.bomberman_rules.Stone{:stone-position-xy [1 3]}])
-
   (let [bomb-xy     [1 1]
         fire-length 10
         board       (board/init 6)
-        stones      #_[] [[1 2] [2 1] [3 1]]
-        ]
+        stones      #_[] [[1 2] [2 1] [3 1]]]
     (->> (-> (bomb-fire-spread-in-all-directions bomb-xy fire-length)
              (remove-fire-after-is-hits-a-wall board)
              (remove-fire-after-is-hits-the-first-stone stones))
          (vals)
          (remove empty?)
-         (apply concat)
-         ))
+         (apply concat)))
 
   {:north [], :west [], :east [[2 1] [3 1] [4 1]], :south [[1 2] [1 3]]}
 

@@ -3,9 +3,6 @@
             [se.jherrlin.claraman.models :as models]
             [taoensso.timbre :as timbre]))
 
-(comment
-  (remove-ns 'se.jherrlin.claraman.game-state)
-  )
 
 ;; Access data in game state
 (defn player-current-xy
@@ -66,8 +63,6 @@
 
 (defn games
   [game-state]                   (-> game-state (get-in [:games]) (vals)))
-
-
 
 (defn game
   [game-state subject] (get-in game-state [:games subject]))
@@ -267,46 +262,3 @@
        (filter (comp #{:shutdown} :game-state))
        (map (fn [{:keys [game-id]}]
               (models/->GameIsInShutdown game-id)))))
-
-
-
-(comment
-  (def repl-game-id #uuid "c03e430f-2b24-4109-a923-08c986a682a8")
-  (def player-1-ws-id #uuid "e677bf82-0137-4105-940d-6d74429d31b0")
-  (def player-2-ws-id #uuid "663bd7a5-7220-40e5-b08d-597c43b89e0a")
-
-  (let [timestamp #inst "2021-09-19T21:10:59.559-00:00"]
-    (reduce
-     (fn [gs m] (projection gs (.toCloudEvent m)))
-     {}
-     [(models/->CreateGame     timestamp        repl-game-id "First game" "my-secret" board/mini '() '())
-      (models/->JoinGame       timestamp        repl-game-id player-1-ws-id "John")
-      (models/->JoinGame       timestamp        repl-game-id player-2-ws-id "Hannah")
-      (models/->StartGame      timestamp        repl-game-id )
-      (models/->PlayerDies                      repl-game-id player-1-ws-id player-2-ws-id)
-      (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
-      (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
-      (models/->PlayerMove     timestamp        repl-game-id player-1-ws-id [2 1] :east)
-      (models/->StoneToRemove  timestamp        repl-game-id [3 3])
-      (models/->GameWinner     timestamp        repl-game-id "John")
-      (models/->EndGame                         repl-game-id nil)]))
-
-
-  (let [timestamp #inst "2021-09-19T21:10:59.559-00:00"]
-    (reduce
-     (fn [gs m] (projection gs (.toCloudEvent m)))
-     {}
-     [(models/->CreateGame    timestamp         repl-game-id "First game" "my-secret" board/mini '() '())
-      (models/->JoinGame      timestamp         repl-game-id player-1-ws-id "John")
-      (models/->JoinGame      timestamp         repl-game-id player-2-ws-id "Hannah")
-      (models/->StartGame                       repl-game-id #inst "2021-09-19T15:54:31.631-00:00")
-
-      ;; (models/->PlayerPicksFireIncItemFromBoard timestamp repl-game-id player-1-ws-id [1 1] 3)
-      ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-      ;; (PlayerMove.             repl-game-id player-1-ws-id [2 1] :east)
-      ;; (StoneToRemove.          repl-game-id [3 3])
-      ;; (EndGame.                repl-game-id nil)
-      ]))
-
-  (.toCloudEvent (EndGame. repl-game-id nil))
-  )
