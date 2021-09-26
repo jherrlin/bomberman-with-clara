@@ -17,7 +17,7 @@ jobs:
       - run: npm install
       - run: mkdir classes
       - run: shadow-cljs release frontend
-      - run: clojure -X:uberjar :aot true :main-class se.jherrlin.server.system :jar target/bomberman.jar :compile-ns '[se.jherrlin.server.system]'
+      - run: clojure -X:uberjar :aot true :main-class se.jherrlin.server.claraman.system :jar target/bomberman.jar :compile-ns '[se.jherrlin.server.claraman.system]'
       - persist_to_workspace:
           root: target
           paths:
