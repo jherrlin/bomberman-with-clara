@@ -30,11 +30,6 @@
                GameIsInShutdown GameShutdown])))
 
 
-(comment
-  (remove-ns 'se.jherrlin.claraman.claraman-rules)
-  )
-
-
 (defrule player-throws-bomb
   "A player can throw a bomb if facing direction points to it."
   [TimestampNow (= ?now now)]
@@ -378,20 +373,6 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   =>
   (insert-unconditional! (StartGameError. ?game-id "Not enough players! Minimum is 2.")))
 
-;; (defrule created-game-ends-automatically-if-timeout-is-reached
-;;   "If game is in lobby more that a certain amount of time. It's removed."
-
-;;   )
-
-;; (defrule game-can-be-started
-;;   "Used by frontend to determine if a game can be started."
-;;   [GameState                                                (= ?game-id game-id) (= :created game-state)]
-;;   [?players-alive <- (acc/all) :from [PlayerOnBoardPosition (= ?game-id game-id)]]
-;;   [:test (<= 2 (count ?players-alive))]
-;;   =>
-;;   (insert-unconditional! (StartGame. ?game-id #inst "2021-09-19T15:54:31.631-00:00" ;; Time is not used here.
-;;                                      )))
-
 ;; TODO
 ;; (defrule player-wants-to-join-game-but-player-name-is-already-three
 ;;   =>
@@ -503,40 +484,31 @@ When fire huts a stone it saves the fire to that stone but discard the rest in t
   [?game-winner <- GameWinner])
 
 
-
 (defsession bomberman-session 'se.jherrlin.claraman.claraman-rules)
-
 
 
 (defn run-rules [facts]
   (let [session  (insert-all bomberman-session facts)
         session' (fire-rules session)]
     {:actions
-     {:player-moves         (map :?player-move           (query session' player-move?))
-      :exploading-bombs     (map :?exploading-bombs      (query session' exploading-bombs?))
-      ;; :bombs-on-board       (map :?bomb-on-board         (query session' bomb-on-board?))      ;; Should not be turned into events, they are facts
-      ;; :fire-on-board        (map :?fire-on-board         (query session' fire-on-board?))      ;; Should not be turned into events, they are facts
-      :stones-to-remove     (map :?stones-to-remove      (query session' stones-to-remove?))
-      :dead-players         (map :?dead-players          (query session' dead-players?))
-      :flying-bombs         (map :?flying-bombs          (query session' flying-bombs?))
-      :fire-to-remove       (map :?fire-to-remove        (query session' fire-to-remove?))
-      :bomb-to-remove       (map :?bomb-to-remove        (query session' bomb-to-remove?))
-      :game-winners         (map :?game-winner           (query session' game-winner?))
-
-      :player-wants-to-move        (map :?player-wants-to-move        (query session' player-wants-to-move?))
-      :player-wants-to-place-bomb  (map :?player-wants-to-place-bomb  (query session' player-wants-to-place-bomb?))
-      :player-wants-to-throw-bomb  (map :?player-wants-to-throw-bomb  (query session' player-wants-to-throw-bomb?))
-
-      :fire-to-add                 (map :?fire-to-add                 (query session' fire-to-add?))
-      :bomb-to-add                 (map :?bomb-to-add                 (query session' bomb-to-add?))
-
-      :end-games                   (map :?end-game             (query session' end-game?))
-      :game-shutdowns              (map :?game-shutdown        (query session' game-shutdown?))
-
-      :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board (query session' picks-fire-inc-item-from-board?))
-
-      :inactive-created-games (map :?created-game-inactivity-timeout (query session' created-game-inactivity-timeout?))
-      :inactive-started-games (map :?started-game-inactivity-timeout (query session' started-game-inactivity-timeout?))}}))
+     {:player-moves                   (map :?player-move                     (query session' player-move?))
+      :exploading-bombs               (map :?exploading-bombs                (query session' exploading-bombs?))
+      :stones-to-remove               (map :?stones-to-remove                (query session' stones-to-remove?))
+      :dead-players                   (map :?dead-players                    (query session' dead-players?))
+      :flying-bombs                   (map :?flying-bombs                    (query session' flying-bombs?))
+      :fire-to-remove                 (map :?fire-to-remove                  (query session' fire-to-remove?))
+      :bomb-to-remove                 (map :?bomb-to-remove                  (query session' bomb-to-remove?))
+      :game-winners                   (map :?game-winner                     (query session' game-winner?))
+      :player-wants-to-move           (map :?player-wants-to-move            (query session' player-wants-to-move?))
+      :player-wants-to-place-bomb     (map :?player-wants-to-place-bomb      (query session' player-wants-to-place-bomb?))
+      :player-wants-to-throw-bomb     (map :?player-wants-to-throw-bomb      (query session' player-wants-to-throw-bomb?))
+      :fire-to-add                    (map :?fire-to-add                     (query session' fire-to-add?))
+      :bomb-to-add                    (map :?bomb-to-add                     (query session' bomb-to-add?))
+      :end-games                      (map :?end-game                        (query session' end-game?))
+      :game-shutdowns                 (map :?game-shutdown                   (query session' game-shutdown?))
+      :picks-fire-inc-item-from-board (map :?picks-fire-inc-item-from-board  (query session' picks-fire-inc-item-from-board?))
+      :inactive-created-games         (map :?created-game-inactivity-timeout (query session' created-game-inactivity-timeout?))
+      :inactive-started-games         (map :?started-game-inactivity-timeout (query session' started-game-inactivity-timeout?))}}))
 
 (defn run-create-game-rules [facts]
   (let [session  (insert-all bomberman-session facts)
