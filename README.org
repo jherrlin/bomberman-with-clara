@@ -64,3 +64,18 @@ The running game can be found at https://bomberman.lambda-group.se/
   #+BEGIN_SRC shell :results output code
     clojure -Moutdated --write
   #+END_SRC
+
+* Development with Emacs
+** With Vlaaads Reveal
+
+   1. Starta a repl from command line
+      =clojure -A:reveal:test:dev -m nrepl.cmdline --middleware '[vlaaad.reveal.nrepl/middleware]'=
+   2. Connect to the repl from Emacs with
+      =cider-connect-clj=
+   3. Start a ClojureScript repl with
+      =cider-jack-in-cljs=
+
+** Without Reveal
+
+   1. Start Clj and Cljs repls with
+      =cider-jack-in-clj&cljs=

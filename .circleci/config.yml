@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - run: clojure -R:default-deps
-      - run: clojure -A:test
+      - run: clojure -A:test:runner
       - run: sudo npm install -g shadow-cljs
       - run: npm install
       - run: mkdir classes
