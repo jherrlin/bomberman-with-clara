@@ -4,7 +4,7 @@
    [re-frame.core :as re-frame]
    [reagent.dom :as rd]
    [reitit.core :as r]
-   [se.jherrlin.client.ajax :as ajax]
+   [se.jherrlin.claraman.client.ajax :as ajax]
    [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
    [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.models :as models]

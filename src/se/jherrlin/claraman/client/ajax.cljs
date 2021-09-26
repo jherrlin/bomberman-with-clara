@@ -1,4 +1,4 @@
-(ns se.jherrlin.client.ajax
+(ns se.jherrlin.claraman.client.ajax
   (:require [ajax.core :as ajax]
             day8.re-frame.http-fx
             [re-frame.core :as re-frame]
