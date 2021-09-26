@@ -2,10 +2,8 @@
   (:require  [clojure.test :as t]
              [se.jherrlin.server.resources :as resources]
              [se.jherrlin.claraman.models :as models]
-             [se.jherrlin.server.game-state2 :as game-state2]
              [se.jherrlin.server.game-state :as game-state]
              [se.jherrlin.clara-labs.board :as board]))
-
 
 
 (comment
@@ -16,7 +14,7 @@
        :games
        (vals)
        (first)
-       (game-state2/game-facts)
+       (game-state/game-facts)
        (resources/output "test-data/create-game-facts.edn"))
   )
 
@@ -31,7 +29,7 @@
            :games
            (vals)
            (first)
-           (game-state2/game-facts)
+           (game-state/game-facts)
            (map #(into {} %))
            (set))
       (->> (resources/pull "test-data/create-game-facts.edn")
@@ -39,7 +37,7 @@
            (set))))))
 
 (comment
-  (->> (game-state2/game-facts
+  (->> (game-state/game-facts
         {:game-id 1,
          :fire (),
          :stones (),

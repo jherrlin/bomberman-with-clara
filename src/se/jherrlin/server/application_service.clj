@@ -4,7 +4,6 @@
             [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.claraman.models :as models]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
-            [se.jherrlin.server.game-state2 :as game-state2]
             [taoensso.timbre :as timbre]
             [se.jherrlin.datetime :as datetime]
             [se.jherrlin.clara-labs.board :as board]))
@@ -38,7 +37,7 @@
           player-wants-to-create-game       (models/->WantsToCreateGame game-id game-name game-password game-board stones items)
           _                                 (def player-wants-to-create-game player-wants-to-create-game)
           facts                             (concat
-                                             (game-state2/active-game-facts @game-state)
+                                             (game-state/active-game-facts @game-state)
                                              [(models/->TimestampNow now)]
                                              [player-wants-to-create-game])
           _                                 (def facts facts)
@@ -71,8 +70,8 @@
           game                       (game-state/game @game-state game-id)
           {:keys [start-game-errors start-games] :as actions}
           (bomberman-rules/run-start-game-rules
-           (concat (game-state2/game-facts game)
-                   [(game-state2/active-game-fact game)]
+           (concat (game-state/game-facts game)
+                   [(game-state/active-game-fact game)]
                    [(models/->TimestampNow (datetime/now))]
                    [player-wants-to-start-game]))]
       (cond
@@ -111,9 +110,9 @@
           _                                                 (def player-wants-to-join-game player-wants-to-join-game)
           _                                                 (def player-wants-to-join-game player-wants-to-join-game)
           facts                                             (concat
-                                                             (game-state2/game-facts game)
+                                                             (game-state/game-facts game)
                                                              [(models/->TimestampNow now)]
-                                                             [(game-state2/active-game-fact game)]
+                                                             [(game-state/active-game-fact game)]
                                                              [player-wants-to-join-game])
           _                                                 (def facts facts)
           {:keys [join-game-errors join-games] :as actions} (bomberman-rules/run-join-game-rules facts)

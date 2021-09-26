@@ -1,7 +1,6 @@
 (ns se.jherrlin.client.events
   (:require [re-frame.core :as re-frame]
             [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
-            [se.jherrlin.server.game-state2 :as game-state2]
             [se.jherrlin.server.game-state :as game-state]))
 
 
@@ -82,7 +81,7 @@
    {:n :start-game
     :s (fn [{:keys [game-state] :as db} [_]]
          (->> game-state
-              (game-state2/game-facts)
+              (game-state/game-facts)
               (bomberman-rules/run-start-game-rules)))}])
 
 (doseq [{:keys [n s e]} events]

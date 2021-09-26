@@ -1,11 +1,8 @@
 (ns se.jherrlin.clara-labs.inactive-game-projection-test
   (:require  [clojure.test :as t]
-             [se.jherrlin.server.resources :as resources]
              [se.jherrlin.claraman.models :as models]
-             [clojure.pprint :as pprint]
              [se.jherrlin.server.game-state :as game-state]
-             [se.jherrlin.clara-labs.board :as board]
-             [se.jherrlin.server.game-state2 :as game-state2]))
+             [se.jherrlin.clara-labs.board :as board]))
 
 
 (t/deftest game-state-projection-after-game-inactivity-timeout

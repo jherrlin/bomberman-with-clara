@@ -22,7 +22,6 @@
    [se.jherrlin.datetime :as datetime]
    [clojure.pprint :as pprint]
    [se.jherrlin.clara-labs.board :as board]
-   [se.jherrlin.server.game-state2 :as game-state2]
    [se.jherrlin.server.application-service :as application-service]
    [se.jherrlin.server.resources :as resources])
   (:import [java.time Instant Duration])
@@ -92,9 +91,9 @@
   (try
     (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
           _                   (def user-action-facts user-action-facts)
-          started-game-facts  (game-state2/started-games-facts @game-state)
-          created-game-facts  (game-state2/created-games-facts @game-state)
-          shutdown-game-facts (game-state2/shutdown-games-facts @game-state)
+          started-game-facts  (game-state/started-games-facts @game-state)
+          created-game-facts  (game-state/created-games-facts @game-state)
+          shutdown-game-facts (game-state/shutdown-games-facts @game-state)
           _                   (def created-game-facts created-game-facts)
           _                   (def started-game-facts started-game-facts)
           _                   (def shutdown-game-facts shutdown-game-facts)
@@ -229,7 +228,7 @@
        :events
        count)
 
-  (count (game-state2/games-facts @game-state'))
+  (count (game-state/games-facts @game-state'))
 
   (java.util.UUID/randomUUID)
   (def repl-subject "JOHN-HANNAS-game")
@@ -241,7 +240,7 @@
   (bomberman-rules/run-rules
    (concat
     (incomming-actions incomming-commands-state game-state')
-    (game-state2/games-facts @game-state')
+    (game-state/games-facts @game-state')
     [(models/->TimestampNow (java.util.Date.))]))
 
 
@@ -251,7 +250,7 @@
 
 
   (bomberman-rules/run-rules
-   (game-state2/games-facts
+   (game-state/games-facts
     (game-state/the-projection {} (->> @event-store :events reverse))
     ))
 
@@ -297,7 +296,7 @@
      (let [game-state          game-state'
            user-action-facts   (incomming-actions incomming-commands-state game-state)
            _                   (def user-action-facts user-action-facts)
-           game-state-facts    (game-state2/games-facts @game-state)
+           game-state-facts    (game-state/games-facts @game-state)
            _                   (def game-state-facts game-state-facts)
            rule-enginge-facts  (concat
                                 user-action-facts
