@@ -3,6 +3,7 @@
    [se.jherrlin.claraman.client.websocket :as websocket]
    [re-frame.core :as re-frame]
    [reagent.dom :as rd]
+   se.jherrlin.claraman.client.ajax
    [reitit.frontend.easy :as rfe]
    [se.jherrlin.claraman.client.router :as client.router]
    [se.jherrlin.claraman.client.events :as events]
@@ -10,33 +11,29 @@
 
 
 (defn header-menu [router]
-  (let []
-    [:div {:style {:flex "1"}}
-     [:> semantic-ui/Menu {:size       "large"
-                           :borderless true}
-      [:> semantic-ui/Menu.Item
-       {:as "a" :href (rfe/href :se.jherrlin.claraman.client.views.home/view)} "Home"]
-      [:> semantic-ui/Menu.Item
-       {:as "a"
-        :href (rfe/href :se.jherrlin.claraman.client.views.create-game/view)} "Create game"]
+  [:div {:style {:flex "1"}}
+   [:> semantic-ui/Menu {:size       "large"
+                         :borderless true}
+    [:> semantic-ui/Menu.Item
+     {:as "a" :href (rfe/href :se.jherrlin.claraman.client.views.home/view)} "Home"]
+    [:> semantic-ui/Menu.Item
+     {:as "a"
+      :href (rfe/href :se.jherrlin.claraman.client.views.create-game/view)} "Create game"]
 
-      [:> semantic-ui/Menu.Item
-       {:as "a"
-        :href (rfe/href :se.jherrlin.claraman.client.views.join-game/view)} "Join game"]
+    [:> semantic-ui/Menu.Item
+     {:as "a"
+      :href (rfe/href :se.jherrlin.claraman.client.views.join-game/view)} "Join game"]
 
-      [:> semantic-ui/Menu.Item
-       {:as "a"
-        :href (rfe/href :se.jherrlin.claraman.client.views.past-games/view)} "Past games"]
+    [:> semantic-ui/Menu.Item
+     {:as "a"
+      :href (rfe/href :se.jherrlin.claraman.client.views.past-games/view)} "Past games"]
 
-      #_[:> semantic-ui/Menu.Item
-       {:as "a" :href (rfe/href :route2/db)} "DB"]
+    [:> semantic-ui/Menu.Item
+     {:as "a" :target "_blank" :href "https://github.com/jherrlin/bomberman-with-clara"} "Source code"]
 
-      [:> semantic-ui/Menu.Item
-       {:as "a" :target "_blank" :href "https://github.com/jherrlin/bomberman-with-clara"} "Source code"]
-
-      [:> semantic-ui/Menu.Menu {:position "right" }
-       [:> semantic-ui/Menu.Item
-        [:img {:src "img/bomberman-logo.png" :style {:height "2em"}}]]]]]))
+    [:> semantic-ui/Menu.Menu {:position "right" }
+     [:> semantic-ui/Menu.Item
+      [:img {:src "img/bomberman-logo.png" :style {:height "2em"}}]]]]])
 
 (defn main-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [:current-route])]
@@ -58,15 +55,10 @@
                     :overflow-x  "hidden"
                     :padding-top "1.0em"}}
       (when current-route
-        (-> current-route :data :view))]
-
-     #_[:div
-      [:> semantic-ui/Menu
-       [:> semantic-ui/Menu.Item {:name "Notifikationer"}]
-       [:> semantic-ui/Menu.Item {:name "Något"}]]]]))
+        (-> current-route :data :view))]]))
 
 (defn ^:dev/after-load mount-root []
-  #_(re-frame/clear-subscription-cache!)
+  (re-frame/clear-subscription-cache!)
   (rd/render [main-component {:router (client.router/handler)}] (.getElementById js/document "app")))
 
 
