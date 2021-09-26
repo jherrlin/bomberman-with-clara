@@ -4,7 +4,7 @@
    [clara.rules.accumulators :as acc]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman]
    [se.jherrlin.datetime :as datetime]
-   [se.jherrlin.server.models :as models]
+   [se.jherrlin.claraman.models :as models]
    [clara.tools.inspect :as inspect]
    [clojure.test :as t]
    [se.jherrlin.clara-labs.board :as board]))

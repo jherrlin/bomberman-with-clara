@@ -6,8 +6,8 @@
             [se.jherrlin.clara-labs.fire-spread :as fire-spread]
             [se.jherrlin.datetime :as datetime]
             [clojure.set :as set]
-            #?(:clj se.jherrlin.server.models)
-            #?(:cljs [se.jherrlin.server.models
+            #?(:clj se.jherrlin.claraman.models)
+            #?(:cljs [se.jherrlin.claraman.models
                       :refer [ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
                               EndGame FireOnBoard FireToAdd FireToRemove
                               FlyingBomb GameState ItemOnBoard JoinGame JoinGameError
@@ -18,7 +18,7 @@
                               CreatedGameInactivityTimeout StartedGameInactivityTimeout GameStartedTimestamp GameCreatedTimestamp
                               GameIsInShutdown GameShutdown]]))
   #?(:clj
-     (:import [se.jherrlin.server.models
+     (:import [se.jherrlin.claraman.models
                ActiveGame Board BombExploading BombOnBoard BombToAdd BombToRemove CreateGame CreateGameError
                EndGame FireOnBoard FireToAdd FireToRemove GameWinner
                FlyingBomb GameState ItemOnBoard JoinGame JoinGameError

@@ -1,6 +1,6 @@
 (ns se.jherrlin.server.game-state2
   (:require [se.jherrlin.server.game-state :as game-state]
-            [se.jherrlin.server.models :as models]
+            [se.jherrlin.claraman.models :as models]
             [taoensso.timbre :as timbre]))
 
 

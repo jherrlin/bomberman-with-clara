@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.models
+(ns se.jherrlin.claraman.models
   (:require [se.jherrlin.clara-labs.board :as board]
             [se.jherrlin.datetime :as datetime]))
 
@@ -189,4 +189,4 @@
 (defrecord GameStartedTimestamp [timestamp game-id])
 (defrecord GameCreatedTimestamp [timestamp game-id])
 
-#?(:clj (compile 'se.jherrlin.server.models))
+#?(:clj (compile 'se.jherrlin.claraman.models))

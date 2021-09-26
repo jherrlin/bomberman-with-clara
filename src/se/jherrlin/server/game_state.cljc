@@ -1,6 +1,6 @@
 (ns se.jherrlin.server.game-state
   (:require [clojure.string :as str]
-            [se.jherrlin.server.models :as models]
+            [se.jherrlin.claraman.models :as models]
             [taoensso.timbre :as timbre]))
 
 (comment

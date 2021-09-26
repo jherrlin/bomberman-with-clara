@@ -1,7 +1,7 @@
 (ns se.jherrlin.clara-labs.game-in-play-test
   (:require  [clojure.test :as t]
              [se.jherrlin.server.resources :as resources]
-             [se.jherrlin.server.models :as models]
+             [se.jherrlin.claraman.models :as models]
              [clojure.pprint :as pprint]
              [se.jherrlin.server.game-state :as game-state]
              [se.jherrlin.clara-labs.board :as board]))
