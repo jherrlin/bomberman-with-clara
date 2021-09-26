@@ -4,4 +4,4 @@
                      :output-dir        "resources/public/js"
                      :devtools          {:preloads [devtools.preload]}
                      :module-hash-names true
-                     :modules           {:main {:init-fn se.jherrlin.client.main/init}}}}}
+                     :modules           {:main {:init-fn se.jherrlin.claraman.client.main/init}}}}}
