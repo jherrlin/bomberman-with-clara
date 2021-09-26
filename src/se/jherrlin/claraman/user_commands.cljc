@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.user-commands
+(ns se.jherrlin.claraman.user-commands
   (:require [clojure.spec.alpha :as s]
             [taoensso.timbre :as timbre]
             [clojure.test.check.generators :as gen]

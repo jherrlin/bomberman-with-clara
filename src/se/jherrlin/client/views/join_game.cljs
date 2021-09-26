@@ -4,7 +4,7 @@
             [reitit.frontend.easy :as rfe]
             [cljs.pprint :as pprint]
             [se.jherrlin.client.views.game-lobby :as game-lobby]
-            [se.jherrlin.server.user-commands :as user-commands]
+            [se.jherrlin.claraman.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]
             [clojure.string :as str]
             [se.jherrlin.datetime :as datetime]))

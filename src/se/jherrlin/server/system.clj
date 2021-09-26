@@ -14,7 +14,7 @@
    [se.jherrlin.server.endpoints :as server.endpoints]
    [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.clara-labs.bomberman-rules :as bomberman-rules]
-   [se.jherrlin.server.user-commands :as user-commands]
+   [se.jherrlin.claraman.user-commands :as user-commands]
    [se.jherrlin.server.models :as models]
    [clojure.spec.alpha :as s]
    [clojure.core.async :as a :refer [<! go-loop timeout]]

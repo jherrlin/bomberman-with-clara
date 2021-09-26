@@ -1,6 +1,6 @@
 (ns se.jherrlin.server.endpoints-ws
   (:require [taoensso.timbre :as timbre]
-            [se.jherrlin.server.user-commands :as user-commands]
+            [se.jherrlin.claraman.user-commands :as user-commands]
             [se.jherrlin.server.application-service :as application-service]
             [se.jherrlin.datetime :as datetime]))
 

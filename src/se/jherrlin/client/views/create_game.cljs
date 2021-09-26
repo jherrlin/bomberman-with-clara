@@ -3,7 +3,7 @@
             [re-frame.core :as re-frame]
             [cljs.pprint :as pprint]
             [se.jherrlin.client.views.join-game :as join-game]
-            [se.jherrlin.server.user-commands :as user-commands]
+            [se.jherrlin.claraman.user-commands :as user-commands]
             ["semantic-ui-react" :as semantic-ui]))
 
 
