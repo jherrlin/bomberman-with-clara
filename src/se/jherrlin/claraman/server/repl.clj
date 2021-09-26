@@ -1,14 +1,14 @@
-(ns se.jherrlin.server.repl
+(ns se.jherrlin.claraman.server.repl
   (:require
    [se.jherrlin.claraman.game-state :as game-state]
    [se.jherrlin.claraman.models :as models]
-   [se.jherrlin.server.resources :as resources]
+   [se.jherrlin.claraman.server.resources :as resources]
    [se.jherrlin.claraman.board :as board]
    [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
    [clojure.pprint :as pprint]
    [clojure.edn :as edn]
    [clojure.java.io :as io]
-   [se.jherrlin.server.system :as system]
+   [se.jherrlin.claraman.server.system :as system]
    [clojure.core.async
     :as a
     :refer [>! <! >!! <!! go chan buffer close! thread go-loop put!
@@ -27,9 +27,9 @@
 
 (defn dump-app-states! [game-name]
   (let [datetime (.format (java.text.SimpleDateFormat. "yyyy-MM-dd_HH-mm") (java.util.Date.))]
-       (spit (str "/tmp/" game-name "-" datetime "-game-state.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.server.components.game-state/game-state)))
-       (spit (str "/tmp/" game-name "-" datetime "-events.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.server.components.event-store/store)))
-       (spit (str "/tmp/" game-name "-" datetime "-incomming-commands.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.server.system/incomming-commands-state)))))
+       (spit (str "/tmp/" game-name "-" datetime "-game-state.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.claraman.server.components.game-state/game-state)))
+       (spit (str "/tmp/" game-name "-" datetime "-events.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.claraman.server.components.event-store/store)))
+       (spit (str "/tmp/" game-name "-" datetime "-incomming-commands.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.claraman.server.system/incomming-commands-state)))))
 
 (comment
   (dump-app-states! "test")
@@ -39,8 +39,8 @@
   @game-state'
   @event-store
   @system/incomming-commands-state
-  (reset! game-state' se.jherrlin.server.components.game-state/initial-game-state)
-  (reset! event-store se.jherrlin.server.components.event-store/store-init)
+  (reset! game-state' se.jherrlin.claraman.server.components.game-state/initial-game-state)
+  (reset! event-store se.jherrlin.claraman.server.components.event-store/store-init)
   (reset! incomming-commands-state/incomming-commands-state {})
 
   (spit "/tmp/kamrat-game-state.edn" (with-out-str (clojure.pprint/pprint @game-state')))

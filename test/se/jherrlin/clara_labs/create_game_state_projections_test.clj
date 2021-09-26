@@ -1,6 +1,6 @@
 (ns se.jherrlin.clara-labs.create-game-state-projections-test
   (:require  [clojure.test :as t]
-             [se.jherrlin.server.resources :as resources]
+             [se.jherrlin.claraman.server.resources :as resources]
              [se.jherrlin.claraman.models :as models]
              [clojure.pprint :as pprint]
              [se.jherrlin.claraman.game-state :as game-state]

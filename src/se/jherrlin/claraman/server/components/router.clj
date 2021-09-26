@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.router
+(ns se.jherrlin.claraman.server.components.router
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as timbre]))
 

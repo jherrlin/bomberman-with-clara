@@ -1,7 +1,7 @@
-(ns se.jherrlin.server.endpoints-ws
+(ns se.jherrlin.claraman.server.endpoints-ws
   (:require [taoensso.timbre :as timbre]
             [se.jherrlin.claraman.user-commands :as user-commands]
-            [se.jherrlin.server.application-service :as application-service]
+            [se.jherrlin.claraman.server.application-service :as application-service]
             [se.jherrlin.datetime :as datetime]))
 
 

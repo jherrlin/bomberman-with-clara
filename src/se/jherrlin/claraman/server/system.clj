@@ -1,18 +1,18 @@
-(ns se.jherrlin.server.system
+(ns se.jherrlin.claraman.server.system
   (:require
    [chime.core :as chime]
    [com.stuartsierra.component :as component]
-   [se.jherrlin.server.components.httpkit :as components.httpkit]
-   [se.jherrlin.server.components.nrepl :as components.nrepl]
-   [se.jherrlin.server.components.router :as components.router]
-   [se.jherrlin.server.components.sente :as components.sente]
-   [se.jherrlin.server.components.chime :as components.chime]
-   [se.jherrlin.server.components.timbre :as components.timbre]
-   [se.jherrlin.server.components.event-store :as components.event-store]
-   [se.jherrlin.server.components.game-state :as components.game-state]
+   [se.jherrlin.claraman.server.components.httpkit :as components.httpkit]
+   [se.jherrlin.claraman.server.components.nrepl :as components.nrepl]
+   [se.jherrlin.claraman.server.components.router :as components.router]
+   [se.jherrlin.claraman.server.components.sente :as components.sente]
+   [se.jherrlin.claraman.server.components.chime :as components.chime]
+   [se.jherrlin.claraman.server.components.timbre :as components.timbre]
+   [se.jherrlin.claraman.server.components.event-store :as components.event-store]
+   [se.jherrlin.claraman.server.components.game-state :as components.game-state]
    [se.jherrlin.claraman.game-state :as game-state]
-   [se.jherrlin.server.endpoints :as server.endpoints]
-   [se.jherrlin.server.endpoints-ws :as server.endpoints-ws]
+   [se.jherrlin.claraman.server.endpoints :as server.endpoints]
+   [se.jherrlin.claraman.server.endpoints-ws :as server.endpoints-ws]
    [se.jherrlin.claraman.claraman-rules :as bomberman-rules]
    [se.jherrlin.claraman.user-commands :as user-commands]
    [se.jherrlin.claraman.models :as models]
@@ -22,13 +22,13 @@
    [se.jherrlin.datetime :as datetime]
    [clojure.pprint :as pprint]
    [se.jherrlin.claraman.board :as board]
-   [se.jherrlin.server.application-service :as application-service]
-   [se.jherrlin.server.resources :as resources])
+   [se.jherrlin.claraman.server.application-service :as application-service]
+   [se.jherrlin.claraman.server.resources :as resources])
   (:import [java.time Instant Duration])
   (:gen-class))
 
 (comment
-  (remove-ns 'se.jherrlin.server.system)
+  (remove-ns 'se.jherrlin.claraman.server.system)
   )
 
 (defonce incomming-commands-state
@@ -219,8 +219,8 @@
   @game-state'
   @event-store
   @incomming-commands-state
-  (reset! game-state' se.jherrlin.server.components.game-state/initial-game-state)
-  (reset! event-store se.jherrlin.server.components.event-store/store-init)
+  (reset! game-state' se.jherrlin.claraman.server.components.game-state/initial-game-state)
+  (reset! event-store se.jherrlin.claraman.server.components.event-store/store-init)
   (reset! incomming-commands-state {})
 
 

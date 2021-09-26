@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.endpoints
+(ns se.jherrlin.claraman.server.endpoints
   (:require
    [clojure.spec.alpha :as s]
    [malli.util :as mu]
@@ -9,12 +9,12 @@
    [reitit.coercion.malli]
    reitit.coercion.spec
    [reitit.dev.pretty :as pretty]
-   [se.jherrlin.server.resources :as resources]
+   [se.jherrlin.claraman.server.resources :as resources]
    [reitit.ring :as ring]
    [reitit.ring.coercion :as ring.coercion]
    [reitit.ring.malli]
    [clojure.spec.alpha :as s]
-   [se.jherrlin.server.pages :as pages]
+   [se.jherrlin.claraman.server.pages :as pages]
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.ring.middleware.parameters :as parameters]
    [reitit.swagger :as swagger]

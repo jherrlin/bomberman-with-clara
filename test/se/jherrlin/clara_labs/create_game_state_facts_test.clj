@@ -1,6 +1,6 @@
 (ns se.jherrlin.clara-labs.create-game-state-facts-test
   (:require  [clojure.test :as t]
-             [se.jherrlin.server.resources :as resources]
+             [se.jherrlin.claraman.server.resources :as resources]
              [se.jherrlin.claraman.models :as models]
              [se.jherrlin.claraman.game-state :as game-state]
              [se.jherrlin.claraman.board :as board]))

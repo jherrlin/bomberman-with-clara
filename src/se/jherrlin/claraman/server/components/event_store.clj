@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.event-store
+(ns se.jherrlin.claraman.server.components.event-store
   (:require [com.stuartsierra.component :as component]
             [taoensso.timbre :as timbre]))
 

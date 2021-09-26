@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.nrepl
+(ns se.jherrlin.claraman.server.components.nrepl
   (:require
    [com.stuartsierra.component :as component]
    [nrepl.server :as nrepl]

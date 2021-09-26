@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.httpkit
+(ns se.jherrlin.claraman.server.components.httpkit
   (:require [com.stuartsierra.component :as component]
             [org.httpkit.server :as httpkit.server]
             [taoensso.timbre :as timbre]))

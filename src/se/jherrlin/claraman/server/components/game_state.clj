@@ -1,6 +1,6 @@
-(ns se.jherrlin.server.components.game-state
+(ns se.jherrlin.claraman.server.components.game-state
   (:require [com.stuartsierra.component :as component]
-            [se.jherrlin.server.resources :as resources]
+            [se.jherrlin.claraman.server.resources :as resources]
             [taoensso.timbre :as timbre]))
 
 

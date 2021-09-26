@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.http-middleware
+(ns se.jherrlin.claraman.server.components.http-middleware
   (:require [com.stuartsierra.component :as component]
             [ring.middleware.session.memory :as memory]
             [ring.middleware.session :as session]

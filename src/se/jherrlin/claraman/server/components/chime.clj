@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.components.chime
+(ns se.jherrlin.claraman.server.components.chime
   (:require
    [taoensso.timbre :as timbre]
    [com.stuartsierra.component :as component]

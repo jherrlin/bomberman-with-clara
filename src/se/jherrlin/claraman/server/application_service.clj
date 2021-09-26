@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.application-service
+(ns se.jherrlin.claraman.server.application-service
   (:require [clojure.spec.alpha :as s]
             [se.jherrlin.claraman.game-state :as game-state]
             [se.jherrlin.claraman.user-commands :as user-commands]
@@ -9,7 +9,7 @@
             [se.jherrlin.claraman.board :as board]))
 
 (comment
-  (remove-ns 'se.jherrlin.server.application-service)
+  (remove-ns 'se.jherrlin.claraman.server.application-service)
   )
 
 

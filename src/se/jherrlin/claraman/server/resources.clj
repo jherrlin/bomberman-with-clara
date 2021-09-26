@@ -1,4 +1,4 @@
-(ns se.jherrlin.server.resources
+(ns se.jherrlin.claraman.server.resources
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]

@@ -1,7 +1,7 @@
-(ns se.jherrlin.server.pages
+(ns se.jherrlin.claraman.server.pages
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [se.jherrlin.server.resources :as resources]
+            [se.jherrlin.claraman.server.resources :as resources]
             [hiccup.page :refer [html5 include-js include-css]]
             [taoensso.timbre :as timbre]))
 
