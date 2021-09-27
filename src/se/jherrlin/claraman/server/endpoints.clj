@@ -25,7 +25,7 @@
    ["/websocket/chsk" (get websocket :reitit-routes)]])
 
 (def events-demo
-  (->> (resources/read-edn-file "events/2021-09-25_3-bots.edn")
+  (->> (resources/read-edn-file "events/2021-09-27_3-bots.edn")
        (:events)
        (reverse)))
 

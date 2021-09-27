@@ -17,6 +17,8 @@
   (def event-store    (-> system/production :event-store :store))
   (def broadcast-fn!  (get-in system/production [:websocket :broadcast-fn!]))
 
+  (spit (str "/home/john/git/clara-labs-frontend/resources/events/2021-09-27_3-bots.edn") (with-out-str (clojure.pprint/pprint @se.jherrlin.claraman.server.components.event-store/store)))
+
   (alter-var-root #'system/production component/start)
   (alter-var-root #'system/production component/stop)
 
@@ -56,24 +58,32 @@
 
 
 (comment
+  @game-state'
   ;; Bots
-  (let [game-id #uuid "246e1ee5-48d3-47e4-b9fe-c66e648439a0"]
-    (map (fn [{:keys [bot-id bot-name]}]
-           (add-events-fn! [(.toCloudEvent (models/->JoinGame (java.util.Date.) game-id bot-id bot-name))]))
+
+  (let [game-id #uuid "e0f4ca3b-4fe6-49a6-97e8-08be438bff78"]
+    (map (fn [{:keys [bot-id bot-name position nr]}]
+           (add-events-fn! [(.toCloudEvent (models/->JoinGame (java.util.Date.) game-id bot-id bot-name nr position))]))
          [{:bot-id   #uuid "e24b0220-b98d-4319-8991-9c634da7027c"
-           :bot-name "Bot 1"}
+           :bot-name "Bot 1"
+           :nr       2
+           :position [17 9]}
           {:bot-id   #uuid "ebc270ae-62fe-42de-90ec-a6b3875eb56e"
-           :bot-name "Bot 2"}
+           :bot-name "Bot 2"
+           :nr       3
+           :position [17 1]}
           {:bot-id   #uuid "a9d89612-cd08-46ab-8303-89918a633193"
-           :bot-name "Bot 3"}]))
+           :bot-name "Bot 3"
+           :nr       4
+           :position [1 9]}]))
 
   (def run-bot-commands? (atom true))
   (go-loop []
-    (let [game-id #uuid "246e1ee5-48d3-47e4-b9fe-c66e648439a0"]
+    (let [game-id #uuid "e0f4ca3b-4fe6-49a6-97e8-08be438bff78"]
       (doall
        (map (fn [{:keys [bot-id]}]
-              (user-commands/register-incomming-user-command!
-               system/incomming-commands-state
+              (se.jherrlin.claraman.server.components.incomming-commands/register-incomming-player-command!
+               se.jherrlin.claraman.server.components.incomming-commands/incomming-commands-state
                (assoc (user-commands/generate-bot-action game-id bot-id)
                       :timestamp (datetime/now))))
             [{:bot-id   #uuid "e24b0220-b98d-4319-8991-9c634da7027c"
@@ -86,7 +96,6 @@
       (<! (timeout 100))
       (recur)))
   (reset! run-bot-commands? false)
-
   )
 
 
