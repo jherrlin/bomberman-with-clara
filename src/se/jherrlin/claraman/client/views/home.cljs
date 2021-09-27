@@ -54,7 +54,8 @@
       [:> semantic-ui/Container {:text true}
        [:> semantic-ui/Header {:as "h3"}
         "What"]
-       [:p "Claraman is a game project around two concepts. A rule engine named "
+       [:p "Claraman is a multiplayer game project around two concepts. A rule
+       engine named "
         [:a {:href "http://www.clara-rules.org/" :target "_blank"} "Clara"] " and event sourcing."]
        [:> semantic-ui/Container {:text true}
         [:> semantic-ui/Header {:as "h4"} "Clara"]

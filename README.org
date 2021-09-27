@@ -1,7 +1,7 @@
 #+TITLE: Claraman
 
-Claraman is a game project around two concepts. A rule engine named Clara and
-event sourcing.
+Claraman is a multiplayer game project around two concepts. A rule engine named
+Clara and event sourcing.
 
 The running game can be found at https://bomberman.lambda-group.se/
 
