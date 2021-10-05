@@ -7,7 +7,7 @@ Type=simple
 User=bomberman-app
 Group=webapps
 WorkingDirectory=/webapps/bomberman
-ExecStart=/bin/bash -c 'mkdir -p logs && /usr/bin/java -jar $$(ls -t bomberman-master*.jar | head -1)'
+ExecStart=/bin/bash -c 'mkdir -p logs && /usr/bin/java -Xmx512m -jar $$(ls -t bomberman-master*.jar | head -1)'
 Restart=on-failure
 RestartSec=20s
 
