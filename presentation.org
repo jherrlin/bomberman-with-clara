@@ -1,0 +1,132 @@
+#+TITLE: Presentation for Wexio Lambda Session
+#+AUTHOR: John Herrlin
+#+DATE: <2021-10-18 Mon>
+
+
+* Event sourcing
+** What's an event that?
+
+   - Accounting
+   - Business contracts
+
+** Events
+
+   CloudEvent specification is used.
+
+   table is taken from Johan Halebys [[https://occurrent.org/documentation#cloudevents][Occurrent]].
+
+   | Attribute    | Description | Example                              |
+   |--------------+-------------+--------------------------------------|
+   | id           | event id    | bfbdb0f7-2756-4262-9045-e0cc35457831 |
+   | source       | event type  | urn:se:jherrlin:bomberman:game       |
+   | subject      | game id     | ea82027c-16d9-4c65-a1c7-bf703473679d |
+   | type         | action type | move                                 |
+   | time         | timestamp   | 2021-10-19T17:08:32.662-00:00        |
+   | content-type | data format | application/edn application/json     |
+   | data         | event data  | data about the event                 |
+
+** CQRS
+
+   Command Query Responsibility Segregation
+
+   Creates are made in one place, reads in another.
+
+** Data flow
+
+   [[./resources/public/img/bomberman-cqrs.drawio.png]]
+
+** Examples
+
+   [[/home/john/git/clara-labs-frontend/dev/user.clj::26]]
+
+* Rule engines / Clara
+
+  http://www.clara-rules.org/
+
+  #+BEGIN_SRC clojure :results output code
+    (ns claraman-demo
+      (:require
+       [clara.rules :refer [defquery defrule fire-rules insert insert-all insert! insert-unconditional! query retract! mk-session]]
+       [se.jherrlin.claraman.board :as board]
+       [se.jherrlin.claraman.models :as models])
+      (:import [se.jherrlin.claraman.models
+                Board PlayerMove PlayerWantsToMove Stone BombOnBoard TimestampNow
+                PlayerOnBoardPosition FireOnBoard PlayerDies]))
+
+
+    (def game-id (java.util.UUID/randomUUID))
+    (def timestamp (java.util.Date.))
+    (def demo-board
+      [[{:type :wall :x 0 :y 0} {:type :wall  :x 1 :y 0} {:type :wall  :x 2 :y 0} {:type :wall  :x 3 :y 0} {:type :wall  :x 4 :y 0} {:type :wall  :x 5 :y 0}]
+       [{:type :wall :x 0 :y 1} {:type :floor :x 1 :y 1} {:type :floor :x 2 :y 1} {:type :floor :x 3 :y 1} {:type :floor :x 4 :y 1} {:type :wall  :x 5 :y 1}]
+       [{:type :wall :x 0 :y 2} {:type :floor :x 1 :y 2} {:type :wall  :x 2 :y 2} {:type :floor :x 3 :y 2} {:type :wall  :x 4 :y 2} {:type :floor :x 5 :y 2}]
+       [{:type :wall :x 0 :y 3} {:type :floor :x 1 :y 3} {:type :floor :x 2 :y 3} {:type :floor :x 3 :y 3} {:type :floor :x 4 :y 3} {:type :wall  :x 5 :y 3}]
+       [{:type :wall :x 0 :y 4} {:type :wall  :x 1 :y 4} {:type :wall  :x 2 :y 4} {:type :wall  :x 3 :y 4} {:type :wall  :x 4 :y 4} {:type :wall  :x 5 :y 4}]])
+
+    (defrule player-move
+      "Player move"
+      [TimestampNow      (= ?now now)]
+      [Board             (= ?game-id game-id) (= ?board board)]
+      [PlayerWantsToMove (= ?game-id game-id) (= ?player-id player-id) (= ?current-xy current-xy) (= ?direction direction)
+       (#{:floor} (board/target-position-type ?board current-xy direction))]
+      [:not [Stone       (= ?game-id game-id) (= stone-position-xy (board/next-xy-position ?current-xy ?direction))]]
+      [:not [BombOnBoard (= ?game-id game-id) (= bomb-position-xy  (board/next-xy-position ?current-xy ?direction))]]
+      =>
+      (insert! (PlayerMove. ?now ?game-id ?player-id (board/next-xy-position ?current-xy ?direction) ?direction)))
+
+    (defrule rule-name
+      ;; If all of this facts are true
+      => ;; then
+      ;; Do this
+      )
+
+    (defrule player-dies-if-walking-into-fire
+      [TimestampNow (= ?now now)]
+      [FireOnBoard  (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
+      [PlayerMove   (= ?game-id game-id) (= ?player-id player-id) (= ?player-next-position next-position)]
+      [:test (= ?player-next-position ?fire-current-xy)]
+      =>
+      (insert! (PlayerDies. ?now ?game-id ?player-id ?fire-player-id)))
+
+    (defrule player-dies
+      "Player dies if she gets hit by fire."
+      [TimestampNow (= ?now now)]
+      [PlayerOnBoardPosition (= ?game-id game-id) (= ?player-id player-id)      (= ?player-current-xy player-current-xy)]
+      [FireOnBoard           (= ?game-id game-id) (= ?fire-player-id player-id) (= ?fire-current-xy fire-position-xy)]
+      [:test (= ?fire-current-xy ?player-current-xy)]
+      =>
+      (insert! (PlayerDies. ?now ?game-id ?player-id ?fire-player-id)))
+
+    (defquery player-move?
+      []
+      [?player-move <- PlayerMove])
+
+    (defquery player-dies?
+      []
+      [?player-dies <- PlayerDies])
+
+    ;; Player move
+    (let [session' (-> (mk-session 'claraman-demo)
+                       (insert (models/->TimestampNow timestamp)
+                               (models/->FireOnBoard                 game-id 2 [2 1] #inst "2021-08-28T15:03:02.000-00:00")
+                               (models/->PlayerWantsToMove timestamp game-id 1 [1 1] :east)
+                               (models/->Board game-id demo-board))
+                       (fire-rules))]
+      {:dies (query session' player-dies?)
+       :move (query session' player-move?)})
+    ;; player-move?
+
+    ;; Player dies
+    (-> (mk-session 'claraman-demo)
+        (insert
+         (models/->TimestampNow                          #inst "2021-08-28T15:03:02.000-00:00")
+         (models/->FireOnBoard           game-id 2 [1 1] #inst "2021-08-28T15:03:02.000-00:00")
+         (models/->PlayerOnBoardPosition game-id 1 [1 1] "A"))
+        (fire-rules)
+        (query player-dies?))
+  #+END_SRC
+
+** Resources
+
+   https://medium.com/@charlottebrf/beginners-introduction-to-clara-rules-a92b02000ceb
+   https://www.onote.com/
