@@ -1,9 +1,7 @@
 (ns se.jherrlin.claraman.client.websocket
   (:require [taoensso.timbre :as timbre]
-            [cljs.pprint :as pprint]
             [re-frame.core :as re-frame]
-            [taoensso.sente :as sente :refer [cb-success?]]
-            [clojure.spec.alpha :as s]))
+            [taoensso.sente :as sente :refer [cb-success?]]))
 
 
 (declare chsk-send!)

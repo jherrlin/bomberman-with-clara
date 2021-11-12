@@ -52,7 +52,7 @@
 (defn incomming-actions
   "Parse incomming actions to Bomberman rule engine facts"
   [incomming-commands-state gs]
-  (some->> @incomming-commands-state
+  (some->> incomming-commands-state
            (vals)
            (map vals)
            (apply concat)
@@ -60,22 +60,18 @@
            (apply concat)
            (map (partial command->engine-fact gs))))
 
-(defn sort-events [x]
-  (some->> x
-           :actions
-           vals
-           (apply concat)))
-
 (defn to-cloud-events [events]
-  (->> events
-       (map #(.toCloudEvent %))
-       (sort-by :time #(compare %2 %1))))
+  (some->> events
+           vals
+           (apply concat)
+           (map #(.toCloudEvent %))
+           (sort-by :time #(compare %2 %1))))
 
 (defn game-loop [{:keys [task-execution-timestamp game-state ws-broadcast-fn! add-events-fn!
                          incomming-commands-state reset-incomming-player-commands!]}]
   (timbre/trace "Game loop is now started " task-execution-timestamp)
   (try
-    (let [player-action-facts (incomming-actions incomming-commands-state game-state)
+    (let [player-action-facts (incomming-actions @incomming-commands-state game-state)
           ;; move, place-bomb, throw-bomb
           started-game-facts  (game-state/started-games-facts @game-state)
           created-game-facts  (game-state/created-games-facts @game-state)
@@ -87,7 +83,7 @@
                                created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
           actions-from-enging (claraman-rules/run-rules rule-enginge-facts)
-          sorted-cloud-events (to-cloud-events (sort-events actions-from-enging))]
+          sorted-cloud-events (-> actions-from-enging :actions to-cloud-events)]
       (add-events-fn! sorted-cloud-events)
       (reset-incomming-player-commands!)
       (doseq [game (-> @game-state :games (vals))]
@@ -102,7 +98,7 @@
   (component/system-map
    :nrepl             (components.nrepl/create)
    :event-store       (components.event-store/create)
-   :incomming-player-commands   (components.incomming-commands/create)
+   :incomming-player-commands (components.incomming-commands/create)
    :game-state        (component/using
                        (components.game-state/create (:projection-fn game-state))
                        [:event-store])
