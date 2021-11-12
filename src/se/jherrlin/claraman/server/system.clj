@@ -75,13 +75,14 @@
                          incomming-commands-state reset-incomming-player-commands!]}]
   (timbre/trace "Game loop is now started " task-execution-timestamp)
   (try
-    (let [user-action-facts   (incomming-actions incomming-commands-state game-state)
+    (let [player-action-facts (incomming-actions incomming-commands-state game-state)
+          ;; move, place-bomb, throw-bomb
           started-game-facts  (game-state/started-games-facts @game-state)
           created-game-facts  (game-state/created-games-facts @game-state)
           shutdown-game-facts (game-state/shutdown-games-facts @game-state)
           rule-enginge-facts  (concat
                                shutdown-game-facts
-                               user-action-facts
+                               player-action-facts
                                started-game-facts
                                created-game-facts
                                [(models/->TimestampNow (java.util.Date.))])
