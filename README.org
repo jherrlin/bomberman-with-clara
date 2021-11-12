@@ -12,7 +12,7 @@ The running game can be found at https://bomberman.lambda-group.se/
   Resources:
   - http://www.clara-rules.org/
   - https://www.youtube.com/watch?v=Z6oVuYmRgkk
-  - https://thesearch.space/episodes/1-the-poet-of-logic-programming
+  - https://thesearch.space/episodes/2-ryan-brush-on-retaking-rules-for-developers
 
 * Event sourcing
 
