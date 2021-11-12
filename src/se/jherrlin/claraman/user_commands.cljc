@@ -1,23 +1,22 @@
 (ns se.jherrlin.claraman.user-commands
   (:require [clojure.spec.alpha :as s]
-            [taoensso.timbre :as timbre]
             [clojure.test.check.generators :as gen]
             [clojure.string :as str]))
 
 (s/def ::non-blank-string (s/and string? (complement str/blank?)))
 
-(s/def ::game-id    (s/or :s string? :u uuid?))
-(s/def ::action     #{:place-bomb :move :throw-bomb :create-game :join-game :start-game})
-(s/def ::user-id    (s/or :n number? :u uuid? :s string?))
-(s/def ::direction  #{:west :east :north :south})
-(s/def ::game-name  ::non-blank-string)
+(s/def ::game-id       (s/or :s string? :u uuid?))
+(s/def ::action        #{:create-game :join-game :move :place-bomb :start-game :throw-bomb})
+(s/def ::user-id       (s/or :n number? :u uuid? :s string?))
+(s/def ::direction     #{:west :east :north :south})
+(s/def ::game-name     ::non-blank-string)
 (s/def ::game-password ::non-blank-string)
-(s/def ::player-name ::non-blank-string)
-(s/def ::start-game  (s/keys :req-un [::action ::game-id]))
-(s/def ::create-game (s/keys :req-un [::action ::game-name ::game-password]))
-(s/def ::join-game   (s/keys :req-un [::action ::game-id ::game-password ::player-name]))
-(s/def ::move        (s/keys :req-un [::action ::game-id ::user-id ::direction]))
-(s/def ::place-bomb  (s/keys :req-un [::action ::game-id ::user-id]))
+(s/def ::player-name   ::non-blank-string)
+(s/def ::start-game    (s/keys :req-un [::action ::game-id]))
+(s/def ::create-game   (s/keys :req-un [::action ::game-name ::game-password]))
+(s/def ::join-game     (s/keys :req-un [::action ::game-id ::game-password ::player-name]))
+(s/def ::move          (s/keys :req-un [::action ::game-id ::user-id ::direction]))
+(s/def ::place-bomb    (s/keys :req-un [::action ::game-id ::user-id]))
 (s/def ::commands
   (s/or :move       ::move
         :place-bomb ::place-bomb
